@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<part>
+    <code>Simon</code>
+    <description>no description</description>
+    <specs>
+        <length>10</length>
+        <width>10</width>
+        <height>10</height>
+        <weight>5</weight>
+    </specs>
+</part>

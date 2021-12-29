@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Part>
+    <General>
+        <prenom>Simon</prenom>
+        <nom>Depelteau</nom>
+        <DOB>2000-07-23</DOB>
+        <Empty></Empty>
+    </General>
+    <sports>
+        <ski>
+            <technical>
+                <brand>
+                    <ski>Rossignol</ski>
+                    <helmet>Sweet protection</helmet>
+                </brand>
+            </technical>
+            <clubs>
+                <mountain>Orford</mountain>
+                <mountain>Bromont</mountain>
+                <mountain>Saint-Sauveur</mountain>
+                <organisation>Carabins</organisation>
+            </clubs>
+        </ski>
+    </sports>
+    <School>
+        <highSchool>Durocher</highSchool>
+        <cegep>Edouard-montpetit</cegep>
+        <university>Sherbrooke</university>
+    </School>
+</Part>

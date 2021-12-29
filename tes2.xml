@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<main>
+    <skier>
+        <ski>Rossi</ski>
+        <boots>Rossi</boots>
+    </skier>
+    <skier>
+        <ski>Head</ski>
+        <boots>head</boots>
+    </skier>
+</main>
