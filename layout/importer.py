@@ -4,7 +4,7 @@ from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import QMainWindow, QWidget, QLabel, QPushButton, QHBoxLayout, QVBoxLayout, QStackedLayout, \
     QComboBox, QFileDialog, QLineEdit
 from PyQt6.QtWidgets import QTreeWidget, QTreeWidgetItem
-from settings import PartModelWidget
+from layout.settings import PartModelWidget
 import xml.etree.ElementTree as et
 import json
 import untangle

@@ -6,14 +6,17 @@ from PyQt6.QtWidgets import QWidget, QMainWindow, QListWidget, QVBoxLayout, QHBo
     QStackedLayout, QLineEdit
 from PyQt6.QtWidgets import QTreeWidget, QTreeWidgetItem
 from PyQt6.QtWidgets import QApplication
-import xml.etree.ElementTree as et
+import xml.etree.ElementTree as eT
+
 
 class SettingsWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         # self.setGeometry(100, 100, 500, 500)
 
+
     def open_window(self, window):
+
         settings = Settings()
         window.setCentralWidget(settings)
         window.setGeometry(200, 100, 900, 500)
@@ -27,7 +30,7 @@ class SettingsWindow(QMainWindow):
         - proprietes de piece (selon modele predefini)
         - 
     Magasin
-"""
+
 class PartModelWidgetOld(QWidget):
     def __init__(self):
         super().__init__()
@@ -49,7 +52,7 @@ class PartModelWidgetOld(QWidget):
 
         self.treewidget = QTreeWidget()
         hbox = QHBoxLayout()
-        f = open('test.xml', 'r').read()
+        f = open('../test.xml', 'r').read()
 
         vbox.addWidget(self.treewidget)
         vbox.addWidget(self.buttons_box)
@@ -106,11 +109,11 @@ class PartModelWidgetOld(QWidget):
         self.treewidget.addTopLevelItem(a)
 
         def display_tree(a, s):
-            """
+            
             :param a: QTreeWidgetItem
             :param s: XML element from the tree
             :return:
-            """
+            
             for child in s:
                 branch = QTreeWidgetItem([child.tag])
                 a.addChild(branch)
@@ -121,15 +124,17 @@ class PartModelWidgetOld(QWidget):
                # a.addChild(QTreeWidgetItem([content]))
 
         display_tree(a, self.tree)
+        """
 
 
 class PartModelWidget(QWidget):
     def __init__(self):
         super().__init__()
-        self.file = 'partModel.xml'
+        self.file = 'layout/partModel.xml'
 
-        self.xml_tree_object = et.ElementTree()
+        self.xml_tree_object = eT.ElementTree()
         self.xml_tree_object.parse(self.file)
+        print(self.xml_tree_object)
 
         self.treewidget = QTreeWidget()
         self.draw_tree()
@@ -250,7 +255,7 @@ class PartModelWidget(QWidget):
             child.addChild(e)
         element = self.get_xml_element(self.treewidget.currentItem())
         for i in element:
-            i.append(et.Element('new element'))
+            i.append(eT.Element('new element'))
 
     def sup_prop(self):
         self.get_xml_element(self.treewidget.currentItem())
