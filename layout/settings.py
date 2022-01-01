@@ -130,7 +130,7 @@ class PartModelWidgetOld(QWidget):
 class PartModelWidget(QWidget):
     def __init__(self):
         super().__init__()
-        self.file = 'layout/partModel.xml'
+        self.file = 'part/partModel.xml'
 
         self.xml_tree_object = eT.ElementTree()
         self.xml_tree_object.parse(self.file)

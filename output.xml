@@ -1,10 +1,12 @@
-<part>
+<piece>
     <code />
-    <description />
-    <specs>
-        <length>NEW TEST</length>
-        <width />
-        <height />
+    <general_information>
+        <description>place_holder</description>
+    </general_information>
+    <specifications>
+        <length>10</length>
+        <width>15</width>
+        <height>20</height>
         <weight />
-    </specs>
-</part>
+    </specifications>
+</piece>

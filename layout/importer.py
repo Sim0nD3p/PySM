@@ -1,13 +1,11 @@
-import sys
-
 from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import QMainWindow, QWidget, QLabel, QPushButton, QHBoxLayout, QVBoxLayout, QStackedLayout, \
     QComboBox, QFileDialog, QLineEdit
 from PyQt6.QtWidgets import QTreeWidget, QTreeWidgetItem
-from layout.settings import PartModelWidget
 import xml.etree.ElementTree as et
 import json
-import untangle
+from part.Part import Part
+from part.dataClasses import Specifications, GeneralInformation
 
 
 class ImporterWindow(QMainWindow):
@@ -78,7 +76,7 @@ class TreePropretiesEditor(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.template = 'sample1.xml'  # template xml file
+        self.template = 'part/partModel.xml'  # template xml file
         self.xml_tree = et.ElementTree()
         self.xml_tree.parse(self.template)
 
@@ -120,7 +118,7 @@ class TreePropretiesEditor(QWidget):
 
         def create_branches(root, xml_element):
             for child in xml_element:
-                branch = QTreeWidgetItem([child.tag])
+                branch = QTreeWidgetItem([child.tag, child.text])
                 root.addChild(branch)
                 create_branches(branch, child)
 
@@ -179,6 +177,12 @@ class TreePropretiesEditor(QWidget):
         self.bottom_widget.setLayout(vbox)
 
     def get_path(self, element, delimiter):
+        """
+        Gets path of tree element
+        :param element: elementTree.ElementTree.Element
+        :param delimiter:
+        :return:
+        """
         def get_parent_path(tree_item):
             def get_parent(item, outstring):
                 if item.parent() is None:
@@ -191,7 +195,7 @@ class TreePropretiesEditor(QWidget):
         return final_path
 
     def get_xml_element(self, path):
-        direct_path = path.lstrip(self.xml_tree.getroot().tag + '/')
+        direct_path = path[path.find('/')+1:]
         return self.xml_tree.findall(direct_path)
 
     def handle_double_click(self, tree_element):
@@ -202,17 +206,20 @@ class TreePropretiesEditor(QWidget):
             self.text_box.setText(tree_element.text(1))
 
     def add_prop(self):
-        self.selected_tree_element.setText(1, self.text_box.text())
-        full_path = self.get_path(self.selected_tree_element, '/')
-        xml_element = self.get_xml_element(full_path)[0]
-        xml_element.text = self.text_box.text()
+        if self.selected_tree_element is not None:
+            self.selected_tree_element.setText(1, self.text_box.text())
+            full_path = self.get_path(self.selected_tree_element, '/')
+            xml_element = self.get_xml_element(full_path)[0]
+            print(xml_element)
+            xml_element.text = self.text_box.text()
 
     def delete_prop(self):
-        self.selected_tree_element.setText(1, '')
-        self.text_box.setText('')
-        full_path = self.get_path(self.selected_tree_element, '/')
-        xml_element = self.get_xml_element(full_path)[0]
-        xml_element.text = ''
+        if self.selected_tree_element is not None:
+            self.selected_tree_element.setText(1, '')
+            self.text_box.setText('')
+            full_path = self.get_path(self.selected_tree_element, '/')
+            xml_element = self.get_xml_element(full_path)[0]
+            xml_element.text = ''
 
     def set_submit_button_enabled(self, text):
         if len(text) > 0:
@@ -331,28 +338,176 @@ class XmlImporter(QWidget):
     def __init__(self, parent=None):
         super().__init__()
         self.tree = TreePropretiesEditor()
+
+        self.bottom_buttons = QWidget()
+        self.create_bottom_buttons()
+
         self.create_layout()
 
-    def create_layout(self):
-        vbox = QVBoxLayout()
+    def create_bottom_buttons(self):
+        hbox = QHBoxLayout()
+
+        b_auto_fill = QPushButton('useless button')
+
         button = QPushButton('button')
         button.clicked.connect(self.test)
 
+        hbox.addWidget(b_auto_fill)
+        hbox.addWidget(button)
+
+        self.bottom_buttons.setLayout(hbox)
+
+
+    def create_layout(self):
+        vbox = QVBoxLayout()
+
+
         vbox.addWidget(self.tree)
-        vbox.addWidget(button)
+        vbox.addWidget(self.bottom_buttons)
 
         self.setLayout(vbox)
 
 
+    def get_instructions_list(self, model):
+        """
+
+        :param model: xml.ElementTree.Element to return child properties
+        :return: dict(path:value)
+        """
+        rec = {}
+        def loop(branch, path):
+            def get_path(root, p):
+                if len(root) == 0:  # when element has no child, we return the element and its path
+                    pa = path + '/' + root.tag
+                    val = root.text
+                    en = [pa, val]
+                    return en
+                else:   # if element has child, we loop trough them
+                    p = p + '/' + root.tag
+                    loop(root, p)
+
+            for child in branch:    # for every element in the branch
+                value = get_path(child, path)
+                if value is not None:
+                    rec[value[0]] = value[1]
+
+        loop(model, model.tag)
+        return rec
+
     def test(self):
         print('this is test')
-        xml = et.ElementTree()
-        xml.parse('partModel.xml')
-        print(xml)
-        doc = untangle.parse('partModel.xml')
-        print(type(doc))
-        print(doc.piece)
-        print(help(doc.piece))
+        '''
+        on veut build object a partir de donne du fichier
+        '''
+        input_file = et.ElementTree()
+        input_file.parse('layout/criss.xml')
+        data = input_file.getroot()
+        decoder_instructions = self.get_instructions_list(model=self.tree.xml_tree.getroot())
+
+
+        def create_object(data, instructions):
+            print('creating object')
+            print(instructions)
+            print(data)
+            path = 'part/general_information/description'
+
+            """
+            data: dict of combinaisons object_path: import_data_path for all properties of importing data
+            """
+
+            def make_data_specs(data, instructions):
+                """
+                Takes data dictionary and instructions dictionary and returns specifications dataclass.
+                The function go search the data with the path of the property found in the instructions dictionary
+                :param data:
+                :param instructions:
+                :return: Specifications dataclass
+                """
+                paths = {   # This is the paths of specifications in partModel, where
+                    'length': 'part/specifications/length',
+                    'width': 'part/specifications/width',
+                    'height': 'part/specifications/height',
+                    'weight': 'part/specifications/weight'
+                }
+                length = data[instructions[paths['length']]]
+                width = data[instructions[paths['width']]]
+                height = data[instructions[paths['height']]]
+                weight = data[instructions[paths['weight']]]
+
+                return Specifications(length=length, width=width, height=height, weight=weight)
+
+            def make_general_informations(data, instructions):
+                """
+                Takes data dictionary and instructions dictionary and returns GeneralInformation dataclass.
+                The function go search the data with the path of the property found in the instructions dictionary
+                :param data:
+                :param instructions:
+                :return: GeneralInformation dataClass
+                """
+                paths = {
+                    'description': 'part/general_information/description'
+                }
+                description = data[instructions[paths['description']]]
+
+                return GeneralInformation(description=description)
+
+
+            print(data[instructions[path]])
+            s = make_data_specs(data, instructions)
+            g = make_general_informations(data, instructions)
+
+            part_sample = Part('code part sample')
+            part_sample.specifications = s
+
+            def add_custom_props(part, data, instructions):
+                print('adding custom props')
+                for object_path in instructions:
+                    object_dir = object_path.split('/')
+                    common_types = ['general_information', 'specifications']
+                    if object_dir[1] not in common_types:
+
+                        def go_to_element(part, path):
+                            print('go to element')
+                            for i in range(len(path)):
+                                if i > 0:
+                                    if hasattr(part, '__dict__'):
+                                        print('has dict')
+                                        if i == len(path)-1:
+                                            part.__setattr__(path[i], 'something')
+                                            print(path[i], '= something')
+                                        else:
+                                            part.__setattr__(path[i], {path[i+1]: {}})
+                                            part = part.__getattribute__(path[i])
+                                            print('new part', part)
+                                            print(path[i], '-->', path[i+1])
+                                    else:
+                                        if i == len(path)-1:
+                                            # print(part)
+                                            print(path[i], '= something')
+                                        else:
+                                            print(path[i], '-->', path[i+1])
+                                            part[path[i]] = path[i+1]
+                                            print(part)
+
+
+
+
+                        go_to_element(part, object_dir)
+                        print(vars(part))
+
+
+            add_custom_props(part_sample, data, instructions)
+
+
+
+        create_object(self.get_instructions_list(data[0]), decoder_instructions)
+        # print(decoder_instructions)
+
+        """
+        creation path for specific object"""
+
+
+
 
 
 

@@ -1,5 +1,51 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<test>
-    <name></name>
-    <surname></surname>
-</test>
+<root>
+    <part>
+        <code>piece1</code>
+        <description>petite piece</description>
+        <specs>
+            <length>25</length>
+            <width>10</width>
+            <height>10</height>
+            <weight>0.01</weight>
+        </specs>
+        <subelement>
+            <priority>priority</priority>
+            <secondary>secondary</secondary>
+        </subelement>
+
+
+    </part>
+    <part>
+        <code>piece2</code>
+        <description>moyenne piece</description>
+        <specs>
+            <length>50</length>
+            <width>50</width>
+            <height>25</height>
+            <weight>0.5</weight>
+        </specs>
+        <subelement>
+            <priority>priority</priority>
+            <secondary>secondary</secondary>
+        </subelement>
+
+    </part>
+    <part>
+        <code>piece3</code>
+        <description>grosse piece</description>
+        <specs>
+            <length>200</length>
+            <width>50</width>
+            <height>10</height>
+            <weight>2</weight>
+        </specs>
+        <subelement>
+            <priority>priority</priority>
+            <secondary>secondary</secondary>
+        </subelement>
+
+    </part>
+
+
+</root>

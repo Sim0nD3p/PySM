@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<part>
+    <code>part/code</code>
+    <general_information>
+        <description>part/description</description>
+    </general_information>
+    <specifications>
+        <length>part/specs/length</length>
+        <width>part/specs/width</width>
+        <height>part/specs/height</height>
+        <weight>part/specs/weight</weight>
+    </specifications>
+    <randomModule>
+        <subelement>
+            <priority>part/subelement/priority</priority>
+            <secondary>part/subelement/secondary</secondary>
+        </subelement>
+    </randomModule>
+</part>
