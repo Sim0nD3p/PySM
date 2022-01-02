@@ -9,12 +9,12 @@ from part.dataClasses import Specifications, GeneralInformation
 
 
 class ImporterWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, parent):
         super().__init__()
+        self.importer = Importer(parent)
 
     def open_window(self, window):
-        importer = Importer()
-        window.setCentralWidget(importer)
+        window.setCentralWidget(self.importer)
         window.setGeometry(200, 100, 900, 500)
         window.setWindowTitle('Importer catalogue')
 
@@ -337,6 +337,7 @@ class JsonImporter(QWidget):
 class XmlImporter(QWidget):
     def __init__(self, parent=None):
         super().__init__()
+        self.parent = parent
         self.tree = TreePropretiesEditor()
 
         self.bottom_buttons = QWidget()
@@ -426,7 +427,7 @@ class XmlImporter(QWidget):
                                     placeholder = placeholder[path[i]]
 
                 part = go_to_element(part, object_dir, value)
-        print(part.__dict__)
+        return part
 
 
 
@@ -481,13 +482,15 @@ class XmlImporter(QWidget):
 
         # print('this is data')
         # print(data)
+
         part_code = get_code(data, instructions)
         part = Part(part_code)
         part.general_information = make_general_informations(data, instructions)
         part.specifications = make_data_specs(data, instructions)
 
         # will add custom properties
-        self.add_custom_props(part, data, instructions)
+        part = self.add_custom_props(part, data, instructions)
+        return part
 
         # print(help(part))
         # print(part.__dict__)
@@ -506,9 +509,13 @@ class XmlImporter(QWidget):
         # for each part, will need to get all properties with get_instructions_list -> returns all all {path:value}
         # FOR LOOP (for testing, we do only 1 part)
 
-        for source in data:
+        imported_list = []
 
-            self.create_object(self.inspect_tree(source), decoder_instructions)
+        for source in data:
+            part = self.create_object(self.inspect_tree(source), decoder_instructions)
+            imported_list.append(part)
+        self.parent.get_import_list(imported_list)
+
 
 
 
@@ -528,10 +535,10 @@ class XmlImporter(QWidget):
 
 
 class Importer(QWidget):
-    def __init__(self):
+    def __init__(self, parent):
         super().__init__()
         self.types = ['csv', 'json', 'xml']
-
+        self.parent = parent
         self.csv_importer = QLabel('csv')
         self.json_importer = JsonImporter(parent=self)
         self.xml_importer = XmlImporter(parent=self)
@@ -560,4 +567,8 @@ class Importer(QWidget):
         print('update import window')
         if file_type == 'json':
             self.json_importer.update_tree(file_name)
+
+    def get_import_list(self, list):
+        print(list)
+        self.parent.handle_part_import(list)
 

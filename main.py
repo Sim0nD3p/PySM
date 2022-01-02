@@ -4,6 +4,7 @@ from layout.centralWidget import CentralWidget
 from layout.settings import SettingsWindow
 from layout.importer import ImporterWindow
 from layout.central.overview.overview import Overview
+from backend.PartCatalog import PartCatalog
 
 
 class MainWindow(QMainWindow):
@@ -12,6 +13,8 @@ class MainWindow(QMainWindow):
         self.setWindowTitle('Sample window')
         self.setGeometry(50, 50, 1200, 650)
         self.context_window1 = QMainWindow()
+        self.part_catalog = PartCatalog()
+        self.importer_window = ImporterWindow(self)
 
         # self.tool_bar = self.addToolBar()
 
@@ -47,9 +50,16 @@ class MainWindow(QMainWindow):
 
     def show_importer(self):
         print('show importer')
-        importer_window = ImporterWindow()
-        importer_window.open_window(self.context_window1)
+
+        self.importer_window.open_window(self.context_window1)
         self.context_window1.show()
+
+    def handle_part_import(self, list):
+        print('this is main')
+        for part in list:
+            self.part_catalog.add_part(part)
+
+        self.main_widget.overview.list_widget.draw_list(list)
 
 
     def create_status_bar(self):
