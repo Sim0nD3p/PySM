@@ -10,8 +10,8 @@
             <weight>0.01</weight>
         </specs>
         <subelement>
-            <priority>priority</priority>
-            <secondary>secondary</secondary>
+            <priority>priorite petite piece</priority>
+            <secondary>sec petite</secondary>
         </subelement>
 
 
@@ -26,8 +26,8 @@
             <weight>0.5</weight>
         </specs>
         <subelement>
-            <priority>priority</priority>
-            <secondary>secondary</secondary>
+            <priority>moyenne priorite</priority>
+            <secondary>moy sec</secondary>
         </subelement>
 
     </part>
@@ -41,8 +41,8 @@
             <weight>2</weight>
         </specs>
         <subelement>
-            <priority>priority</priority>
-            <secondary>secondary</secondary>
+            <priority>gross priorite</priority>
+            <secondary>sec grosse</secondary>
         </subelement>
 
     </part>

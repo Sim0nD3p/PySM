@@ -16,4 +16,15 @@
             <secondary>part/subelement/secondary</secondary>
         </subelement>
     </randomModule>
+    <equipement>
+        <ski>
+            <ski>rossi</ski>
+            <boots>rossi</boots>
+            <bindings>look</bindings>
+        </ski>
+        <hemlet>
+            <helmet>sweet</helmet>
+            <googles>sweet</googles>
+        </hemlet>
+    </equipement>
 </part>

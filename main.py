@@ -1,8 +1,9 @@
-from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel
+from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QWidget, QVBoxLayout
 import sys
 from layout.centralWidget import CentralWidget
 from layout.settings import SettingsWindow
 from layout.importer import ImporterWindow
+from layout.central.overview.overview import Overview
 
 
 class MainWindow(QMainWindow):
@@ -12,16 +13,14 @@ class MainWindow(QMainWindow):
         self.setGeometry(50, 50, 1200, 650)
         self.context_window1 = QMainWindow()
 
+        # self.tool_bar = self.addToolBar()
+
+        self.main_widget = CentralWidget()
+        self.setCentralWidget(self.main_widget)
+
         self.create_menus()
         self.create_tool_bar()
         self.create_status_bar()
-        self.set_main_content()
-
-    def set_main_content(self):
-        widget = CentralWidget()
-        widget.setStyleSheet('background-color:blue')
-        widget.resize(200, 200)
-        self.setCentralWidget(widget)
 
     def create_menus(self):
         menu_bar = self.menuBar()
@@ -70,7 +69,30 @@ class MainWindow(QMainWindow):
         boiler plate for tool bar
         :return:
         """
-        test = self.addToolBar('TEST')
+
+        def test():
+            print('test')
+
+        widget = QWidget()
+        vbox = QVBoxLayout()
+        var = 'test'
+        index = self.main_widget.stackedlayout.currentIndex()
+        change_up = QPushButton('+')
+        change_up.clicked.connect(lambda: self.main_widget.handle_stack_change('up'))
+        change_down = QPushButton('-')
+        change_down.clicked.connect(lambda: self.main_widget.handle_stack_change('down'))
+
+
+
+
+        vbox.addWidget(change_up)
+        vbox.addWidget(change_down)
+
+        widget.setLayout(vbox)
+
+
+        test = self.addToolBar('test')
+        test.addWidget(widget)
         click = test.addAction('hello')
         click.triggered.connect(self.test)
 
