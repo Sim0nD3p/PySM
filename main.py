@@ -2,17 +2,18 @@ from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QWid
 import sys
 from layout.centralWidget import CentralWidget
 from layout.settings.settings import SettingsWindow
-from layout.importer import ImporterWindow
+from layout.importer.importer import ImporterWindow
 from layout.central.overview.overview import Overview
 from backend.PartCatalog import PartCatalog
+from backend.writers.partCatalogWriter import PartCatalogWriter
 
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.context_window1 = QMainWindow()
         self.setWindowTitle('Sample window')
         self.setGeometry(50, 50, 1200, 650)
-        self.context_window1 = QMainWindow()
         self.part_catalog = PartCatalog()
         self.importer_window = ImporterWindow(self)
 
@@ -36,11 +37,16 @@ class MainWindow(QMainWindow):
         catalog_import = catalog_menu.addAction('importer calatogue')
         catalog_import.triggered.connect(self.show_importer)
 
+        catalog_save = catalog_menu.addMenu('Sauvegarder catalogue')
+        save = catalog_save.addAction('Enregistrer')
+        save_as = catalog_save.addAction('Enregistrer sous')
+
+        save.triggered.connect(PartCatalogWriter.save_default)
+
 
         suppliers_menu = menu_bar.addMenu('Fournisseurs')
         settings_menu = menu_bar.addAction('Paramètres')
         settings_menu.triggered.connect(self.show_settings)
-
 
     def show_settings(self):
         print('show settings')
@@ -54,12 +60,17 @@ class MainWindow(QMainWindow):
         self.importer_window.open_window(self.context_window1)
         self.context_window1.show()
 
+
     def handle_part_import(self, list):
         print('this is main')
         for part in list:
             self.part_catalog.add_part(part)
 
         self.main_widget.overview.list_widget.draw_list(list)
+
+    def part_catalog_update(self):
+        print('i thing we got it')
+        self.main_widget.overview.list_widget.draw_list(PartCatalog.catalog)
 
 
     def create_status_bar(self):
@@ -73,6 +84,7 @@ class MainWindow(QMainWindow):
         label2 = QLabel('This is status')
         status_bar.addPermanentWidget(label, stretch=1)
         status_bar.addPermanentWidget(label2, stretch=5)
+
 
     def create_tool_bar(self):
         """

@@ -7,6 +7,7 @@ class TreeWidget(QTreeWidget):
     def draw_tree(self, part):
         self.clear()
         self.setColumnCount(2)
+        self.setColumnWidth(0, 300)
         print(part)
         print(part.__dict__)
         print(part.code)

@@ -1,11 +1,9 @@
-from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import QMainWindow, QWidget, QLabel, QPushButton, QHBoxLayout, QVBoxLayout, QStackedLayout, \
-    QComboBox, QFileDialog, QLineEdit
-from PyQt6.QtWidgets import QTreeWidget, QTreeWidgetItem
-import xml.etree.ElementTree as et
+    QComboBox, QFileDialog
 import json
-from part.Part import Part
-from part.dataClasses import Specifications, GeneralInformation
+from layout.importer.treePropertiesEditor import TreePropretiesEditor
+from layout.importer.xmlImporter import XmlImporter
+from layout.importer.confirmationWidget import ConfirmationWidget
 
 
 class ImporterWindow(QMainWindow):
@@ -72,164 +70,6 @@ class typeSelection(QWidget):
         self.setLayout(vbox)
 
 
-class TreePropretiesEditor(QWidget):
-    def __init__(self):
-        super().__init__()
-
-        self.template = 'part/partModel.xml'  # template xml file
-        self.xml_tree = et.ElementTree()
-        self.xml_tree.parse(self.template)
-
-        self.selected_tree_element = None
-
-        self.tree_widget = QTreeWidget()
-        self.tree_widget.itemDoubleClicked.connect(self.handle_double_click)
-        self.draw_tree()
-
-        self.selected_path = QLabel()
-        self.upper_bottom_line_infos = QWidget()
-        self.create_upper_bottom_line_infos()
-
-        self.label_prop = QLabel('Chemin source')
-        self.text_box = QLineEdit()
-        self.b_add_prop = QPushButton('Ajouter')
-        self.b_add_prop.setEnabled(False)
-        self.b_add_prop.clicked.connect(self.add_prop)
-        self.text_box.textChanged.connect(self.set_submit_button_enabled)
-
-        self.input_line = QWidget()
-        self.create_input_line()
-
-        self.bottom_widget = QWidget()
-        self.create_bottom_widget()
-
-        vbox = QVBoxLayout()
-        vbox.addWidget(self.tree_widget)
-        vbox.addWidget(self.bottom_widget)
-        self.setLayout(vbox)
-
-
-    def draw_tree(self):
-        self.tree_widget.setColumnCount(2)
-        xml_root = self.xml_tree.getroot()
-
-        widget_root = QTreeWidgetItem([xml_root.tag])
-        self.tree_widget.addTopLevelItem(widget_root)
-
-        def create_branches(root, xml_element):
-            for child in xml_element:
-                branch = QTreeWidgetItem([child.tag, child.text])
-                root.addChild(branch)
-                create_branches(branch, child)
-
-        create_branches(widget_root, xml_root)
-        self.tree_widget.expandAll()
-        self.tree_widget.setColumnWidth(0, 200)
-
-    def create_upper_bottom_line_infos(self):
-        hbox = QHBoxLayout()
-        selected_path_info = QLabel('Chemin sélectionné:')
-        selected_path_info.setMaximumWidth(110)
-        self.selected_path.setText('')
-        font = QFont()
-        font.setBold(True)
-        self.selected_path.setFont(font)
-
-        hbox.addWidget(selected_path_info)
-        hbox.addWidget(self.selected_path)
-        self.upper_bottom_line_infos.setLayout(hbox)
-
-    def create_input_line(self):
-        hbox = QHBoxLayout()
-        hbox.addWidget(self.label_prop)
-        hbox.addWidget(self.text_box)
-        hbox.addWidget(self.b_add_prop)
-        self.input_line.setLayout(hbox)
-
-
-
-    def create_bottom_widget(self):
-        vbox = QVBoxLayout()
-        filler = QLabel('filler')
-
-        bottom_buttons = QWidget()
-        hbox = QHBoxLayout()
-
-        b_del_prop = QPushButton('Supprimer lien')
-        b_submit_template = QPushButton('Write XML template')
-        button3 = QPushButton('Button 3')
-        button4 = QPushButton('Button 4')
-
-        b_del_prop.clicked.connect(self.delete_prop)
-        b_submit_template.clicked.connect(self.submit_template)
-
-        hbox.addWidget(b_del_prop)
-        hbox.addWidget(b_submit_template)
-        hbox.addWidget(button3)
-        hbox.addWidget(button4)
-
-        bottom_buttons.setLayout(hbox)
-
-        vbox.addWidget(self.upper_bottom_line_infos)
-        vbox.addWidget(self.input_line)
-        vbox.addWidget(bottom_buttons)
-
-        self.bottom_widget.setLayout(vbox)
-
-    def get_path(self, element, delimiter):
-        """
-        Gets path of tree element
-        :param element: elementTree.ElementTree.Element
-        :param delimiter:
-        :return:
-        """
-        def get_parent_path(tree_item):
-            def get_parent(item, outstring):
-                if item.parent() is None:
-                    return outstring
-                outstring = item.parent().text(0) + delimiter + outstring
-                return get_parent(item.parent(), outstring)
-            output = get_parent(tree_item, tree_item.text(0))
-            return output
-        final_path = get_parent_path(element)
-        return final_path
-
-    def get_xml_element(self, path):
-        direct_path = path[path.find('/')+1:]
-        return self.xml_tree.findall(direct_path)
-
-    def handle_double_click(self, tree_element):
-        if tree_element.childCount() == 0:
-            self.selected_tree_element = tree_element
-            full_path = self.get_path(tree_element, '/')
-            self.selected_path.setText(full_path)
-            self.text_box.setText(tree_element.text(1))
-
-    def add_prop(self):
-        if self.selected_tree_element is not None:
-            self.selected_tree_element.setText(1, self.text_box.text())
-            full_path = self.get_path(self.selected_tree_element, '/')
-            xml_element = self.get_xml_element(full_path)[0]
-            print(xml_element)
-            xml_element.text = self.text_box.text()
-
-    def delete_prop(self):
-        if self.selected_tree_element is not None:
-            self.selected_tree_element.setText(1, '')
-            self.text_box.setText('')
-            full_path = self.get_path(self.selected_tree_element, '/')
-            xml_element = self.get_xml_element(full_path)[0]
-            xml_element.text = ''
-
-    def set_submit_button_enabled(self, text):
-        if len(text) > 0:
-            self.b_add_prop.setEnabled(True)
-        else:
-            self.b_add_prop.setEnabled(False)
-
-    def submit_template(self):
-        print('submit template')
-        self.xml_tree.write('output.xml')
 
 
 '''
@@ -333,169 +173,6 @@ class JsonImporter(QWidget):
 
                             # print('loop', main_prop, type(part[main_prop]))
 
-
-class XmlImporter(QWidget):
-    def __init__(self, parent=None):
-        super().__init__()
-        self.parent = parent
-        self.tree = TreePropretiesEditor()
-
-        self.bottom_buttons = QWidget()
-        self.create_bottom_buttons()
-
-        self.create_layout()
-
-    def create_bottom_buttons(self):
-        hbox = QHBoxLayout()
-
-        b_auto_fill = QPushButton('useless button')
-
-        button = QPushButton('button')
-        button.clicked.connect(self.initiate_creation)
-
-        hbox.addWidget(b_auto_fill)
-        hbox.addWidget(button)
-
-        self.bottom_buttons.setLayout(hbox)
-
-
-    def create_layout(self):
-        vbox = QVBoxLayout()
-
-        vbox.addWidget(self.tree)
-        vbox.addWidget(self.bottom_buttons)
-
-        self.setLayout(vbox)
-
-    def inspect_tree_old(self, model):
-        """
-        Returns the path of all child element and their text value in xml tree
-        :param model: xml.ElementTree.Element to return child properties
-        :return: dict(path:value)
-        """
-        rec = {}
-        def loop(branch, path):
-            def get_path(root, p):
-                if len(root) == 0:  # when element has no child, we return the element and its path
-                    pa = path + '/' + root.tag
-                    val = root.text
-                    en = [pa, val]
-                    return en
-                else:   # if element has child, we loop trough them
-                    p = p + '/' + root.tag
-                    loop(root, p)
-
-            for child in branch:    # for every element in the branch
-                value = get_path(child, path)
-                if value is not None:
-                    rec[value[0]] = value[1]
-
-        loop(model, model.tag)
-        return rec
-
-    def add_custom_props_old(self, part, data, instructions):
-        """
-        add custom props to given path and return the part with properties added
-
-        :param part: part object
-        :param data: data in form of list of all properties: value
-        :param instructions: instructions in form of list of all properties: properties path
-        :return:
-        """
-        for object_path in instructions:            # go trough all the properties path of the partModel
-            object_dir = object_path.split('/')     # split path directions
-            common_types = ['code', 'general_information', 'specifications']
-            if object_dir[1] not in common_types:   # excludes common types to only get custom properties
-                value = None
-                if instructions[object_path] in data:   # if we have data with corresponding path given by instructions
-                    # the instructions give {partModel path(object path): data path}
-                    source_path = instructions[object_path]
-                    value = data[source_path]
-
-                def go_to_element(current_part, path, current_value):
-                    placeholder = current_part
-                    for i in range(len(path)):
-                        if i > 0:
-                            if hasattr(placeholder, '__dict__'):
-                                if i == len(path) - 1:
-                                    placeholder.__setattr__(path[i], current_value)
-                                else:
-                                    placeholder_child_value = {}
-                                    if hasattr(placeholder, path[i]):
-                                        placeholder_child_value = placeholder.__getattribute__(path[i])
-                                    placeholder.__setattr__(path[i], placeholder_child_value)
-                                    placeholder = placeholder.__getattribute__(path[i])
-                            else:
-                                if i == len(path) - 1:
-                                    placeholder[path[i]] = current_value
-                                    return current_part
-                                else:
-                                    if path[i] not in placeholder:
-                                        placeholder[path[i]] = {path[i + 1]: 'something'}
-                                    placeholder = placeholder[path[i]]
-
-                part = go_to_element(part, object_dir, value)
-        return part
-
-
-
-    def create_object(self, data, instructions):
-        # might be moved in Part class method for custom constructor
-        # will need to check for error handling on get and make functions for when the data is not available
-
-        part_code = Part.get_code(data, instructions)
-        part = Part(part_code)
-        part.general_information = Part.make_general_information(data, instructions)
-        part.specifications = Part.make_specifications(data, instructions)
-
-        # will add custom properties
-        part = Part.add_custom_prop(part, data, instructions)
-        return part
-
-    def initiate_creation(self):
-        """
-        1. gets instructions for how to get the data in the given file structure and how to assign it into partModel
-        2.
-        :return:
-        """
-
-        # this is only for testing purpose will be the file selected via explorer
-        input_file = et.ElementTree()
-        input_file.parse('layout/criss.xml')
-        data = input_file.getroot()
-        # we get xml root of the data file from which we will take data for parts
-
-        # instructions of where to get values for each child properties in the partModel
-        # decoder_instructions = self.inspect_tree(model=self.tree.xml_tree.getroot())
-        decoder_instructions = Part.inspect_tree(self.tree.xml_tree.getroot())
-        # for each part, will need to get all properties with get_instructions_list -> returns all all {path:value}
-        # FOR LOOP (for testing, we do only 1 part)
-
-        imported_list = []
-
-        for source in data:
-            part = self.create_object(Part.inspect_tree(source), decoder_instructions)
-            imported_list.append(part)
-        self.parent.get_import_list(imported_list)
-
-
-
-
-
-        # create_object(self.get_instructions_list(data[0]), decoder_instructions)
-        # print(decoder_instructions)
-        """
-        creation path for specific object"""
-
-
-
-
-
-
-
-
-
-
 class Importer(QWidget):
     def __init__(self, parent):
         super().__init__()
@@ -505,32 +182,52 @@ class Importer(QWidget):
         self.json_importer = JsonImporter(parent=self)
         self.xml_importer = XmlImporter(parent=self)
 
+        self.main_stacked_layout = QStackedLayout()
 
-        self.stacked_widget = QWidget()
-        self.stacked_layout = QStackedLayout()
-        self.stacked_layout.addWidget(self.csv_importer)
-        self.stacked_layout.addWidget(self.json_importer)
-        self.stacked_layout.addWidget(self.xml_importer)
-        self.stacked_widget.setLayout(self.stacked_layout)
+        self.confirmation_widget = ConfirmationWidget(parent=self)
+        self.selection_widget = QWidget()
+
+        self.stacked_panel = QWidget()
+        self.panel_layout = QStackedLayout()
+        self.panel_layout.addWidget(self.csv_importer)
+        self.panel_layout.addWidget(self.json_importer)
+        self.panel_layout.addWidget(self.xml_importer)
+        self.stacked_panel.setLayout(self.panel_layout)
 
         self.selection = typeSelection(parent=self)
 
         self.hbox = QHBoxLayout()
         self.hbox.addWidget(self.selection)
-        self.hbox.addWidget(self.stacked_widget)
-        self.setLayout(self.hbox)
+        self.hbox.addWidget(self.stacked_panel)
+        self.selection_widget.setLayout(self.hbox)
+
+        self.main_stacked_layout.addWidget(self.selection_widget)
+        self.main_stacked_layout.addWidget(self.confirmation_widget)
+
+        self.setLayout(self.main_stacked_layout)
 
     def change_import_window(self, type):
         print('change import window')
         index = self.types.index(type)
-        self.stacked_layout.setCurrentIndex(index)
+        self.panel_layout.setCurrentIndex(index)
 
     def update_import_window(self, file_name, file_type):
         print('update import window')
         if file_type == 'json':
             self.json_importer.update_tree(file_name)
 
-    def get_import_list(self, list):
+    def main_update(self):
+        """
+        calls the main.py file to update UI
+        :param list:
+        :return:
+        """
         print(list)
-        self.parent.handle_part_import(list)
+        self.parent.part_catalog_update()
+
+    def confirm_import(self, list):
+        print('confirming import list')
+        self.main_stacked_layout.setCurrentIndex(1)
+        self.confirmation_widget.display_import_list(list)
+
 

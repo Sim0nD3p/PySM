@@ -9,6 +9,12 @@ class ListWidget(QListWidget):
         self.part_catalog = PartCatalog()
 
     def draw_list(self, list):
+        """
+
+        :param list: list of string or list of parts
+        :return:
+        """
+        self.clear()
         for item in list:
             if type(item) == str:
                 row = QListWidgetItem(item)
