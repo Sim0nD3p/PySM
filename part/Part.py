@@ -1,5 +1,4 @@
-from dataclasses import dataclass
-import xml.etree.ElementTree as et
+from part.dataClasses import GeneralInformation, Specifications
 """
     ESSENTIALS ATTRIBUTES FOR PARTS
     -code
@@ -23,11 +22,136 @@ class Part:
     def __init__(self, code: str):
         self.code = code
 
+    @staticmethod
+    def inspect_tree(tree):
+        """
+        Returns the path of all child element and their text value in xml tree
+        :param tree: xml.ElementTree.Element to return child properties
+        :return: dict(path:value)
+        """
+        rec = {}
+
+        def loop(branch, path):
+            def get_path(root, p):
+                if len(root) == 0:  # when element has no child, we return the element and its path
+                    pa = path + '/' + root.tag
+                    val = root.text
+                    en = [pa, val]
+                    return en
+                else:   # if element has child, we loop trough them
+                    p = p + '/' + root.tag
+                    loop(root, p)
+            for child in branch:    # for every element in the branch
+                value = get_path(child, path)
+                if value is not None:
+                    rec[value[0]] = value[1]
+
+        loop(tree, tree.tag)
+        return rec
+
+    @staticmethod
+    def get_code(data, instructions):
+        """
+        get parts code
+        :param data:
+        :param instructions:
+        :return: str: code
+        """
+        path = {'code': 'part/code'}
+
+        code = data[instructions[path['code']]]
+
+        return code
+
+    @staticmethod
+    def make_general_information(data, instructions):
+        """
+        Takes data dictionary and instructions dictionary and returns GeneralInformation dataclass.
+        The function go search the data with the path of the property found in the instructions dictionary
+        :param data: dict of all properties(path):value
+        :param instructions: dict of all properties(path):path
+        :return: GeneralInformation dataClass
+        """
+        paths = {
+            'description': 'part/general_information/description'
+        }
+        description = data[instructions[paths['description']]]
+
+        return GeneralInformation(description=description)
+
+    @staticmethod
+    def make_specifications(data, instructions):
+        """
+        Takes data dictionary and instructions dictionary and returns specifications dataclass.
+        The function go search the data with the path of the property found in the instructions dictionary
+        :param data:
+        :param instructions:
+        :return: Specifications dataclass
+        """
+        paths = {  # This is the paths of specifications in partModel, where
+            'length': 'part/specifications/length',
+            'width': 'part/specifications/width',
+            'height': 'part/specifications/height',
+            'weight': 'part/specifications/weight'
+        }
+        length = data[instructions[paths['length']]]
+        width = data[instructions[paths['width']]]
+        height = data[instructions[paths['height']]]
+        weight = data[instructions[paths['weight']]]
+
+        return Specifications(length=length, width=width, height=height, weight=weight)
+
+    @staticmethod
+    def add_custom_prop(part, data, instructions):
+        """
+        add custom props to given path and return the part with properties added
+        :param part: part object
+        :param data: data in form of list of all properties: value
+        :param instructions: instructions in form of list of all properties: properties path
+        :return: part with added custom props
+        """
+        for object_path in instructions:            # go trough all the properties path of the partModel
+            object_dir = object_path.split('/')     # split path directions
+            common_types = ['code', 'general_information', 'specifications']
+            if object_dir[1] not in common_types:   # excludes common types to only get custom properties
+                value = None
+                if instructions[object_path] in data:   # if we have data with corresponding path given by instructions
+                    # the instructions give {partModel path(object path): data path}
+                    source_path = instructions[object_path]
+                    value = data[source_path]
+
+                def go_to_element(current_part, path, current_value):
+                    placeholder = current_part
+                    for i in range(len(path)):
+                        if i > 0:
+                            if hasattr(placeholder, '__dict__'):
+                                if i == len(path) - 1:
+                                    placeholder.__setattr__(path[i], current_value)
+                                else:
+                                    placeholder_child_value = {}
+                                    if hasattr(placeholder, path[i]):
+                                        placeholder_child_value = placeholder.__getattribute__(path[i])
+                                    placeholder.__setattr__(path[i], placeholder_child_value)
+                                    placeholder = placeholder.__getattribute__(path[i])
+                            else:
+                                if i == len(path) - 1:
+                                    placeholder[path[i]] = current_value
+                                    return current_part
+                                else:
+                                    if path[i] not in placeholder:
+                                        placeholder[path[i]] = {path[i + 1]: 'something'}
+                                    placeholder = placeholder[path[i]]
+
+                part = go_to_element(part, object_dir, value)
+        return part
 
     @classmethod
-    def create1(cls):
-        print('creating class')
-
+    def make_part_from_instructions(cls, instructions, data):
+        """
+        :param instructions:
+        :param data:
+        :return:
+        """
 
 
 def target(xml_root, obj):

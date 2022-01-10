@@ -13,3 +13,15 @@ class PartCatalog:
     def add_part(cls, part):
         cls.catalog.append(part)
 
+    @classmethod
+    def get_catalog_data(cls, source_xml):
+        """
+        Called to populate the PartCatalog with parts in the backend/appData/catalog.xml file (the saved catalog)
+
+        :param source_xml: source xml in appData
+        :return: void
+        """
+
+
+
+

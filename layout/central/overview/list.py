@@ -4,6 +4,7 @@ from backend.PartCatalog import PartCatalog
 class ListWidget(QListWidget):
     def __init__(self, parent):
         super().__init__()
+        self.parent = parent
         self.itemClicked.connect(self.handle_selection)
         self.part_catalog = PartCatalog()
 
@@ -17,8 +18,8 @@ class ListWidget(QListWidget):
             self.addItem(row)
 
     def handle_selection(self, element):
-        print('hello')
         e = self.part_catalog.get_part(element.text())
-        print(e.__dict__)
+        self.parent.handle_list_change(e)
+
 
 

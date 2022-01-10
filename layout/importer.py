@@ -367,7 +367,7 @@ class XmlImporter(QWidget):
 
         self.setLayout(vbox)
 
-    def inspect_tree(self, model):
+    def inspect_tree_old(self, model):
         """
         Returns the path of all child element and their text value in xml tree
         :param model: xml.ElementTree.Element to return child properties
@@ -393,7 +393,15 @@ class XmlImporter(QWidget):
         loop(model, model.tag)
         return rec
 
-    def add_custom_props(self, part, data, instructions):
+    def add_custom_props_old(self, part, data, instructions):
+        """
+        add custom props to given path and return the part with properties added
+
+        :param part: part object
+        :param data: data in form of list of all properties: value
+        :param instructions: instructions in form of list of all properties: properties path
+        :return:
+        """
         for object_path in instructions:            # go trough all the properties path of the partModel
             object_dir = object_path.split('/')     # split path directions
             common_types = ['code', 'general_information', 'specifications']
@@ -434,68 +442,22 @@ class XmlImporter(QWidget):
     def create_object(self, data, instructions):
         # might be moved in Part class method for custom constructor
         # will need to check for error handling on get and make functions for when the data is not available
-        def get_code(data, instructions):
-            path = {'code': 'part/code'}
 
-            code = data[instructions[path['code']]]
-
-            return code
-
-        def make_data_specs(data, instructions):
-            """
-            Takes data dictionary and instructions dictionary and returns specifications dataclass.
-            The function go search the data with the path of the property found in the instructions dictionary
-            :param data:
-            :param instructions:
-            :return: Specifications dataclass
-            """
-            paths = {  # This is the paths of specifications in partModel, where
-                'length': 'part/specifications/length',
-                'width': 'part/specifications/width',
-                'height': 'part/specifications/height',
-                'weight': 'part/specifications/weight'
-            }
-            length = data[instructions[paths['length']]]
-            width = data[instructions[paths['width']]]
-            height = data[instructions[paths['height']]]
-            weight = data[instructions[paths['weight']]]
-
-            return Specifications(length=length, width=width, height=height, weight=weight)
-
-        def make_general_informations(data, instructions):
-            """
-            Takes data dictionary and instructions dictionary and returns GeneralInformation dataclass.
-            The function go search the data with the path of the property found in the instructions dictionary
-            :param data:
-            :param instructions:
-            :return: GeneralInformation dataClass
-            """
-            paths = {
-                'description': 'part/general_information/description'
-            }
-            description = data[instructions[paths['description']]]
-
-            return GeneralInformation(description=description)
-
-        # print('this is instructions')
-        # print(instructions)
-
-        # print('this is data')
-        # print(data)
-
-        part_code = get_code(data, instructions)
+        part_code = Part.get_code(data, instructions)
         part = Part(part_code)
-        part.general_information = make_general_informations(data, instructions)
-        part.specifications = make_data_specs(data, instructions)
+        part.general_information = Part.make_general_information(data, instructions)
+        part.specifications = Part.make_specifications(data, instructions)
 
         # will add custom properties
-        part = self.add_custom_props(part, data, instructions)
+        part = Part.add_custom_prop(part, data, instructions)
         return part
 
-        # print(help(part))
-        # print(part.__dict__)
-
     def initiate_creation(self):
+        """
+        1. gets instructions for how to get the data in the given file structure and how to assign it into partModel
+        2.
+        :return:
+        """
 
         # this is only for testing purpose will be the file selected via explorer
         input_file = et.ElementTree()
@@ -504,15 +466,15 @@ class XmlImporter(QWidget):
         # we get xml root of the data file from which we will take data for parts
 
         # instructions of where to get values for each child properties in the partModel
-        decoder_instructions = self.inspect_tree(model=self.tree.xml_tree.getroot())
-
+        # decoder_instructions = self.inspect_tree(model=self.tree.xml_tree.getroot())
+        decoder_instructions = Part.inspect_tree(self.tree.xml_tree.getroot())
         # for each part, will need to get all properties with get_instructions_list -> returns all all {path:value}
         # FOR LOOP (for testing, we do only 1 part)
 
         imported_list = []
 
         for source in data:
-            part = self.create_object(self.inspect_tree(source), decoder_instructions)
+            part = self.create_object(Part.inspect_tree(source), decoder_instructions)
             imported_list.append(part)
         self.parent.get_import_list(imported_list)
 

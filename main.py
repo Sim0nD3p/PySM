@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QWidget, QVBoxLayout
 import sys
 from layout.centralWidget import CentralWidget
-from layout.settings import SettingsWindow
+from layout.settings.settings import SettingsWindow
 from layout.importer import ImporterWindow
 from layout.central.overview.overview import Overview
 from backend.PartCatalog import PartCatalog
