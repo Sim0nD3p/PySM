@@ -3,6 +3,7 @@ from PyQt6.QtWidgets import QMainWindow, QWidget, QLabel, QPushButton, QHBoxLayo
 import json
 from layout.importer.treePropertiesEditor import TreePropretiesEditor
 from layout.importer.xmlImporter import XmlImporter
+from layout.importer.jsonImporter import JsonImporter
 from layout.importer.confirmationWidget import ConfirmationWidget
 
 
@@ -95,7 +96,7 @@ def from_string(cls, input_data):
 
 
 
-class JsonImporter(QWidget):
+class JsonImporter_old(QWidget):
     def __init__(self, parent=None):
         super().__init__()
         self.parent = parent
@@ -207,12 +208,12 @@ class Importer(QWidget):
         self.setLayout(self.main_stacked_layout)
 
     def change_import_window(self, type):
-        print('change import window')
+        # print('change import window')
         index = self.types.index(type)
         self.panel_layout.setCurrentIndex(index)
 
     def update_import_window(self, file_name, file_type):
-        print('update import window')
+        # print('update import window')
         if file_type == 'json':
             self.json_importer.update_tree(file_name)
 
@@ -223,10 +224,11 @@ class Importer(QWidget):
         :return:
         """
         print(list)
+        self.main_stacked_layout.setCurrentIndex(0)
         self.parent.part_catalog_update()
 
     def confirm_import(self, list):
-        print('confirming import list')
+        # print('confirming import list')
         self.main_stacked_layout.setCurrentIndex(1)
         self.confirmation_widget.display_import_list(list)
 

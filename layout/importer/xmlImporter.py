@@ -19,13 +19,13 @@ class XmlImporter(QWidget):
     def create_bottom_buttons(self):
         hbox = QHBoxLayout()
 
-        b_auto_fill = QPushButton('useless button')
+        b_auto_fill = QPushButton('should auto-fill')
 
-        button = QPushButton('button')
-        button.clicked.connect(self.initiate_creation)
+        b_init_import = QPushButton('Suivant')
+        b_init_import.clicked.connect(self.initiate_creation)
 
         hbox.addWidget(b_auto_fill)
-        hbox.addWidget(button)
+        hbox.addWidget(b_init_import)
 
         self.bottom_buttons.setLayout(hbox)
 
@@ -53,24 +53,31 @@ class XmlImporter(QWidget):
 
     def initiate_creation(self):
         """
-        1. gets instructions for how to get the data in the given file structure and how to assign it into partModel
-        2.
+        Initiate the import of parts from xml file
+        1. gets instructions from QTreeWidget
         :return:
         """
+        # getting instruction to get data in the right path source data -> object
+        decoder_instructions = Part.inspect_tree(self.tree.xml_tree.getroot())
+        print('Decoder instructions')
+        print(decoder_instructions)
 
         # this is only for testing purpose will be the file selected via explorer
         input_file = et.ElementTree()
         input_file.parse('layout/criss.xml')
         data = input_file.getroot()
+        print('xml data')
+
+        print(data)
         # we get xml root of the data file from which we will take data for parts
 
         # instructions of where to get values for each child properties in the partModel
         # decoder_instructions = self.inspect_tree(model=self.tree.xml_tree.getroot())
-        decoder_instructions = Part.inspect_tree(self.tree.xml_tree.getroot())
         # for each part, will need to get all properties with get_instructions_list -> returns all all {path:value}
         # FOR LOOP (for testing, we do only 1 part)
 
         imported_list = []
+        print(Part.inspect_tree(data[0]))
 
         for source in data:
             part = self.create_object(Part.inspect_tree(source), decoder_instructions)

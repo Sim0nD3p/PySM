@@ -1,0 +1,16 @@
+{
+  "general information": {
+    "prenom": "Simon",
+    "nom": "Depelteau",
+    "DOB": {
+      "year": 2000,
+      "month": "july",
+      "day": 23
+    },
+    "equipement": {
+      "ski": "rossignol",
+      "boots": "rossignol",
+      "poles": "rossignol"
+    }
+  }
+}

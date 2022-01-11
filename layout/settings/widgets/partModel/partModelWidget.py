@@ -135,26 +135,57 @@ class PartModelWidget(QWidget):
             i.append(eT.Element('new element'))
 
     def sup_prop(self):
-        self.get_xml_element(self.treewidget.currentItem())
+        print('current item', self.treewidget.currentItem())
+        element = self.get_xml_element(self.treewidget.currentItem())
+        path = self.get_parent_path(self.treewidget.currentItem())
+        parent_path = path[:len(path) - len(path.split('/')[len(path.split('/')) - 1])-1]
+        direct_path = parent_path[len(parent_path.split('/')[0])+1:]
+        xml_parent = self.xml_tree_object.findall(direct_path)
+        if xml_parent is not None:
+            for xml_element in xml_parent:
+                print(xml_element)
+                xml_element.remove(element[0])
+                print(element[0])
 
+        tree_elements = self.get_tree_element(self.treewidget.currentItem())
+        for element in tree_elements:
+            parent_element = element.parent()
+            parent_element.removeChild(element)
+
+
+    def get_parent_path(self, tree_item):
+        """
+        Gets path of a QTreeWidgetItem
+        :param tree_item: QTreeWidgetItem
+        :return: path
+        """
+        def get_parent(item, outstring):
+            if item.parent() is None:
+                return outstring
+            outstring = item.parent().text(0) + '/' + outstring
+            return get_parent(item.parent(), outstring)
+
+        output = get_parent(tree_item, tree_item.text(0))
+        return output
 
     def get_xml_element(self, tree_element):
-        def get_parent_path(tree_item):
-            def get_parent(item, outstring):
-                if item.parent() is None:
-                    return outstring
-                outstring = item.parent().text(0) + '/' + outstring
-                return get_parent(item.parent(), outstring)
-            output = get_parent(tree_item, tree_item.text(0))
-            return output
-
-        parent_path = get_parent_path(tree_element)
-        direct_path = parent_path.lstrip(self.xml_tree_object.getroot().tag + '/')
+        """
+        Gets the xml element associated with the QTreeWidgetItem given
+        :param tree_element: QTreeWidgetItem
+        :return: xml.etree.ElementTree.Element
+        """
+        parent_path = self.get_parent_path(tree_element)
+        direct_path = parent_path[len(parent_path.split('/')[0])+1:]
 
         return self.xml_tree_object.findall(direct_path)
 
 
     def get_tree_element(self, tree_element):
+        """
+        Gets the QTreeWidgetItem element in the QTreeWidget
+        :param tree_element:
+        :return: QTreeWidgetItem
+        """
         return self.treewidget.findItems(tree_element.text(0), Qt.MatchFlag.MatchRecursive)
 
 

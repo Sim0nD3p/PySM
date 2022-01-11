@@ -10,6 +10,10 @@ class PartCatalog:
         return output
 
     @classmethod
+    def get_catalog(cls):
+        return cls.catalog
+
+    @classmethod
     def check_presence(cls, part):
         return False
 

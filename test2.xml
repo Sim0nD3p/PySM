@@ -1,0 +1,92 @@
+<root>
+    <part code="piece1">
+        <code>piece1</code>
+        <general_information>
+            <description>petite piece</description>
+        </general_information>
+        <specifications>
+            <length>25</length>
+            <width>10</width>
+            <height>10</height>
+            <weight>0.01</weight>
+        </specifications>
+        <randomModule>
+            <subelement>
+                <priority>priorite petite piece</priority>
+                <secondary>sec petite</secondary>
+            </subelement>
+        </randomModule>
+        <equipement>
+            <ski>
+                <ski/>
+                <boots/>
+                <bindings/>
+            </ski>
+            <hemlet>
+                <helmet/>
+                <googles/>
+            </hemlet>
+        </equipement>
+    </part>
+    <part code="piece2">
+        <code>piece2</code>
+        <general_information>
+            <description>moyenne piece</description>
+        </general_information>
+        <specifications>
+            <length>50</length>
+            <width>50</width>
+            <height>25</height>
+            <weight>0.5</weight>
+        </specifications>
+        <randomModule>
+            <subelement>
+                <priority>moyenne priorite</priority>
+                <secondary>moy sec</secondary>
+            </subelement>
+        </randomModule>
+        <equipement>
+            <ski>
+                <ski/>
+                <boots/>
+                <bindings/>
+            </ski>
+            <hemlet>
+                <helmet/>
+                <googles/>
+            </hemlet>
+        </equipement>
+    </part>
+    <part code="piece3">
+        <code>piece3</code>
+        <general_information>
+            <description>grosse piece</description>
+        </general_information>
+        <specifications>
+            <length>200</length>
+            <width>50</width>
+            <height>10</height>
+            <weight>2</weight>
+        </specifications>
+        <randomModule>
+            <subelement>
+                <priority>gross priorite</priority>
+                <secondary>sec grosse</secondary>
+            </subelement>
+        </randomModule>
+        <equipement>
+            <ski>
+                <ski/>
+                <boots/>
+                <bindings/>
+            </ski>
+            <hemlet>
+                <helmet/>
+                <googles/>
+            </hemlet>
+        </equipement>
+    </part>
+    <doc>
+        <field1 name="blah">huih</field1>
+    </doc>
+</root>
