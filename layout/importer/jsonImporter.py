@@ -37,35 +37,65 @@ class JsonImporter(QWidget):
         hbox.addWidget(b_init_import)
         self.bottom_buttons.setLayout(hbox)
 
-    def initiate_import(self):
-        decoder_instructions = Part.inspect_tree(self.tree.xml_tree.getroot())
-        print('Decoder instructions')
-        print(decoder_instructions)
-        file_name = 'sample.json'
 
+    def create_object(self, data, instructions):
+        part_code = Part.get_code(data, instructions)
+        part = Part(part_code)
+        part.general_information = Part.make_general_information(data, instructions)
+        part.specifications = Part.make_specifications(data, instructions)
+        part = Part.add_custom_prop(part, data, instructions)
+        return part
+
+
+    # could move with tree_inspector in Part static method sml and json versions different
+    def scan_obj(self, obj, root):
         rec = {}
 
         def scan(obj, root):
-            # print('obj', obj, type(obj))
             for child in obj:
-                new_root = root + '/' + child
+                if len(root) > 0:
+                    new_root = root + '/' + child
+                else:
+                    new_root = child
+
                 if type(obj[child]) == dict:
                     scan(obj[child], new_root)
                 else:
                     rec[new_root] = obj[child]
                     # print(new_root, obj[child])
 
+        scan(obj, root)
+        return rec
 
 
+    def initiate_import(self):
+        decoder_instructions = Part.inspect_tree(self.tree.xml_tree.getroot())
+        print('Decoder instructions')
+        print(decoder_instructions)
+        file_name = 'PFEPtest.json'
+
+
+
+
+        imported_list = []
         with open(file_name) as json_string:
             json_data = json.load(json_string)
-            # print(json_data)
-            scan(json_data, 'root')
+            for child in json_data:
+                #print(child)
+                data = self.scan_obj(child, 'part')
+                imported_list.append(self.create_object(data, decoder_instructions))
 
-        print(rec)
 
 
-        print('testt')
+        self.parent.confirm_import(imported_list)
+        # code = Part.get_code(json_data, data)
+        # part = Part(code)
+
+        # part = Part.add_custom_prop(part, rec, decoder_instructions)
+        # imported_list.append(part)
+        # print(vars(part))
+        # print(code)
+
 
 
 

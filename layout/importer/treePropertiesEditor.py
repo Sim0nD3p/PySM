@@ -8,7 +8,7 @@ class TreePropretiesEditor(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.template = 'part/partModel.xml'  # template xml file
+        self.template = 'backend/appData/partModels/partModel.xml'  # template xml file
         self.xml_tree = et.ElementTree()
         self.xml_tree.parse(self.template)
 
@@ -138,6 +138,7 @@ class TreePropretiesEditor(QWidget):
             self.text_box.setText(tree_element.text(1))
 
     def add_prop(self):
+        print(self.selected_tree_element)
         if self.selected_tree_element is not None:
             self.selected_tree_element.setText(1, self.text_box.text())
             full_path = self.get_path(self.selected_tree_element, '/')
@@ -161,4 +162,4 @@ class TreePropretiesEditor(QWidget):
 
     def submit_template(self):
         print('submit template')
-        self.xml_tree.write('output.xml')
+        self.xml_tree.write('backend/appData/partModels/partModel.xml')

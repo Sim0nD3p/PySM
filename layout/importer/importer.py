@@ -96,83 +96,7 @@ def from_string(cls, input_data):
 
 
 
-class JsonImporter_old(QWidget):
-    def __init__(self, parent=None):
-        super().__init__()
-        self.parent = parent
-        self.tree = TreePropretiesEditor()
-        self.create_layout()
 
-    def create_layout(self):
-        vbox = QVBoxLayout()
-
-        button = QPushButton('button')
-        button.clicked.connect(self.get_xml)
-        vbox.addWidget(self.tree)
-        vbox.addWidget(button)
-        self.setLayout(vbox)
-
-    def get_xml(self):
-        self.tree.submit_template()
-
-
-    def update_tree(self, file_name):
-        print('update treeeee')
-        self.setStyleSheet('background-color:red')
-        self.json_parser(file_name)
-
-    def json_parser(self, file_name):
-
-        def check_prop(prop):
-            t = type(prop)
-            # print(prop, t)
-            if t == str or t == int or t == float or t == bool or prop == None:
-                return True
-            elif t == list and len(prop) >= 1:
-                # ne prend pas les liste comprenants elements differents
-                tl0 = type(prop[0])
-                # print('tl0', tl0)
-                if tl0 == str or tl0 == int or tl0 == float or tl0 == bool:
-                    print('on the way')
-                    return True
-                else:
-                    return False
-            else:
-                return False
-
-
-        print('parsing json')
-        with open(file_name) as file:
-            data = file.read()
-            json_data = json.loads(data)
-            for part in json_data:
-                for main_prop in part:
-                    if type(main_prop) == str or type(main_prop) == int:
-                        if check_prop(part[main_prop]):
-                            print(main_prop, part[main_prop])
-                        else:
-                            for second_prop in part[main_prop]:
-                                if type(second_prop) == str or type(second_prop) == int:
-                                    print('second prop', type(second_prop))
-                                    if check_prop(part[main_prop][second_prop]):
-                                        print(second_prop, part[main_prop][second_prop])
-                                    else:
-                                        print('checking for thirs prop')
-                                        for third_prop in part[main_prop][second_prop]:
-                                            print(third_prop)
-                                            if type(third_prop) == str or type(third_prop) == int:
-                                                if check_prop(part[main_prop][second_prop][third_prop]):
-                                                    print(third_prop, part[main_prop][second_prop][third_prop])
-                                                else:
-                                                    print('checking for fourth prop')
-                                                    for p4 in part[main_prop][second_prop][third_prop]:
-                                                        if type(p4) == str or type(p4) == int:
-                                                            if check_prop(part[main_prop][second_prop][third_prop][p4]):
-                                                                p = part[main_prop][second_prop][third_prop]
-                                                                print('4th', p[p4])
-
-
-                            # print('loop', main_prop, type(part[main_prop]))
 
 class Importer(QWidget):
     def __init__(self, parent):
@@ -223,7 +147,7 @@ class Importer(QWidget):
         :param list:
         :return:
         """
-        print(list)
+        # print(list)
         self.main_stacked_layout.setCurrentIndex(0)
         self.parent.part_catalog_update()
 
@@ -231,5 +155,6 @@ class Importer(QWidget):
         # print('confirming import list')
         self.main_stacked_layout.setCurrentIndex(1)
         self.confirmation_widget.display_import_list(list)
+
 
 

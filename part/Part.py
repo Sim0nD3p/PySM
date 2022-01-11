@@ -50,6 +50,25 @@ class Part:
         return rec
 
     @staticmethod
+    def get_value(data, instruction, full_path):
+        """
+        Handles the retrieval of value with instructions and data
+        Gets value with instruction and data. Finds the data path with instruction[full_path]
+        and then the value with data[instruction[full_path]]
+        :param data: dict: data
+        :param instruction: dict: instructions
+        :param full_path: path to get in instruction
+        :return:
+        """
+        if full_path in instruction:
+            if instruction[full_path] in data:
+                return data[instruction[full_path]]
+            else:
+                return 'error'
+        else:
+            return 'error'
+
+    @staticmethod
     def get_code(data, instructions):
         """
         get parts code
@@ -59,7 +78,7 @@ class Part:
         """
         path = {'code': 'part/code'}
 
-        code = data[instructions[path['code']]]
+        code = Part.get_value(data, instructions, path['code'])
 
         return code
 
@@ -75,7 +94,7 @@ class Part:
         paths = {
             'description': 'part/general_information/description'
         }
-        description = data[instructions[paths['description']]]
+        description = Part.get_value(data, instructions, paths['description'])
 
         return GeneralInformation(description=description)
 
@@ -94,10 +113,10 @@ class Part:
             'height': 'part/specifications/height',
             'weight': 'part/specifications/weight'
         }
-        length = data[instructions[paths['length']]]
-        width = data[instructions[paths['width']]]
-        height = data[instructions[paths['height']]]
-        weight = data[instructions[paths['weight']]]
+        length = Part.get_value(data, instructions, paths['length'])
+        width = Part.get_value(data, instructions, paths['width'])
+        height = Part.get_value(data, instructions, paths['height'])
+        weight = Part.get_value(data, instructions, paths['weight'])
 
         return Specifications(length=length, width=width, height=height, weight=weight)
 
@@ -111,22 +130,34 @@ class Part:
         :return: part with added custom props
         """
         for object_path in instructions:            # go trough all the properties path of the partModel
+            # print(object_path)
             object_dir = object_path.split('/')     # split path directions
             common_types = ['code', 'general_information', 'specifications']
             if object_dir[1] not in common_types:   # excludes common types to only get custom properties
                 value = None
-                if instructions[object_path] in data:   # if we have data with corresponding path given by instructions
+                # print('data', data)
+                # print('instructions', instructions)
+                # print('[object_path]', [object_path])
+                # print('instructions[object_path]', [instructions[object_path]])
+                if object_path in instructions:   # if we have data with corresponding path given by instructions
                     # the instructions give {partModel path(object path): data path}
                     source_path = instructions[object_path]
-                    value = data[source_path]
+                    if source_path in data:
+                        value = data[source_path]
 
                 def go_to_element(current_part, path, current_value):
+                    # print('path', path)
+                    # print('current_value', current_value)
                     placeholder = current_part
+                    # print('placeholder', placeholder)
                     for i in range(len(path)):
+                        # print('path[i]', path[i])
                         if i > 0:
                             if hasattr(placeholder, '__dict__'):
                                 if i == len(path) - 1:
+                                    # print('path[i]: currentvalue', path[i], current_value)
                                     placeholder.__setattr__(path[i], current_value)
+                                    return part
                                 else:
                                     placeholder_child_value = {}
                                     if hasattr(placeholder, path[i]):
@@ -143,6 +174,8 @@ class Part:
                                     placeholder = placeholder[path[i]]
 
                 part = go_to_element(part, object_dir, value)
+        # print('end ot add custom props')
+        # print('part', part, type(part))
         return part
 
     @classmethod

@@ -1,0 +1,12 @@
+<part>
+    <code>part/code</code>
+    <general_information>
+        <description>part/description</description>
+    <classe /></general_information>
+    <specifications>
+        <length>part/specs/length</length>
+        <width>part/specs/width</width>
+        <height>part/specs/height</height>
+        <weight>part/specs/weight</weight>
+    </specifications>
+    </part>

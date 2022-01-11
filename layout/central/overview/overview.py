@@ -33,6 +33,4 @@ class Overview(QWidget):
         self.setLayout(self.grid_layout)
 
     def handle_list_change(self, element):
-        print('handle list change')
-        print(element)
         self.tree_widget.draw_tree(element)

@@ -7,7 +7,7 @@ import xml.etree.ElementTree as eT
 class PartModelWidget(QWidget):
     def __init__(self):
         super().__init__()
-        self.file = 'part/partModel.xml'
+        self.file = 'backend/appData/partModels/partModel.xml'
 
         self.xml_tree_object = eT.ElementTree()
         self.xml_tree_object.parse(self.file)
@@ -60,15 +60,22 @@ class PartModelWidget(QWidget):
 
         b_sup_prop = QPushButton('Supprimer propriété actuelle')
         b_sup_prop.clicked.connect(self.sup_prop)
-        button3 = QPushButton('button 3')
-        button4 = QPushButton('button 4')
+        button3 = QPushButton('(save as)')
+
+        b_save = QPushButton('Enregistrer')
+        b_save.clicked.connect(self.save_part_model)
 
         # hbox.addWidget(b_add_prop)
         hbox.addWidget(b_sup_prop)
         hbox.addWidget(button3)
-        hbox.addWidget(button4)
+        hbox.addWidget(b_save)
 
         self.bottom_buttons.setLayout(hbox)
+
+
+    def save_part_model(self):
+        print('saving part model')
+        self.xml_tree_object.write('backend/appData/partModels/partModel.xml')
 
     def create_input_widget(self):
         hbox = QHBoxLayout()
@@ -127,12 +134,18 @@ class PartModelWidget(QWidget):
         self.text_edit.setText('')
 
         tree_elements = self.get_tree_element(self.treewidget.currentItem())
+        print(tree_elements)
         for child in tree_elements:
             e = QTreeWidgetItem([new_prop_tag])
             child.addChild(e)
         element = self.get_xml_element(self.treewidget.currentItem())
-        for i in element:
-            i.append(eT.Element('new element'))
+        # print('xml element', element)
+        # print(self.xml_tree_object.getroot())
+        if len(element) > 0:
+            for i in element:
+                i.append(eT.Element(new_prop_tag))
+        else:
+            self.xml_tree_object.getroot().append(eT.Element(new_prop_tag))
 
     def sup_prop(self):
         print('current item', self.treewidget.currentItem())
@@ -141,11 +154,12 @@ class PartModelWidget(QWidget):
         parent_path = path[:len(path) - len(path.split('/')[len(path.split('/')) - 1])-1]
         direct_path = parent_path[len(parent_path.split('/')[0])+1:]
         xml_parent = self.xml_tree_object.findall(direct_path)
-        if xml_parent is not None:
+        if len(xml_parent) != 0:
             for xml_element in xml_parent:
-                print(xml_element)
                 xml_element.remove(element[0])
                 print(element[0])
+        else:
+            self.xml_tree_object.getroot().remove(element[0])
 
         tree_elements = self.get_tree_element(self.treewidget.currentItem())
         for element in tree_elements:

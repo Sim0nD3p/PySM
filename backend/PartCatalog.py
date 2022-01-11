@@ -15,7 +15,15 @@ class PartCatalog:
 
     @classmethod
     def check_presence(cls, part):
+        for entry in cls.catalog:
+            if entry.code == part.code:
+                return True
         return False
+
+
+    @classmethod
+    def print_catalog(cls):
+        print(cls.catalog)
 
     @classmethod
     def add_part(cls, part):

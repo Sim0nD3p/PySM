@@ -66,9 +66,9 @@ class XmlImporter(QWidget):
         input_file = et.ElementTree()
         input_file.parse('layout/criss.xml')
         data = input_file.getroot()
-        print('xml data')
+        # print('xml data')
 
-        print(data)
+        # print(data)
         # we get xml root of the data file from which we will take data for parts
 
         # instructions of where to get values for each child properties in the partModel
@@ -77,7 +77,7 @@ class XmlImporter(QWidget):
         # FOR LOOP (for testing, we do only 1 part)
 
         imported_list = []
-        print(Part.inspect_tree(data[0]))
+        # print(Part.inspect_tree(data[0]))
 
         for source in data:
             part = self.create_object(Part.inspect_tree(source), decoder_instructions)
