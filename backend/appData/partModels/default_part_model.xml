@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<part>
+    <code>part/code</code>
+    <general_information>
+        <description>part/general_information/description</description>
+        <type>part/general_information/family</type>
+    </general_information>
+    <specifications>
+        <length>part/specifications/length</length>
+        <width>part/specifications/width</width>
+        <height>part/specifications/height</height>
+        <weight>part/specifications/weight</weight>
+    </specifications>
+</part>

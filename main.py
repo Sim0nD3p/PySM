@@ -6,6 +6,7 @@ from layout.importer.importer import ImporterWindow
 from layout.central.overview.overview import Overview
 from backend.PartCatalog import PartCatalog
 from backend.writers.partCatalogWriter import PartCatalogWriter
+from backend.loaders.partCatalogLoader import PartCatalogLoader
 
 
 class MainWindow(QMainWindow):
@@ -25,6 +26,7 @@ class MainWindow(QMainWindow):
         self.create_menus()
         self.create_tool_bar()
         self.create_status_bar()
+        self.backend_startup()
 
     def create_menus(self):
         menu_bar = self.menuBar()
@@ -48,6 +50,12 @@ class MainWindow(QMainWindow):
         settings_menu = menu_bar.addAction('Paramètres')
         settings_menu.triggered.connect(self.show_settings)
 
+    def backend_startup(self):
+        print('initiating app')
+        PartCatalogLoader.load_xml_catalog('backend/appData/catalog.xml')
+        self.part_catalog_update()
+
+
     def show_settings(self):
         print('show settings')
         settings_window = SettingsWindow()
@@ -68,7 +76,12 @@ class MainWindow(QMainWindow):
 
         self.main_widget.overview.list_widget.draw_list(list)
 
+
     def part_catalog_update(self):
+        """
+        Function to run when new catalog update to update UI
+        :return:
+        """
         print('i thing we got it')
         self.main_widget.overview.list_widget.draw_list(PartCatalog.catalog)
 

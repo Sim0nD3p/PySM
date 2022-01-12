@@ -41,8 +41,10 @@ class TreeWidget(QTreeWidget):
                 else:
                     if type(object) is None:
                         root.setText(1, 'none')
-                    else:
+                    elif type(object) == str:
                         root.setText(1, object)
+                    else:
+                        root.setText(1, str(object))
 
         get_element(part, root)
         self.expandAll()

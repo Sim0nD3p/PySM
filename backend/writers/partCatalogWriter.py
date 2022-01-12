@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 from backend.PartCatalog import PartCatalog
 
 
-class PartCatalogWriter():
+class PartCatalogWriter:
     def __init__(self):
         self.test = 'string'
 
@@ -12,37 +12,31 @@ class PartCatalogWriter():
         catalog = PartCatalog().get_catalog()
 
         def scan(obj, element):
-            # print('obj', obj)
+
             if hasattr(obj, '__dict__'):
                 for child in vars(obj):
-                    print('child: content')
-                    print(child, ':', vars(obj)[child])
                     new_element = ET.SubElement(element, child)
                     scan(vars(obj)[child], new_element)
             else:
 
-                # print('has no __dict__')
-                # print(obj, type(obj))
                 if type(obj) == dict:
                     for child in obj:
-                        # print('child', child)
-                        # print('obj[child]', obj[child])
-                        print(child, obj[child])
                         new_element = ET.SubElement(element, child)
                         scan(obj[child], new_element)
                 else:
-                    print(element)
-                    element.text = obj
-                    print(obj)
+                    element.text = str(obj)
 
         xml = ET.Element('root')
 
         for part in catalog:
+            print('writing part:', part.code)
             part_element = ET.SubElement(xml, 'part', attrib={'code': part.code})
             scan(part, part_element)
         # scan(catalog[0], xml)
 
+
         tree = ET.ElementTree(xml)
-        tree.write('test2.xml')
+        print(tree)
+        tree.write('backend/appData/catalog.xml')
 
 

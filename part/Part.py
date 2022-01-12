@@ -1,9 +1,14 @@
 from part.dataClasses import GeneralInformation, Specifications
 """
-    ESSENTIALS ATTRIBUTES FOR PARTS
-    -code
-    -description
-    -use_case
+    **TF
+    ----- NOMENCLATURE -----
+    - SEPXXX-XXXXXX
+    
+    ----- GENERAL INFORMATION -----
+    - type (3 premiers chiffres apres SEP)
+    - niveau (piece, assemblage, option)
+    - niveau piece
+    
     
     
 """
@@ -92,11 +97,13 @@ class Part:
         :return: GeneralInformation dataClass
         """
         paths = {
-            'description': 'part/general_information/description'
+            'description': 'part/general_information/description',
+            'type': 'part/general_information/type'
         }
         description = Part.get_value(data, instructions, paths['description'])
+        part_type = Part.get_value(data, instructions, paths['type'])
 
-        return GeneralInformation(description=description)
+        return GeneralInformation(description=description, type=part_type)
 
     @staticmethod
     def make_specifications(data, instructions):

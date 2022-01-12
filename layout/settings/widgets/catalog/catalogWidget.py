@@ -1,4 +1,5 @@
-from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QLabel
+from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QLabel, QSpacerItem
+from backend.PartCatalog import PartCatalog
 
 """
     Main file for catalog
@@ -9,19 +10,15 @@ from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QLab
 class CatalogWidget(QWidget):
     def __init__(self):
         super().__init__()
-        self.setStyleSheet('background-color: blue')
-        self.button = QPushButton('click me', self)
+        self.create_layout()
 
-        self.catalog_file_name = QLabel('nom du fichier catalogue')
-        self.catalog_file = QWidget(self)
-        self.draw_catalog_file()
+    def create_layout(self):
+        vbox = QVBoxLayout()
+        b_print_catalog = QPushButton('print catalog')
+        b_print_catalog.clicked.connect(self.print_catalog)
+        vbox.addWidget(b_print_catalog)
 
-    def draw_catalog_file(self):
-        hbox = QHBoxLayout()
+        self.setLayout(vbox)
 
-        label = QLabel('Fichier catalogue:')
-
-        hbox.addWidget(label)
-        hbox.addWidget(self.catalog_file_name)
-
-        self.catalog_file.setLayout(hbox)
+    def print_catalog(self):
+        PartCatalog.print_catalog()

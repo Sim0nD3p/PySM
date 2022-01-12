@@ -19,3 +19,4 @@ class GeneralInformation:
     **elements might be added with time
     """
     description: str
+    type: str   # type (3 digits after SEP)
