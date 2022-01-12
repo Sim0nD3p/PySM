@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import QWidget, QListWidget, QGridLayout, QVBoxLayout, QHBoxLayout
 from layout.central.overview.list import ListWidget
 from layout.central.overview.treeWidget import TreeWidget
+from layout.central.overview.filterWidget import FilterWidget
 
 class Overview(QWidget):
     def __init__(self):
@@ -22,8 +23,8 @@ class Overview(QWidget):
         self.list_widget = ListWidget(self)
         self.list_widget.draw_list(list)
 
-        self.sub3 = QWidget()
-        self.sub3.setStyleSheet('background-color:green')
+        self.sub3 = FilterWidget(parent=self)
+        # self.sub3.setStyleSheet('background-color:green')
         self.sub3.setMinimumWidth(500)
         self.sub3.setMinimumHeight(200)
 
@@ -34,3 +35,8 @@ class Overview(QWidget):
 
     def handle_list_change(self, element):
         self.tree_widget.draw_tree(element)
+
+
+    def test(self):
+        print('test')
+

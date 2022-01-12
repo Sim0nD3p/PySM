@@ -18,11 +18,11 @@ class PartCatalogLoader:
 
         def create_object(data, instructions):
             part_code = Part.get_code(data, instructions)
-            print(part_code)
+            # print(part_code)
             part = Part(part_code)
             part.general_information = Part.make_general_information(data, instructions)
             part.specifications = Part.make_specifications(data, instructions)
-            print(vars(part))
+            # print(vars(part))
             return part
 
         default_xml_tree = ET.ElementTree()

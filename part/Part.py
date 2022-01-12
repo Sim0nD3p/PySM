@@ -27,6 +27,26 @@ class Part:
     def __init__(self, code: str):
         self.code = code
 
+    @classmethod
+    def inspect_part_object(cls, part):
+        rec = {}
+        def scan(obj, root):
+            if hasattr(obj, '__dict__'):
+                for child in vars(obj):
+                    new_root = root + '/' + child
+                    scan(vars(obj)[child], new_root)
+            else:
+                if type(obj) == dict or type(obj) == list:
+                    for child in obj:
+                        new_root = root + '/' + child
+                        scan(obj[child], new_root)
+                else:
+                    rec[root] = obj
+
+        scan(part, 'part')
+        return rec
+
+
     @staticmethod
     def inspect_tree(tree):
         """
