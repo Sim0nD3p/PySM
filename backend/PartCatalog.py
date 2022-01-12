@@ -12,10 +12,12 @@ class PartCatalog:
 
     @classmethod
     def text_search(cls, text):
-        print('searching string', text)
-
+        """
+        Search for string in all prop of part
+        :param text: string
+        :return: list of part object
+        """
         results = []
-
         def check_part(current_part):
             part_content = Part.inspect_part_object(current_part)
             for prop in part_content:
@@ -24,13 +26,24 @@ class PartCatalog:
                         return current_part
             return None
 
+        def check_branch(branch):
+            branch_content = Part.inspect_part_object(branch)
+
         for part in cls.catalog:
             if check_part(part) is not None:
                 results.append(part)
 
         return results
 
-
+    @classmethod
+    def get_all_types(cls):
+        """
+        Gets all the parts types present in the catalog
+        :return: list of types (string)
+        """
+        types = []
+        for part in cls.catalog:
+            print("test")
 
     @classmethod
     def get_catalog(cls):

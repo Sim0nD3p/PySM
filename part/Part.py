@@ -5,7 +5,7 @@ from part.dataClasses import GeneralInformation, Specifications
     - SEPXXX-XXXXXX
     
     ----- GENERAL INFORMATION -----
-    - type (3 premiers chiffres apres SEP)
+    - type (3 premiers chiffres apres SEP), possible types vs type E21
     - niveau (piece, assemblage, option)
     - niveau piece
     

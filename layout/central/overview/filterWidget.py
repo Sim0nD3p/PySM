@@ -40,6 +40,13 @@ class FilterWidget(QWidget):
         hbox.addWidget(self.b_search)
         self.text_search.setLayout(hbox)
 
+    def create_second_line(self):
+        hbox = QHBoxLayout()
+
+        l_type = QLabel('Type')
+        type_selector = QComboBox()
+
+
 
 
     def create_layout(self):
