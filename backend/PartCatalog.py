@@ -11,7 +11,7 @@ class PartCatalog:
         return output
 
     @classmethod
-    def text_search(cls, text):
+    def text_search(cls, source, text):
         """
         Search for string in all prop of part
         :param text: string
@@ -26,10 +26,14 @@ class PartCatalog:
                         return current_part
             return None
 
+        # not implemented yet, search in specific field
         def check_branch(branch):
             branch_content = Part.inspect_part_object(branch)
 
-        for part in cls.catalog:
+        if source is None:
+            source = cls.catalog
+
+        for part in source:
             if check_part(part) is not None:
                 results.append(part)
 
@@ -43,7 +47,16 @@ class PartCatalog:
         """
         types = []
         for part in cls.catalog:
-            print("test")
+            if hasattr(part, 'general_information'):
+                if hasattr(part.general_information, 'type'):
+                    if part.general_information.type != 'error':
+                        if part.general_information.type not in types:
+                            types.append(part.general_information.type)
+
+        # should add sort in alpabetical order
+        print(type(types), types)
+
+        return types
 
     @classmethod
     def get_catalog(cls):

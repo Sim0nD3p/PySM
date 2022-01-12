@@ -11,14 +11,18 @@ class FilterWidget(QWidget):
         self.parent = parent
         self.setStyleSheet('background-color:blue')
 
-        self.text_search = QWidget()
-        self.line_edit = QLineEdit()
-
         self.search_shortcut = QShortcut(QKeySequence(Qt.Key.Key_Return), self)
         self.search_shortcut.activated.connect(self.submit_search)
 
+        self.text_search = QWidget()
+        self.line_edit = QLineEdit()
+
         self.b_search = QPushButton('soumettre')
         self.b_search.clicked.connect(self.submit_search)
+
+        self.second_line = QWidget()
+        self.dropdown = QComboBox()
+        self.create_second_line()
 
         self.create_text_search()
         self.create_layout()
@@ -26,7 +30,7 @@ class FilterWidget(QWidget):
     def submit_search(self):
         print('shoudl search')
         text = self.line_edit.text()
-        results = PartCatalog.text_search(text)
+        results = PartCatalog.text_search(None, text)
         print(len(results))
         self.parent.list_widget.draw_list(results)
 
@@ -40,11 +44,25 @@ class FilterWidget(QWidget):
         hbox.addWidget(self.b_search)
         self.text_search.setLayout(hbox)
 
+    def update_dropdown(self):
+        print('updating dropdown')
+        print(len(PartCatalog.get_catalog()))
+        types_list = PartCatalog.get_all_types()
+        self.dropdown.clear()
+        self.dropdown.addItems(types_list)
+
     def create_second_line(self):
         hbox = QHBoxLayout()
 
+
+        self.dropdown.clear()
+        self.dropdown.setMaximumWidth(150)
         l_type = QLabel('Type')
-        type_selector = QComboBox()
+
+        hbox.addWidget(l_type)
+        hbox.addWidget(self.dropdown)
+
+        self.second_line.setLayout(hbox)
 
 
 
@@ -53,7 +71,12 @@ class FilterWidget(QWidget):
         vbox = QVBoxLayout()
         vbox.addWidget(self.text_search)
 
-        label = QLabel('this is label')
-        vbox.addWidget(label)
+        label = QPushButton('test')
+        label.clicked.connect(self.test)
+        vbox.addWidget(self.second_line)
         vbox.setContentsMargins(0, 0, 0, 0)
         self.setLayout(vbox)
+
+    def test(self):
+        print('testing')
+        PartCatalog.get_all_types()

@@ -37,6 +37,7 @@ class PartCatalogLoader:
             part = create_object(Part.inspect_tree(child), decoder_instructions)
             if not PartCatalog.check_presence(part):
                 PartCatalog.add_part(part)
+        print('catalog now has', len(PartCatalog.catalog))
 
 
 

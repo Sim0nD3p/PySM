@@ -3,7 +3,7 @@
     <code>part/code</code>
     <general_information>
         <description>part/general_information/description</description>
-        <type>part/general_information/family</type>
+        <type>part/general_information/type</type>
     </general_information>
     <specifications>
         <length>part/specifications/length</length>

@@ -23,12 +23,12 @@ class Overview(QWidget):
         self.list_widget = ListWidget(self)
         self.list_widget.draw_list(list)
 
-        self.sub3 = FilterWidget(parent=self)
+        self.filter_widget = FilterWidget(parent=self)
         # self.sub3.setStyleSheet('background-color:green')
-        self.sub3.setMinimumWidth(500)
-        self.sub3.setMinimumHeight(200)
+        self.filter_widget.setMinimumWidth(500)
+        self.filter_widget.setMinimumHeight(200)
 
-        self.grid_layout.addWidget(self.sub3, 0, 0)
+        self.grid_layout.addWidget(self.filter_widget, 0, 0)
         self.grid_layout.addWidget(self.list_widget, 1, 0)
         self.grid_layout.addWidget(self.sub1, 0, 1, 2, 1)
         self.setLayout(self.grid_layout)

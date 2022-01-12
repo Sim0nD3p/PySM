@@ -84,6 +84,7 @@ class MainWindow(QMainWindow):
         """
         print('i thing we got it')
         self.main_widget.overview.list_widget.draw_list(PartCatalog.catalog)
+        self.main_widget.overview.filter_widget.update_dropdown()
 
 
     def create_status_bar(self):
