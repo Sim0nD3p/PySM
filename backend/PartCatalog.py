@@ -67,15 +67,25 @@ class PartCatalog:
         return cls.catalog
 
     @classmethod
+    def delete_catalog(cls):
+        cls.catalog = []
+
+    @classmethod
     def check_presence(cls, part):
         """
         Check if given part object is present in catalog
         :param part: part object
         :return: bool
         """
-        for entry in cls.catalog:
-            if entry.code == part.code:
-                return True
+        if type(part) == str:
+            for entry in cls.catalog:
+                if entry.code == part:
+                    return True
+        else:
+            for entry in cls.catalog:
+                if entry.code == part.code:
+                    return True
+
         return False
 
 

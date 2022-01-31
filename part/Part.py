@@ -48,7 +48,7 @@ class Part:
 
 
     @staticmethod
-    def inspect_tree(tree):
+    def inspect_xml_tree(tree):
         """
         Returns the path of all child element and their text value in xml tree
         :param tree: xml.ElementTree.Element to return child properties
@@ -73,6 +73,29 @@ class Part:
 
         loop(tree, tree.tag)
         return rec
+
+    @staticmethod
+    def inspect_json_tree(tree, parent_tag):
+        rec = {}
+
+        def scan(current_tree, current_parent_tag):
+            for child in current_tree:
+                if len(current_parent_tag) > 0:
+                    new_root = current_parent_tag + '/' + child
+                else:
+                    new_root = child
+
+                if type(current_tree[child]) == dict:
+                    scan(current_tree[child], new_root)
+                else:
+                    rec[new_root] = current_tree[child]
+                    # print(new_root, obj[child])
+
+        scan(tree, parent_tag)
+        return rec
+
+
+
 
     @staticmethod
     def get_value(data, instruction, full_path):

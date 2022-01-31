@@ -1,11 +1,34 @@
 from PyQt6.QtWidgets import QWidget, QHBoxLayout, QPushButton, QVBoxLayout
 
+from layout.importer.treeInspector import TreeInspector
 from layout.importer.treePropertiesEditor import TreePropretiesEditor
 from part.Part import Part
 import xml.etree.ElementTree as et
 
+class XmlImporter(TreeInspector):
+    def __init__(self):
+        super().__init__()
 
-class XmlImporter(QWidget):
+    def handle_submit(self):
+        print('handle xml')
+        decoder_instructions = Part.inspect_xml_tree(self.xml_tree.getroot())
+        data_stack = self.get_data()
+        return decoder_instructions, data_stack
+
+    def get_data(self):
+        # this is only for testing purpose will be the file selected via explorer
+        input_file = et.ElementTree()
+        input_file.parse('layout/criss.xml')
+        data = input_file.getroot()
+        data_stack = []
+
+        for child in data:
+            child_data = Part.inspect_xml_tree(child)
+            data_stack.append(child_data)
+
+        return data_stack
+
+class XmlImporter_old(QWidget):
     def __init__(self, parent=None):
         super().__init__()
         self.parent = parent
@@ -58,7 +81,7 @@ class XmlImporter(QWidget):
         :return:
         """
         # getting instruction to get data in the right path source data -> object
-        decoder_instructions = Part.inspect_tree(self.tree.xml_tree.getroot())
+        decoder_instructions = Part.inspect_xml_tree(self.tree.xml_tree.getroot())
         print('Decoder instructions')
         print(decoder_instructions)
 
@@ -80,7 +103,7 @@ class XmlImporter(QWidget):
         # print(Part.inspect_tree(data[0]))
 
         for source in data:
-            part = self.create_object(Part.inspect_tree(source), decoder_instructions)
+            part = self.create_object(Part.inspect_xml_tree(source), decoder_instructions)
             imported_list.append(part)
         # self.parent.get_import_list(imported_list)
         self.parent.confirm_import(imported_list)

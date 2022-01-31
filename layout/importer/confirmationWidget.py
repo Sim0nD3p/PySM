@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QLabel, QPushButton, QListWidget, QListWidgetItem, QVBoxLayout, QHBoxLayout
+from PyQt6.QtWidgets import QWidget, QLabel, QPushButton, QListWidget, QListWidgetItem, QVBoxLayout, QHBoxLayout, QTreeWidget, QTreeWidgetItem
 from PyQt6.QtCore import Qt
 from backend.PartCatalog import PartCatalog
 
@@ -11,39 +11,46 @@ class ConfirmationWidget(QWidget):
 
         self.vbox = QVBoxLayout()
 
-        self.list_widget = QListWidget()
+        self.tree = QTreeWidget()
         self.confirm_button = QPushButton('Importer')
-        self.confirm_button.clicked.connect(self.import_data)
-        self.vbox.addWidget(self.list_widget)
+        self.vbox.addWidget(self.tree)
         self.vbox.addWidget(self.confirm_button)
         self.setLayout(self.vbox)
 
-    def handle_click(self, e):
-        print(self.repo[e.text()])
 
-    def import_data(self):
-        for i in range(self.list_widget.count()):
-            if self.list_widget.item(i).checkState() == Qt.CheckState.Checked:
-                part = self.repo[self.list_widget.item(i).text()]
-                PartCatalog.add_part(part)
-
-        print('import data')
-        self.parent.main_update()
+    def update_tree(self, list):
+        self.tree.clear()
+        self.tree.setColumnCount(2)
 
 
-    def display_import_list(self, import_list):
-        self.list_widget.clear()
-        print(len(import_list))
-        for child in import_list:
-            if hasattr(child, 'code'):
-                new_item = QListWidgetItem(child.code)
-                self.repo[child.code] = child
-                if PartCatalog.check_presence(child) == False:
-                    new_item.setCheckState(Qt.CheckState.Checked)
-                else:
-                    new_item.setCheckState(Qt.CheckState.Unchecked)
-                self.list_widget.addItem(new_item)
-        self.list_widget.itemClicked.connect(self.handle_click)
+        absent = QTreeWidgetItem(['Pièces à ajouter'])
+        present = QTreeWidgetItem(['Pièces en conflit'])
+
+        self.tree.setHeaderHidden(True)
+        self.tree.setColumnWidth(0, 400)
+        self.tree.addTopLevelItem(present)
+        self.tree.addTopLevelItem(absent)
+
+        for part in list:
+            part_code = part['part/code']
+            print(part_code)
+            if PartCatalog.check_presence(part_code):
+                print('yess')
+                e = QTreeWidgetItem([part_code, 'remplacer'])
+                present.addChild(e)
+                e.setCheckState(1, Qt.CheckState.Checked)
+            else:
+                e = QTreeWidgetItem([part_code, 'importer'])
+                absent.addChild(e)
+                e.setCheckState(1, Qt.CheckState.Checked)
+
+        self.tree.expandAll()
+        self.tree.itemChanged.connect(self.handle_selection)
+
+    def handle_selection(self, e):
+        print(e.checkState(1))
+
+
 
 
 

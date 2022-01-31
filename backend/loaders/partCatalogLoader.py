@@ -29,12 +29,12 @@ class PartCatalogLoader:
         file = 'backend/appData/partModels/default_part_model.xml'  # file on how to get instructions
         default_xml_tree.parse(file)       # parsing instructions
         instructions_root = default_xml_tree.getroot()  # getting root of instructions
-        decoder_instructions = Part.inspect_tree(instructions_root)
+        decoder_instructions = Part.inspect_xml_tree(instructions_root)
 
         imported_list = []
         for child in root:
             # scan(child, 'root')
-            part = create_object(Part.inspect_tree(child), decoder_instructions)
+            part = create_object(Part.inspect_xml_tree(child), decoder_instructions)
             if not PartCatalog.check_presence(part):
                 PartCatalog.add_part(part)
         print('catalog now has', len(PartCatalog.catalog))

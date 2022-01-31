@@ -38,6 +38,15 @@ class MainWindow(QMainWindow):
         catalog_menu = menu_bar.addMenu('Catalogue')
         catalog_import = catalog_menu.addAction('importer calatogue')
         catalog_import.triggered.connect(self.show_importer)
+        catalog_add_props = catalog_menu.addAction('Ajouter propriété')
+        catalog_add_props.triggered.connect(self.show_importer)
+        catalog_delete = catalog_menu.addAction('Supprimer catalogue')
+
+        def delete_catalog():
+            PartCatalog.delete_catalog()
+            self.part_catalog_update()
+
+        catalog_delete.triggered.connect(delete_catalog)
 
         catalog_save = catalog_menu.addMenu('Sauvegarder catalogue')
         save = catalog_save.addAction('Enregistrer')
@@ -49,6 +58,8 @@ class MainWindow(QMainWindow):
         suppliers_menu = menu_bar.addMenu('Fournisseurs')
         settings_menu = menu_bar.addAction('Paramètres')
         settings_menu.triggered.connect(self.show_settings)
+
+
 
     def backend_startup(self):
         print('initiating app')

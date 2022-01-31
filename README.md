@@ -1,10 +1,15 @@
 # PySM
 ##To do:
+- add way to select multiple items and modify their prop in batch
 - streamline partModel.xml
-- clean up partModel and bug on auto import
-- add filter type
+- add filter type 
 - think about storage
 
 
   - template for importing (create and select)
   - add more props
+
+  - continue work on import
+    - confirmationWidget, add props vs add part (merge, remplacer)
+    - standard import for parts and props
+    - import for orders dates and qte

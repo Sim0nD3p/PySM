@@ -35,10 +35,10 @@ class TreePropretiesEditor(QWidget):
         self.bottom_widget = QWidget()
         self.create_bottom_widget()
 
-        vbox = QVBoxLayout()
-        vbox.addWidget(self.tree_widget)
-        vbox.addWidget(self.bottom_widget)
-        self.setLayout(vbox)
+        self.vbox = QVBoxLayout()
+        self.vbox.addWidget(self.tree_widget)
+        self.vbox.addWidget(self.bottom_widget)
+        self.setLayout(self.vbox)
 
 
     def draw_tree(self):
