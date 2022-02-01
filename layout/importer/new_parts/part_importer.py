@@ -23,6 +23,10 @@ class Importer(QWidget):
         self.json_importer = JsonImporter()
         self.csv_importer = QLabel('csv importer placeholder')
 
+        # triggers for next step
+        self.json_importer.submit_button.clicked.connect(lambda: self.confirm_import('JSON'))
+        self.xml_importer.submit_button.clicked.connect(lambda: self.confirm_import('xml'))
+
         self.file_selector = FileSelector(parent=self, file_types=self.file_types)
 
         self.importer_stack_layout = QStackedLayout()
@@ -48,41 +52,37 @@ class Importer(QWidget):
     def handle_filetype_change(self, index):
         self.importer_stack_layout.setCurrentIndex(index)
 
-    def get_data_from_importer(self, type):
+    def get_data_from_importer(self, input_datatype):
         # do things according to type might move to Importer
         # gets data and instructions from jsonImporter or xmlImporter, deals with it according to type (see also
         # propsLoader)
-        print('import type', type)
+        print('import type', input_datatype)
         print('long reach')
-        if type == 'JSON':
+        if input_datatype == 'JSON':
             decoder_instructions, data = self.json_importer.handle_submit()
             return decoder_instructions, data
-        elif type == 'xml':
+        elif input_datatype == 'xml':
             decoder_instructions, data = self.xml_importer.handle_submit()
             return decoder_instructions, data
 
 
 
-    def confirm_import(self, decoder_instructions, data):
+    def confirm_import(self, input_datatype):
         print('confirm import')
-        print(len(data))
+        decoder_instructions, data = self.get_data_from_importer(input_datatype)
+        self.parent.trigger_confirmation(data)
 
 
 
 class PartImporter(Importer):
     def __init__(self, parent=None):
-        super().__init__()
+        super().__init__(parent=parent)
         self.parent = parent
 
         # might move directly in Importer
-        self.json_importer.submit_button.clicked.connect(lambda: self.send_to_confirm('JSON'))
-        self.xml_importer.submit_button.clicked.connect(lambda: self.send_to_confirm('xml'))
 
-
-    def send_to_confirm(self, type):
-        decoder_instructions, data = self.get_data_from_importer(type)
-        print('getting data')
-        self.parent.test(data)
+    def create_object_batch(self, data, instructions):
+        print('should start creating batch objects')
 
 
 

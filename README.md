@@ -13,3 +13,6 @@
     - confirmationWidget, add props vs add part (merge, remplacer)
     - standard import for parts and props
     - import for orders dates and qte
+
+## where I am:
+    - bug @importer.py, submit_import (line 91)

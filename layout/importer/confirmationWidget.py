@@ -35,12 +35,13 @@ class ConfirmationWidget(QWidget):
             part_code = part['part/code']
             print(part_code)
             if PartCatalog.check_presence(part_code):
-                print('yess')
                 e = QTreeWidgetItem([part_code, 'remplacer'])
+                e.setData(1, 1, part)
                 present.addChild(e)
                 e.setCheckState(1, Qt.CheckState.Checked)
             else:
                 e = QTreeWidgetItem([part_code, 'importer'])
+                e.setData(1, 1, part)
                 absent.addChild(e)
                 e.setCheckState(1, Qt.CheckState.Checked)
 

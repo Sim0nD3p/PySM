@@ -2,19 +2,18 @@ import datetime
 from datetime import date, timedelta
 from part.usage.usageDataClasses import Order, Date
 
-"""
-Original program:
-    - total order size
-    - annual average - DONE
-    - orderByMonth - DONE
-    - monthly average - DONE (some things left to do)
-    - max monthly consom
-    - commande typique
-    - freq order - DONE
-    
-"""
 
 class PastOrders:
+    """
+    functions:
+        - add order
+        - sort orders
+        - total orders by month
+        - annual average
+        - monthly average
+        - order frequency
+        - average order size
+    """
     def __init__(self):
         self.orders = []
 
@@ -114,8 +113,6 @@ class PastOrders:
 
         return rec
 
-
-
     def order_frequency(self, start_year):
         """
         From original program (dataAnalyser.js line 297, freqOrder), refait
@@ -132,6 +129,23 @@ class PastOrders:
                 delta = d1 - d0
                 sum += delta.days
         return sum / (len(self.orders) - 1)
+
+    def average_order_size(self, start_year):
+        """
+        Gets the average order size
+        :param start_year:
+        :return: average order size
+        """
+        start_date = date(start_year, 1, 1)
+        order_count = 0
+        total_ordered = 0
+        for order in self.orders:
+            if order.date.get_date() >= start_date:
+                total_ordered += order.quantity
+                order_count += 1
+
+        return total_ordered / order_count
+
 
 
 
@@ -163,4 +177,4 @@ o.add_order(o6)
 print('monthly average ', o.monthly_average(Date(2017, 1, 1), 4, 'test'))
 print('annual average ', o.annual_average(2017))
 print('order frequency ', o.order_frequency(2017))
-print(o.order_frequency(2019))
+print(o.average_order_size(2016))
