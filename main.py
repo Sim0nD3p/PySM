@@ -17,6 +17,7 @@ class MainWindow(QMainWindow):
         self.setGeometry(50, 50, 1200, 650)
         self.part_catalog = PartCatalog()
         self.importer_window = ImporterWindow(self)
+        self.importer_window.importer.confirmation_widget.confirm_button.clicked.connect(self.part_catalog_update)
 
         # self.tool_bar = self.addToolBar()
 

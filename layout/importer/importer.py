@@ -4,10 +4,13 @@ import json
 from layout.importer.treePropertiesEditor import TreePropretiesEditor
 from layout.importer.xmlImporter import XmlImporter
 from layout.importer.jsonImporter import JsonImporter
+from layout.importer.new_parts.part_importer import Importer
 from layout.importer.confirmationWidget import ConfirmationWidget
 from layout.importer.new_parts.part_importer import PartImporter
 from layout.importer.add_props.props_pusher import PropsPusher
 from PyQt6.QtCore import Qt
+from backend.PartCatalog import PartCatalog
+from layout.importer.new_parts.props_importer import PropsImporter
 from layout.importer.treePropertiesEditor import TreePropretiesEditor
 
 
@@ -46,15 +49,30 @@ def from_string(cls, input_data):
 '''
 
 class newWidget(QWidget):
+    """
+    has importers and confirmation widget, acts on them
+    """
     def __init__(self):
         super().__init__()
         self.main_stack_layout = QStackedLayout()
         self.tab_widget = QTabWidget()
 
+        # PART IMPORTER
         self.part_importer = PartImporter(parent=self)
-        # part, props
-        self.tab_widget.addTab(self.part_importer, 'part')
+        self.part_importer.json_importer.submit_button.clicked.connect(lambda: self.trigger_confirmation(
+            self.part_importer.get_data_from_importer('JSON')))
 
+        self.part_importer.xml_importer.submit_button.clicked.connect(lambda: self.trigger_confirmation(
+            self.part_importer.get_data_from_importer('xml')))
+
+        # PROPS IMPORTER
+        self.props_importer = PropsImporter()
+        self.props_importer.json_importer.submit_button.clicked.connect(self.test)
+        self.props_importer.xml_importer.submit_button.clicked.connect(self.test)
+
+
+        self.tab_widget.addTab(self.part_importer, 'Pièce')
+        self.tab_widget.addTab(self.props_importer, 'Propriété')
         self.main_stack_layout.addWidget(self.tab_widget)
 
         self.confirmation_widget = ConfirmationWidget()
@@ -63,56 +81,63 @@ class newWidget(QWidget):
 
         self.setLayout(self.main_stack_layout)
 
+    def test(self):
+        print('caliss')
 
     def submit_import(self):
         """
         gets what to do with which parts from confirmationWidget
-        :return:
-        """
-        """
         for each importer (part, props), there are 2 possibilities:
             - part is absent in database
             - part is present in database
-            
+
+
         when importing parts:
             - absent: creating part
             - present: merging, replacing or ignore
-            checkbox: 
+            checkbox:
                 - merge: importing prop -> could be replaced by import props
                 - replacing: delete and create
                 - ignore: do nothing
-        
+
+
         when importing props:
             - absent: ignore or create part
             - present: importing props (replacing them by default)
-            
-        
+
+
+        :return:
         """
         print('submit import')
         print('filtering parts')
         present = self.confirmation_widget.tree.topLevelItem(0)
         absent = self.confirmation_widget.tree.topLevelItem(1)
-
         # if we import new parts
-        if self.tab_widget.currentIndex(0) == 0:
+        if self.tab_widget.currentIndex() == 0:
             # looping thru already present parts
             for index in range(present.childCount()):   # loop thru present
-                data = present.child(index)
-                if present.child(index).checkState() == Qt.CheckState.Checked:
+                data = present.child(index).data(1, 1)
+                if present.child(index).checkState(1) == Qt.CheckState.Checked:
                     # checked present
-                    print('test')
+                    # replace part
+                    print('present checked')
+                    PartCatalog.remove_part(data['part/code'])
                 else:
                     # unchecked present
-                    print('test')
+                    # do nothing
+                    print('present unchecked')
             for index in range(absent.childCount()):    # loop thru absent
-                data = absent.child(index)
-                if absent.child(index).checkState() == Qt.CheckState.Checked:
+                data = absent.child(index).data(1, 1)
+                instructions = absent.child(index).data(1, 2)
+                if absent.child(index).checkState(1) == Qt.CheckState.Checked:
                     # checked absent
-                    print('test')
+                    # import part
+                    self.part_importer.import_part(instructions, data)
                 else:
                     # unchecked absent
-                    print('test')
-        elif self.tab_widget.currentIndex(1) == 1:  # import props
+                    # do nothing
+                    print('absent unchecked')
+        elif self.tab_widget.currentIndex() == 1:  # import props
             for index in range(present.childCount()):   # loop thru present
                 data = present.child(index)
                 if present.child(index).checkState() == Qt.CheckState.Checked:
@@ -133,15 +158,20 @@ class newWidget(QWidget):
 
         print(present.childCount())
 
+    def get_decoder_instructions(self, data_type):
+            instructions, data = self.part_importer.get_data_from_importer(data_type)
+
+
 
     def trigger_confirmation(self, data):
         """
         calls the confirmationWidget
-        :param data:
+        :param data: (decoder_instructions, data)
         :return:
         """
+        decoder_instructions, data = data
         print('show confirm')
-        self.confirmation_widget.update_tree(data)
+        self.confirmation_widget.update_tree(data, decoder_instructions)
         self.main_stack_layout.setCurrentIndex(1)
 
 

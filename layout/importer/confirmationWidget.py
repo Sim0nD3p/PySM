@@ -18,7 +18,13 @@ class ConfirmationWidget(QWidget):
         self.setLayout(self.vbox)
 
 
-    def update_tree(self, list):
+    def update_tree(self, list, decoder_instructions):
+        """
+        Updates the tree filtering present and absent parts to import
+        :param list: part's dict data gotten from importer
+        :param decoder_instructions: decoder instructions
+        :return:
+        """
         self.tree.clear()
         self.tree.setColumnCount(2)
 
@@ -37,11 +43,13 @@ class ConfirmationWidget(QWidget):
             if PartCatalog.check_presence(part_code):
                 e = QTreeWidgetItem([part_code, 'remplacer'])
                 e.setData(1, 1, part)
+                e.setData(1, 2, decoder_instructions)
                 present.addChild(e)
                 e.setCheckState(1, Qt.CheckState.Checked)
             else:
                 e = QTreeWidgetItem([part_code, 'importer'])
                 e.setData(1, 1, part)
+                e.setData(1, 2, decoder_instructions)
                 absent.addChild(e)
                 e.setCheckState(1, Qt.CheckState.Checked)
 

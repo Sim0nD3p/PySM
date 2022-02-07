@@ -3,9 +3,16 @@ from part.Part import Part
 class PartCatalog:
     catalog = []
 
-    def get_part(self, code):
+
+    @classmethod
+    def get_part(cls, code: str):
+        """
+
+        :param code: code (string)
+        :return: part
+        """
         output = None
-        for part in self.catalog:
+        for part in cls.catalog:
             if part.code == code:
                 output = part
         return output
@@ -106,6 +113,21 @@ class PartCatalog:
         :return:
         """
         cls.catalog.append(part)
+
+    @classmethod
+    def remove_part(cls, part):
+        """
+        remove part in catalog (could be better to account for error)
+        :param part: part object
+        :return: void
+        """
+
+        if type(part) is str:
+            if cls.get_part(part) is not None:
+                cls.catalog.remove(cls.get_part(part))
+        else:
+            if part in cls.catalog:
+                cls.catalog.remove(part)
 
 
 

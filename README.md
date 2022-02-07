@@ -15,4 +15,5 @@
     - import for orders dates and qte
 
 ## where I am:
-    - bug @importer.py, submit_import (line 91)
+    - fix encapsulations, avoid parent reference in classes
+

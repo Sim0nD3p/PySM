@@ -1,9 +1,10 @@
 from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QStackedLayout
 from layout.importer.file_selector import FileSelector
 from layout.importer.jsonImporter import JsonImporter
+from layout.importer.treeInspector import TreeInspector
 from layout.importer.xmlImporter import XmlImporter
 from part.Part import Part
-
+from backend.PartCatalog import PartCatalog
 
 
 
@@ -14,6 +15,7 @@ class Importer(QWidget):
     catalog props
 
     """
+
     def __init__(self, parent=None):
         super().__init__()
         self.file_types = ['json', 'csv', 'xml']
@@ -24,16 +26,19 @@ class Importer(QWidget):
         self.csv_importer = QLabel('csv importer placeholder')
 
         # triggers for next step
-        self.json_importer.submit_button.clicked.connect(lambda: self.confirm_import('JSON'))
-        self.xml_importer.submit_button.clicked.connect(lambda: self.confirm_import('xml'))
+        # self.json_importer.submit_button.clicked.connect(lambda: self.confirm_import('JSON'))
+        # self.xml_importer.submit_button.clicked.connect(lambda: self.confirm_import('xml'))
 
         self.file_selector = FileSelector(parent=self, file_types=self.file_types)
+        self.file_selector.dropdown.currentIndexChanged.connect(self.handle_filetype_change)
 
         self.importer_stack_layout = QStackedLayout()
 
         self.create_importer_stack()
         self.create_layout()
 
+    def test(self):
+        print('this is test from importer')
 
 
     def create_importer_stack(self):
@@ -66,20 +71,22 @@ class Importer(QWidget):
             return decoder_instructions, data
 
 
-
-    def confirm_import(self, input_datatype):
-        print('confirm import')
-        decoder_instructions, data = self.get_data_from_importer(input_datatype)
-        self.parent.trigger_confirmation(data)
-
-
-
 class PartImporter(Importer):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.parent = parent
 
         # might move directly in Importer
+
+
+    def import_part(self, instructions, data):
+        part_code = Part.get_code(data, instructions)
+        part = Part(part_code)
+        part.general_information = Part.make_general_information(data, instructions)
+        part.specifications = Part.make_specifications(data, instructions)
+        part.add_custom_prop(part, data, instructions)
+        PartCatalog.add_part(part)
+
 
     def create_object_batch(self, data, instructions):
         print('should start creating batch objects')
@@ -94,4 +101,9 @@ class PartImporter(Importer):
         part.specifications = Part.make_specifications(data, instructions)
         part = Part.add_custom_prop(part, data, instructions)
         return part
+
+
+
+
+
 

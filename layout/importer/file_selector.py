@@ -16,7 +16,6 @@ class FileSelector(QWidget):
     def create_type_selection(self):
         label = QLabel('Type de fichier')
         self.dropdown.addItems(self.file_types)
-        self.dropdown.currentIndexChanged.connect(self.parent.handle_filetype_change)
         self.type_selection.addWidget(label)
         self.type_selection.addWidget(self.dropdown)
 
