@@ -18,7 +18,7 @@ class ConfirmationWidget(QWidget):
         self.setLayout(self.vbox)
 
 
-    def update_tree(self, list, decoder_instructions):
+    def update_tree(self, confirmation_type, list, decoder_instructions):
         """
         Updates the tree filtering present and absent parts to import
         :param list: part's dict data gotten from importer
@@ -28,10 +28,15 @@ class ConfirmationWidget(QWidget):
         self.tree.clear()
         self.tree.setColumnCount(2)
 
+        if confirmation_type == 'part':
+            absent_text = 'Pièces à ajouter'
+            present_text = 'Pièces en conflit'
+        else:
+            absent_text = 'Pièces non répertorié'
+            present_text = 'Pièce répertorié'
 
-        absent = QTreeWidgetItem(['Pièces à ajouter'])
-        present = QTreeWidgetItem(['Pièces en conflit'])
-
+        absent = QTreeWidgetItem([absent_text])
+        present = QTreeWidgetItem([present_text])
         self.tree.setHeaderHidden(True)
         self.tree.setColumnWidth(0, 400)
         self.tree.addTopLevelItem(present)

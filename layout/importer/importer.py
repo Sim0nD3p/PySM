@@ -59,16 +59,20 @@ class newWidget(QWidget):
 
         # PART IMPORTER
         self.part_importer = PartImporter(parent=self)
-        self.part_importer.json_importer.submit_button.clicked.connect(lambda: self.trigger_confirmation(
+        self.part_importer.json_importer.submit_button.clicked.connect(lambda: self.trigger_confirmation('part',
             self.part_importer.get_data_from_importer('JSON')))
 
-        self.part_importer.xml_importer.submit_button.clicked.connect(lambda: self.trigger_confirmation(
+        self.part_importer.xml_importer.submit_button.clicked.connect(lambda: self.trigger_confirmation('part',
             self.part_importer.get_data_from_importer('xml')))
 
         # PROPS IMPORTER
         self.props_importer = PropsImporter()
-        self.props_importer.json_importer.submit_button.clicked.connect(self.test)
-        self.props_importer.xml_importer.submit_button.clicked.connect(self.test)
+        self.props_importer.json_importer.submit_button.clicked.connect(lambda: self.trigger_confirmation('prop',
+            self.props_importer.get_data_from_importer('JSON')
+        ))
+        self.props_importer.xml_importer.submit_button.clicked.connect(lambda: self.trigger_confirmation('prop',
+            self.props_importer.get_data_from_importer('xml')
+        ))
 
 
         self.tab_widget.addTab(self.part_importer, 'Pièce')
@@ -124,7 +128,7 @@ class newWidget(QWidget):
                     PartCatalog.remove_part(data['part/code'])
                 else:
                     # unchecked present
-                    # do nothing
+                    # do nothing (dont import part)
                     print('present unchecked')
             for index in range(absent.childCount()):    # loop thru absent
                 data = absent.child(index).data(1, 1)
@@ -139,22 +143,29 @@ class newWidget(QWidget):
                     print('absent unchecked')
         elif self.tab_widget.currentIndex() == 1:  # import props
             for index in range(present.childCount()):   # loop thru present
-                data = present.child(index)
-                if present.child(index).checkState() == Qt.CheckState.Checked:
+                data = present.child(index).data(1, 1)
+                instructions = present.child(index).data(1, 2)
+                if present.child(index).checkState(1) == Qt.CheckState.Checked:
                     # checked present
-                    print('test')
+                    # add props to part
+                    self.props_importer.import_props_to_part(instructions, data)
+
                 else:
                     # unchecked present
                     print('test')
             for index in range(absent.childCount()):    # loop thru absent
-                data = absent.child(index)
-                if absent.child(index).checkState() == Qt.CheckState.Checked:
+                # data = absent.child(index)
+                if absent.child(index).checkState(1) == Qt.CheckState.Checked:
                     # checked absent
                     print('test')
                 else:
                     # unchecked absent
                     print('test')
-                data = absent.child(index)
+                # data = absent.child(index)
+        elif self.tab_widget.currentIndex() == 2:
+            # importing history
+            print('import history')
+
 
         print(present.childCount())
 
@@ -163,7 +174,7 @@ class newWidget(QWidget):
 
 
 
-    def trigger_confirmation(self, data):
+    def trigger_confirmation(self, confirmation_type, data):
         """
         calls the confirmationWidget
         :param data: (decoder_instructions, data)
@@ -171,7 +182,7 @@ class newWidget(QWidget):
         """
         decoder_instructions, data = data
         print('show confirm')
-        self.confirmation_widget.update_tree(data, decoder_instructions)
+        self.confirmation_widget.update_tree(confirmation_type, data, decoder_instructions)
         self.main_stack_layout.setCurrentIndex(1)
 
 

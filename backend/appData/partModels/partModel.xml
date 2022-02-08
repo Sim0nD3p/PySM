@@ -1,7 +1,7 @@
 <part>
-    <code />
+    <code>part/code</code>
     <general_information>
-        <description />
+        <description>part/description</description>
         <type />
     </general_information>
     <specifications>
@@ -10,4 +10,4 @@
         <height />
         <weight />
     </specifications>
-</part>
+<testProp><test1><soustest /><soustest2 /></test1></testProp></part>

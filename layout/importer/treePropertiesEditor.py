@@ -1,4 +1,5 @@
-from PyQt6.QtGui import QFont
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QFont, QShortcut, QKeySequence
 from PyQt6.QtWidgets import QWidget, QTreeWidget, QLabel, QPushButton, QLineEdit, QVBoxLayout, QTreeWidgetItem, \
     QHBoxLayout
 import xml.etree.ElementTree as et
@@ -27,6 +28,8 @@ class TreePropretiesEditor(QWidget):
         self.b_add_prop = QPushButton('Ajouter')
         self.b_add_prop.setEnabled(False)
         self.b_add_prop.clicked.connect(self.add_prop)
+        self.add_prop_shortcut = QShortcut(QKeySequence(Qt.Key.Key_Return), self)
+        self.add_prop_shortcut.activated.connect(self.add_prop)
         self.text_box.textChanged.connect(self.set_submit_button_enabled)
 
         self.input_line = QWidget()
@@ -136,6 +139,7 @@ class TreePropretiesEditor(QWidget):
             full_path = self.get_path(tree_element, '/')
             self.selected_path.setText(full_path)
             self.text_box.setText(tree_element.text(1))
+            self.text_box.setFocus()
 
     def add_prop(self):
         print(self.selected_tree_element)
@@ -157,8 +161,10 @@ class TreePropretiesEditor(QWidget):
     def set_submit_button_enabled(self, text):
         if len(text) > 0:
             self.b_add_prop.setEnabled(True)
+            self.add_prop_shortcut.setEnabled(True)
         else:
             self.b_add_prop.setEnabled(False)
+            self.add_prop_shortcut.setEnabled(False)
 
     def submit_template(self):
         print('submit template')

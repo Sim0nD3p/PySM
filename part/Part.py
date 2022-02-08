@@ -103,9 +103,9 @@ class Part:
         Handles the retrieval of value with instructions and data
         Gets value with instruction and data. Finds the data path with instruction[full_path]
         and then the value with data[instruction[full_path]]
-        :param data: dict: data
-        :param instruction: dict: instructions
-        :param full_path: path to get in instruction
+        :param data: dict: data {"data_path": "data"}
+        :param instruction: dict: instructions {"object_path": "data_path"}
+        :param full_path: "object path" to get in instructions
         :return:
         """
         if full_path in instruction:
@@ -170,6 +170,44 @@ class Part:
 
         return Specifications(length=length, width=width, height=height, weight=weight)
 
+
+    @staticmethod
+    def go_to_element(current_part, directions, current_value):
+        """
+        Go to path, assign value and returns part
+        :param current_part: part object
+        :param directions: directions of path split array ex: ['part', 'general_information', 'description']
+        :param current_value: value for the property
+        :return: part
+        """
+        placeholder = current_part
+        # print('placeholder', placeholder)
+        for i in range(len(directions)):  # for each direction in the path
+            # print('path[i]', path[i])
+            if i > 0:
+                if hasattr(placeholder, '__dict__'):
+                    if i == len(directions) - 1:
+                        # print('path[i]: currentvalue', path[i], current_value)
+                        placeholder.__setattr__(directions[i], current_value)
+                        return current_part
+                    else:
+                        placeholder_child_value = {}
+                        if hasattr(placeholder, directions[i]):
+                            placeholder_child_value = placeholder.__getattribute__(directions[i])
+                        placeholder.__setattr__(directions[i], placeholder_child_value)
+                        placeholder = placeholder.__getattribute__(directions[i])
+                else:
+                    if i == len(directions) - 1:
+                        placeholder[directions[i]] = current_value
+                        return current_part
+                    else:
+                        if directions[i] not in placeholder:
+                            placeholder[directions[i]] = {directions[i + 1]: 'something'}
+                        placeholder = placeholder[directions[i]]
+
+
+
+
     @staticmethod
     def add_custom_prop(part, data, instructions):
         """
@@ -179,53 +217,30 @@ class Part:
         :param instructions: instructions in form of list of all properties: properties path
         :return: part with added custom props
         """
-        for object_path in instructions:            # go trough all the properties path of the partModel
-            # print(object_path)
-            object_dir = object_path.split('/')     # split path directions
+
+
+
+        def get_value(object_path, instructions, data):
+            if object_path in instructions:
+                source_path = instructions[object_path]
+                if source_path in data:
+                    value = data[source_path]
+
+
+        for object_path in instructions:    # go trough all the properties path of the partModel
+            object_dir = object_path.split('/')     # split path in directions
             common_types = ['code', 'general_information', 'specifications']
             if object_dir[1] not in common_types:   # excludes common types to only get custom properties
                 value = None
-                # print('data', data)
-                # print('instructions', instructions)
-                # print('[object_path]', [object_path])
-                # print('instructions[object_path]', [instructions[object_path]])
+
                 if object_path in instructions:   # if we have data with corresponding path given by instructions
                     # the instructions give {partModel path(object path): data path}
                     source_path = instructions[object_path]
                     if source_path in data:
                         value = data[source_path]
 
-                def go_to_element(current_part, path, current_value):
-                    # print('path', path)
-                    # print('current_value', current_value)
-                    placeholder = current_part
-                    # print('placeholder', placeholder)
-                    for i in range(len(path)):
-                        # print('path[i]', path[i])
-                        if i > 0:
-                            if hasattr(placeholder, '__dict__'):
-                                if i == len(path) - 1:
-                                    # print('path[i]: currentvalue', path[i], current_value)
-                                    placeholder.__setattr__(path[i], current_value)
-                                    return part
-                                else:
-                                    placeholder_child_value = {}
-                                    if hasattr(placeholder, path[i]):
-                                        placeholder_child_value = placeholder.__getattribute__(path[i])
-                                    placeholder.__setattr__(path[i], placeholder_child_value)
-                                    placeholder = placeholder.__getattribute__(path[i])
-                            else:
-                                if i == len(path) - 1:
-                                    placeholder[path[i]] = current_value
-                                    return current_part
-                                else:
-                                    if path[i] not in placeholder:
-                                        placeholder[path[i]] = {path[i + 1]: 'something'}
-                                    placeholder = placeholder[path[i]]
+                part = Part.go_to_element(part, object_dir, value)
 
-                part = go_to_element(part, object_dir, value)
-        # print('end ot add custom props')
-        # print('part', part, type(part))
         return part
 
     @classmethod

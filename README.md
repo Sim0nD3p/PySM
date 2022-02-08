@@ -1,3 +1,4 @@
+
 # PySM
 ##To do:
 - add way to select multiple items and modify their prop in batch
@@ -17,3 +18,8 @@
 ## where I am:
     - fix encapsulations, avoid parent reference in classes
 
+
+## Thing to eventually do
+- add global code path variable in setting for part/code
+- reload partModel in treePropertiesEditor when saved
+  - properties path stays when switching part->props after saving
