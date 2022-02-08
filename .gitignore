@@ -2,3 +2,6 @@ test2.xml
 
 backend/appData/catalog_old.xml
 backend/appData/catalog.xml
+layout/importer/catalogInputModules/historyFormatterScripts/achats.csv
+layout/importer/catalogInputModules/historyFormatterScripts/achats.xlsx
+layout/importer/catalogInputModules/historyFormatterScripts/suppInfos.py

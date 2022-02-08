@@ -1,8 +1,7 @@
-from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QStackedLayout
+from PyQt6.QtWidgets import QWidget, QHBoxLayout, QLabel, QStackedLayout
 from layout.importer.file_selector import FileSelector
-from layout.importer.jsonImporter import JsonImporter
-from layout.importer.treeInspector import TreeInspector
-from layout.importer.xmlImporter import XmlImporter
+from layout.importer.fileParsers.jsonImporter import JsonImporter
+from layout.importer.fileParsers.xmlImporter import XmlImporter
 from part.Part import Part
 from backend.PartCatalog import PartCatalog
 
@@ -11,7 +10,7 @@ from backend.PartCatalog import PartCatalog
 class Importer(QWidget):
     """
     Gets the data and instructions needed to make part objects
-    receivendata and instructions from importers(xml, json) and its child will either make new catalog or update /
+    receivendata and instructions from catalogInputModules(xml, json) and its child will either make new catalog or update /
     catalog props
 
     """

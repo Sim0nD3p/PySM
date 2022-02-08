@@ -1,17 +1,10 @@
-from PyQt6.QtWidgets import QMainWindow, QWidget, QLabel, QPushButton, QHBoxLayout, QVBoxLayout, QStackedLayout, \
-    QComboBox, QFileDialog, QTabWidget
-import json
-from layout.importer.treePropertiesEditor import TreePropretiesEditor
-from layout.importer.xmlImporter import XmlImporter
-from layout.importer.jsonImporter import JsonImporter
-from layout.importer.new_parts.part_importer import Importer
+from PyQt6.QtWidgets import QMainWindow, QWidget, QPushButton, QStackedLayout, \
+    QTabWidget
 from layout.importer.confirmationWidget import ConfirmationWidget
-from layout.importer.new_parts.part_importer import PartImporter
-from layout.importer.add_props.props_pusher import PropsPusher
+from layout.importer.catalogInputModules.part_importer import PartImporter
 from PyQt6.QtCore import Qt
 from backend.PartCatalog import PartCatalog
-from layout.importer.new_parts.props_importer import PropsImporter
-from layout.importer.treePropertiesEditor import TreePropretiesEditor
+from layout.importer.catalogInputModules.props_importer import PropsImporter
 
 
 class ImporterWindow(QMainWindow):
@@ -50,7 +43,7 @@ def from_string(cls, input_data):
 
 class newWidget(QWidget):
     """
-    has importers and confirmation widget, acts on them
+    has catalogInputModules and confirmation widget, acts on them
     """
     def __init__(self):
         super().__init__()

@@ -18,8 +18,10 @@ class Date:
 
 @dataclass
 class Order:
+    part_code: str
     date: Date
     quantity: int
+    supplier_name: str
 
 
 
