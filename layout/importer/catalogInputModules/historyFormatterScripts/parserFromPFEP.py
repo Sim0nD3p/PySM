@@ -34,7 +34,7 @@ root = ET.SubElement(root, 'order')
 
 print(type(xml))
 xml.write('../../../../backend/appData/privateData/test.xml')
-
+print('test')
 # xml.write('backend/appData/privateData/orderPool.xml')
 
 
