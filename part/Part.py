@@ -1,4 +1,5 @@
 from part.dataClasses import GeneralInformation, Specifications
+from part.usage.orderHistory import OrderHistory
 """
     **TF
     ----- NOMENCLATURE -----
@@ -26,6 +27,21 @@ class Part:
     """
     def __init__(self, code: str):
         self.code = code
+        self.order_history = OrderHistory()
+        self.order_stats = {
+            'monthly': self.order_history.annual_average(2017)
+        }
+
+    def add_order_to_history(self, order):
+        """
+        Adds order to history and updates the stats
+        :param order: order object
+        :return:
+        """
+        self.order_history.add_order(order)
+        print(self.code, self.order_history.orders)
+
+
 
     @classmethod
     def inspect_part_object(cls, part):

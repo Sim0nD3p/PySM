@@ -5,6 +5,7 @@ from layout.importer.catalogInputModules.part_importer import PartImporter
 from PyQt6.QtCore import Qt
 from backend.PartCatalog import PartCatalog
 from layout.importer.catalogInputModules.props_importer import PropsImporter
+from layout.importer.catalogInputModules.history_importer import HistoryImporter
 
 
 class ImporterWindow(QMainWindow):
@@ -67,9 +68,14 @@ class newWidget(QWidget):
             self.props_importer.get_data_from_importer('xml')
         ))
 
+        # HISTORY IMPORTER
+        self.history_importer = HistoryImporter()
+        self.history_importer.submit_button.clicked.connect(self.history_importer.make_order_pool)
+
 
         self.tab_widget.addTab(self.part_importer, 'Pièce')
         self.tab_widget.addTab(self.props_importer, 'Propriété')
+        self.tab_widget.addTab(self.history_importer, "Historique d'achats")
         self.main_stack_layout.addWidget(self.tab_widget)
 
         self.confirmation_widget = ConfirmationWidget()

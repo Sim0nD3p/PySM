@@ -16,7 +16,10 @@
     - import for orders dates and qte
 
 ## where I am:
-    - fix encapsulations, avoid parent reference in classes
+- faire fonctionner orderHistory make it display in tree after import
+
+## Mid term
+- fix ENTER shortcut in part search 
 
 
 ## Thing to eventually do

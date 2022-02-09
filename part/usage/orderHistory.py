@@ -3,7 +3,8 @@ from datetime import date, timedelta
 from part.usage.usageDataClasses import Order, Date
 
 
-class PastOrders:
+
+class OrderHistory:
     """
     functions:
         - add order
@@ -18,7 +19,16 @@ class PastOrders:
         self.orders = []
 
     def add_order(self, order):
-        self.orders.append(order)
+        """
+        Adds order to history if it isn't already
+        :param order: order object
+        :return: void
+        """
+        if order not in self.orders:
+            self.orders.append(order)
+        else:
+            print('order already in history')
+
 
     def sort_orders(self):
         """
@@ -50,6 +60,7 @@ class PastOrders:
         :param start_year: int
         :return: yearly average
         """
+        print('annual average')
         current_year = date.today().year
         ordered_quantity = 0
         for order in self.orders:
@@ -148,7 +159,7 @@ class PastOrders:
 
 
 
-
+"""
 d1 = Date(2017, 7, 25)
 o1 = Order(d1, 200)
 
@@ -167,7 +178,7 @@ o5 = Order(d5, 250)
 d6 = Date(2021, 5, 12)
 o6 = Order(d6, 750)
 
-o = PastOrders()
+o = OrderHistory()
 o.add_order(o1)
 o.add_order(o2)
 o.add_order(o3)
@@ -178,3 +189,4 @@ print('monthly average ', o.monthly_average(Date(2017, 1, 1), 4, 'test'))
 print('annual average ', o.annual_average(2017))
 print('order frequency ', o.order_frequency(2017))
 print(o.average_order_size(2016))
+"""
