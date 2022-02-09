@@ -1,5 +1,6 @@
 import json
 from part.usage.usageDataClasses import Order, Date
+import xml.etree.ElementTree as ET
 from layout.importer.catalogInputModules.historyFormatterScripts.suppInfos import suppliers
 
 print('parsing from PFEP.json')
@@ -8,6 +9,7 @@ file_path = 'C:/Users/simon/Documents/Techno-Fab/PySM/PySM/PFEPtest.json'
 
 orders = []
 
+# creating pool of all orders
 with open(file_path, 'r') as json_string:
     json_data = json.load(json_string)
     for child in json_data:
@@ -25,8 +27,20 @@ with open(file_path, 'r') as json_string:
                     o = Order(current_part, date, quantity, supplier_name)
                     orders.append(o)
 
+# write xml
+root = ET.Element('orders')
+xml = ET.ElementTree(root)
+root = ET.SubElement(root, 'order')
 
-    for child in orders:
-        print(child)
+print(type(xml))
+xml.write('../../../../backend/appData/privateData/test.xml')
+
+# xml.write('backend/appData/privateData/orderPool.xml')
+
+
+
+
+
+
 
 
