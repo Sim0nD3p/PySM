@@ -16,6 +16,7 @@
     - import for orders dates and qte
 
 ## where I am:
+- finish catalogWriter and do catalogLoader for order_history
 - bug filterWidget
 
 

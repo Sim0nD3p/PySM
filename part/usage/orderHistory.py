@@ -54,7 +54,6 @@ class OrderHistory:
 
     def total_order(self):
         t = 0
-        print('total order')
         for order in self.orders:
             t += order.quantity
 
@@ -66,7 +65,6 @@ class OrderHistory:
         sorts orders by date
         :return: void
         """
-        print('sorting orders')
         if len(self.orders) >= 2:
             self.orders = sorted(self.orders, key=lambda order: order.date.get_date())
 
@@ -93,7 +91,6 @@ class OrderHistory:
         :param start_year: int
         :return: yearly average
         """
-        print('annual average')
         current_year = date.today().year
         ordered_quantity = 0
         for order in self.orders:
@@ -177,7 +174,6 @@ class OrderHistory:
         self.sort_orders()
         start_date = datetime.date(start_year, 1, 1)
         sum = 0
-        print('order frequency')
 
         # filter after date
         in_timeframe = []
@@ -186,8 +182,6 @@ class OrderHistory:
                 in_timeframe.append(order)
 
         if len(in_timeframe) >= 2:
-            print(len(in_timeframe))
-            print(range(len(in_timeframe) - 1))
             for i in range(len(in_timeframe) - 2):
                 d0 = date(in_timeframe[i].date.year, in_timeframe[i].date.month, in_timeframe[i].date.day)
                 d1 = date(in_timeframe[i + 1].date.year, in_timeframe[i + 1].date.month, in_timeframe[i + 1].date.day)

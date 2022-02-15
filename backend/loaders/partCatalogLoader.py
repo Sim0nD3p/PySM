@@ -11,19 +11,13 @@ class PartCatalogLoader:
         xml_object.parse(file)
         root = xml_object.getroot()
 
-        def scan(obj, root):
-            for child in obj:
-                print(child)
-
-
         def create_object(data, instructions):
             part_code = Part.get_code(data, instructions)
             # print(part_code)
-            part = Part(part_code)
-            part.general_information = Part.make_general_information(data, instructions)
-            part.specifications = Part.make_specifications(data, instructions)
-            # print(vars(part))
-            return part
+            new_part = Part(part_code)
+            new_part.general_information = Part.make_general_information(data, instructions)
+            new_part.specifications = Part.make_specifications(data, instructions)
+            return new_part
 
         default_xml_tree = ET.ElementTree()
         file = 'backend/appData/partModels/default_part_model.xml'  # file on how to get instructions
@@ -33,7 +27,6 @@ class PartCatalogLoader:
 
         imported_list = []
         for child in root:
-            # scan(child, 'root')
             part = create_object(Part.inspect_xml_tree(child), decoder_instructions)
             if not PartCatalog.check_presence(part):
                 PartCatalog.add_part(part)

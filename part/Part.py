@@ -29,9 +29,7 @@ class Part:
     def __init__(self, code: str):
         self.code = code
         self.order_history = OrderHistory()
-        self.order_stats = {
-            'monthly': self.order_history.annual_average(2017)
-        }
+        self.order_stats = {}
 
     def add_order_to_history(self, order):
         """

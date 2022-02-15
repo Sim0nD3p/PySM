@@ -2,5 +2,6 @@ test2.xml
 PFEPtest.json
 backend/appData/catalog_old.xml
 backend/appData/catalog.xml
+backend/appData/catalog_new.xml
 layout/importer/catalogInputModules/historyFormatterScripts/suppInfos.py
 backend/appData/privateData
