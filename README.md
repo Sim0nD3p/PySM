@@ -16,7 +16,8 @@
     - import for orders dates and qte
 
 ## where I am:
-- faire fonctionner orderHistory make it display in tree after import
+- bug filterWidget
+
 
 ## Mid term
 - fix ENTER shortcut in part search 

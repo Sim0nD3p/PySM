@@ -1,7 +1,26 @@
 import json
+import math
 from part.usage.usageDataClasses import Order, Date
 import xml.etree.ElementTree as ET
 from layout.importer.catalogInputModules.historyFormatterScripts.suppInfos import suppliers
+
+def number_to_int(number):
+    """
+    Transform value number to integer (int)
+    :param number: number value (str, int, float)
+    :return: int
+    """
+    if type(number) is str:
+        if ',' in number:
+            number = number.replace(',', '.')
+
+        number = float(number)
+        if math.isnan(number):
+            return None # error - cannot convert to number
+        number = int(math.ceil(number))
+
+    return number
+
 
 def parseFromPFEP(file_path):
     orders = []
@@ -18,10 +37,16 @@ def parseFromPFEP(file_path):
             for year in child['history']:
                 for month in child['history'][year]:
                     for day in child['history'][year][month]:
-                        date = Date(year, month, day)
-                        quantity = child['history'][year][month][day]
-                        o = Order(current_part, date, quantity, supplier_name)
-                        orders.append(o)
+                        date = None
+                        quantity = None
+                        if number_to_int(year) and number_to_int(month) and number_to_int(day):
+                            date = Date(number_to_int(year), number_to_int(month), number_to_int(day))
+                        if number_to_int(child['history'][year][month][day]):
+                            quantity = number_to_int(child['history'][year][month][day])
+
+                        if date and quantity:
+                            o = Order(current_part, date, quantity, supplier_name)
+                            orders.append(o)
         return orders
 
 

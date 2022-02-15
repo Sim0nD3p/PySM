@@ -1,5 +1,6 @@
 from part.dataClasses import GeneralInformation, Specifications
 from part.usage.orderHistory import OrderHistory
+from part.usage.usageDataClasses import Date, Order
 """
     **TF
     ----- NOMENCLATURE -----
@@ -39,7 +40,17 @@ class Part:
         :return:
         """
         self.order_history.add_order(order)
-        print(self.code, self.order_history.orders)
+        self.update_order_stats()
+
+    def update_order_stats(self):
+        start_date = Date(2017, 1, 1)
+        self.order_stats = {
+            'annual_average': self.order_history.annual_average(start_date.year),
+            'monthly_average': self.order_history.monthly_average(start_date, 6, 'single'),
+            'average_order_frequency': self.order_history.order_frequency(start_date.year),
+            'average_order_size': self.order_history.average_order_size(start_date.year)
+
+        }
 
 
 
