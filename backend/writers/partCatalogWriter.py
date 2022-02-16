@@ -8,12 +8,25 @@ class PartCatalogWriter:
 
     @classmethod
     def save_default(cls, catalog):
+        """
+        Create xml file for the catalog
+        Write all part's properties as is in xml parent except order_history, order_stats
+        - order_history: create xml for all order object (see convert_orders_xml)
+        - order_stats: doesn't write property, will be recalculated on import
+        :param catalog: PartCatalog class
+        :return: void
+        """
         print('save catalog')
         catalog = PartCatalog().get_catalog()
-        exceptions = ['order_history']
+        exceptions = ['order_history', 'order_stats']
 
         def convert_orders_xml(order_history, xml_parent_element):
-
+            """
+            Convert orders object in xml element and sub-elements, adds them to xml parent element
+            :param order_history: order_history objects
+            :param xml_parent_element: xml parent element
+            :return: void
+            """
             if hasattr(order_history, 'orders'):
                 for order in order_history.orders:
                     order_element = ET.SubElement(xml_parent_element, 'order')
@@ -33,23 +46,27 @@ class PartCatalogWriter:
 
 
 
-        def scan(obj, element):
+        def create_xml(obj, element):
+            """
+            Create xml for all properties of given part
+            :param obj: part object
+            :param element: xml element of part
+            :return: void
+            """
 
             if hasattr(obj, '__dict__'):
                 for child in vars(obj):
                     if child not in exceptions:
                         new_element = ET.SubElement(element, child)
-                        scan(vars(obj)[child], new_element)
+                        create_xml(vars(obj)[child], new_element)
                     elif child == 'order_history':
                         new_element = ET.SubElement(element, 'orders')
                         convert_orders_xml(vars(obj)[child], new_element)
-
             else:
-
                 if type(obj) == dict:
                     for child in obj:
                         new_element = ET.SubElement(element, child)
-                        scan(obj[child], new_element)
+                        create_xml(obj[child], new_element)
                 else:
                     element.text = str(obj)
 
@@ -58,7 +75,7 @@ class PartCatalogWriter:
         for part in catalog:
             print('writing part:', part.code)
             part_element = ET.SubElement(xml, 'part', attrib={'code': part.code})
-            scan(part, part_element)
+            create_xml(part, part_element)
         # scan(catalog[0], xml)
 
 

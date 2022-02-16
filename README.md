@@ -21,7 +21,10 @@
 
 
 ## Mid term
-- fix ENTER shortcut in part search 
+- fix ENTER shortcut in part search
+
+- add selector for part model in settings
+- partModel vs default_part_model setting vs importer/writer + modifications
 
 
 ## Thing to eventually do

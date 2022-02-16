@@ -64,7 +64,7 @@ class MainWindow(QMainWindow):
 
     def backend_startup(self):
         print('initiating app')
-        PartCatalogLoader.load_xml_catalog('backend/appData/catalog.xml')
+        PartCatalogLoader.load_xml_catalog('backend/appData/catalog_new.xml')
         self.part_catalog_update()
 
 
@@ -94,7 +94,6 @@ class MainWindow(QMainWindow):
         Function to run when new catalog update to update UI
         :return:
         """
-        print('i thing we got it')
         self.main_widget.overview.list_widget.draw_list(PartCatalog.catalog)
         self.main_widget.overview.filter_widget.update_dropdown()
 

@@ -31,11 +31,20 @@ class Part:
         self.order_history = OrderHistory()
         self.order_stats = {}
 
+    def add_orders_to_history(self, orders):
+        """
+        Adds multiple orders to order_history and updates order_stats using self.add_order_to_history
+        :param orders: order list
+        :return: void
+        """
+        for order in orders:
+            self.add_order_to_history(order)
+
     def add_order_to_history(self, order):
         """
-        Adds order to history and updates the stats
+        Adds order to order_history (order_history.orders) and updates order_stats
         :param order: order object
-        :return:
+        :return: void
         """
         self.order_history.add_order(order)
         self.update_order_stats()
@@ -195,6 +204,26 @@ class Part:
 
         return Specifications(length=length, width=width, height=height, weight=weight)
 
+    @classmethod
+    def make_order_history(cls, xml_order_history):
+        """
+        Makes order_history from xml element given containing all orders,
+        creates Order object from xml elements:
+        <order>
+            <part_code>part_code</part_code>
+            <date>yyyy-mm-dd</date>
+            <quantity>quantity</quantity>
+            <supplier>supplier</supplier>
+        </order>
+
+
+        :param xml_order_history: xml element of order as above
+        :return: order_history
+        """
+        for child in xml_order_history:
+            print(child)
+        print('order history')
+
 
     @staticmethod
     def go_to_element(current_part, directions, current_value):
@@ -254,7 +283,7 @@ class Part:
 
         for object_path in instructions:    # go trough all the properties path of the partModel
             object_dir = object_path.split('/')     # split path in directions
-            common_types = ['code', 'general_information', 'specifications']
+            common_types = ['code', 'general_information', 'specifications', 'orders']
             if object_dir[1] not in common_types:   # excludes common types to only get custom properties
                 value = None
 

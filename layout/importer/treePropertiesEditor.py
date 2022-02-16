@@ -9,7 +9,7 @@ class TreePropretiesEditor(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.template = 'backend/appData/partModels/partModel.xml'  # template xml file
+        self.template = 'backend/appData/partModels/default_part_model.xml'  # template xml file
         self.xml_tree = et.ElementTree()
         self.xml_tree.parse(self.template)
 
@@ -168,4 +168,4 @@ class TreePropretiesEditor(QWidget):
 
     def submit_template(self):
         print('submit template')
-        self.xml_tree.write('backend/appData/partModels/partModel.xml')
+        self.xml_tree.write('backend/appData/partModels/default_part_model.xml')
