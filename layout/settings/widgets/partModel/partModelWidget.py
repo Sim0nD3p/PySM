@@ -1,12 +1,64 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QPushButton, QHBoxLayout, QWidget, QLineEdit, QTreeWidget, QLabel, QTreeWidgetItem, \
-    QVBoxLayout
+    QVBoxLayout, QMainWindow
 import xml.etree.ElementTree as eT
+from layout.settings.widgets.partModel.PartModelTreeEditor import PartModelTreeEditor
+
+
 
 
 class PartModelWidget(QWidget):
+    """
+    All settings regarding partModel
+    - select partModel file
+    - select root name for part
+    """
     def __init__(self):
         super().__init__()
+        self.main_vbox = QVBoxLayout()
+
+        self.treeWindow = QMainWindow()
+        self.tree = PartModelTreeEditor()
+
+        self.root_name_edit = QLineEdit()
+
+
+
+
+        b_part_editor = QPushButton('Modifier la structure de pièce')
+        b_part_editor.clicked.connect(self.handleClick)
+
+        self.main_vbox.addWidget(b_part_editor)
+        self.create_layout()
+
+
+    def create_settings(self):
+        """
+        Create all settings for partModel
+        :return:
+        """
+        hbox1 = QHBoxLayout()
+        hbox1.addWidget(QLabel('Modifier racine pièce (root)'))
+
+
+
+
+    def handleClick(self):
+        print('handle click')
+        self.treeWindow.setGeometry(200, 200, 400, 400)
+        self.treeWindow.setCentralWidget(self.tree)
+        self.treeWindow.show()
+
+    def create_layout(self):
+        # self.main_vbox.addWidget()
+        self.setLayout(self.main_vbox)
+
+
+
+class PartModelWidget_old(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.treeWindow = QMainWindow()
         self.file = 'backend/appData/partModels/partModel.xml'
 
         self.xml_tree_object = eT.ElementTree()
@@ -28,29 +80,13 @@ class PartModelWidget(QWidget):
         self.bottom_widget = QWidget()
         self.create_bottom_widget()
 
-        self.upper_buttons = QWidget()
-        self.create_upper_buttons()
 
         vbox = QVBoxLayout()
-        vbox.addWidget(self.upper_buttons)
         vbox.addWidget(self.treewidget)
         vbox.addWidget(self.bottom_widget)
         self.setLayout(vbox)
 
-    def create_upper_buttons(self):
-        hbox = QHBoxLayout()
 
-        button1 = QPushButton('button 1')
-        button2 = QPushButton('button 2')
-        button3 = QPushButton('button 3')
-        button4 = QPushButton('button 4')
-
-        hbox.addWidget(button1)
-        hbox.addWidget(button2)
-        hbox.addWidget(button3)
-        hbox.addWidget(button4)
-
-        self.upper_buttons.setLayout(hbox)
 
     def create_bottom_buttons(self):
         hbox = QHBoxLayout()

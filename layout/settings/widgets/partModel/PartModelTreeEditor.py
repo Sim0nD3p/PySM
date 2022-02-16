@@ -1,16 +1,19 @@
-from PyQt6.QtWidgets import QWidget, QMainWindow, QLabel, QPushButton
+from PyQt6.QtWidgets import QWidget, QMainWindow, QLabel, QPushButton, QLineEdit, QTreeWidget, QVBoxLayout, QHBoxLayout, \
+    QTreeWidgetItem
+import xml.etree.ElementTree as eT
+
 
 class TreeWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.treeWidget = PartModelWidget()
+        self.treeWidget = PartModelTreeEditor()
         self.setCentralWidget(self.treeWidget)
 
 
-class PartModelWidget(QWidget):
+class PartModelTreeEditor(QWidget):
     def __init__(self):
         super().__init__()
-        self.treeWindow = QMainWindow()
+
         self.file = 'backend/appData/partModels/partModel.xml'
 
         self.xml_tree_object = eT.ElementTree()

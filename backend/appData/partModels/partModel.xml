@@ -2,18 +2,12 @@
     <code>part/code</code>
     <general_information>
         <description>part/description</description>
-        <type/>
+        <type />
     </general_information>
     <specifications>
-        <length/>
-        <width/>
-        <height/>
-        <weight/>
+        <length />
+        <width />
+        <height />
+        <weight />
     </specifications>
-    <testProp>
-        <test1>
-            <soustest>part/testProp/test1/soustest</soustest>
-            <soustest2/>
-        </test1>
-    </testProp>
-</part>
+    </part>
