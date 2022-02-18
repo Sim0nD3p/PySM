@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QLab
 from layout.importer.treePropertiesEditor import TreePropretiesEditor
 from layout.importer.treeInspector import TreeInspector
 import json
-
+from layout.settings.settings import Settings
 from part.Part import Part
 
 class JsonImporter(TreeInspector):
@@ -25,6 +25,6 @@ class JsonImporter(TreeInspector):
         with open(file_name) as json_string:
             json_data = json.load(json_string)
             for child in json_data:
-                data = Part.inspect_json_tree(child, 'part')
+                data = Part.inspect_json_tree(child, Settings.json_part_root)
                 data_stack.append(data)
         return data_stack

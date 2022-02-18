@@ -1,9 +1,8 @@
 from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QWidget, QVBoxLayout
 import sys
-from layout.centralWidget import CentralWidget
-from layout.settings.settings import SettingsWindow
+from layout.central.centralWidget import CentralWidget
+from layout.settings.settingsLayout import SettingsWindow
 from layout.importer.importer import ImporterWindow
-from layout.central.overview.overview import Overview
 from backend.PartCatalog import PartCatalog
 from backend.writers.partCatalogWriter import PartCatalogWriter
 from backend.loaders.partCatalogLoader import PartCatalogLoader
@@ -32,15 +31,13 @@ class MainWindow(QMainWindow):
     def create_menus(self):
         menu_bar = self.menuBar()
         files_menu = menu_bar.addMenu('Files')
-        parts_menu = menu_bar.addMenu('Pièces')
-        importer = parts_menu.addMenu('importer')
-        importer.addAction('piece')
+        # parts_menu = menu_bar.addMenu('Pièces')
+        # importer = parts_menu.addMenu('importer')
+        # importer.addAction('piece')
 
         catalog_menu = menu_bar.addMenu('Catalogue')
-        catalog_import = catalog_menu.addAction('importer calatogue')
+        catalog_import = catalog_menu.addAction('Importer')
         catalog_import.triggered.connect(self.show_importer)
-        catalog_add_props = catalog_menu.addAction('Ajouter propriété')
-        catalog_add_props.triggered.connect(self.show_importer)
         catalog_delete = catalog_menu.addAction('Supprimer catalogue')
 
         def delete_catalog():
@@ -51,12 +48,10 @@ class MainWindow(QMainWindow):
 
         catalog_save = catalog_menu.addMenu('Sauvegarder catalogue')
         save = catalog_save.addAction('Enregistrer')
-        save_as = catalog_save.addAction('Enregistrer sous')
 
         save.triggered.connect(PartCatalogWriter.save_default)
 
 
-        suppliers_menu = menu_bar.addMenu('Fournisseurs')
         settings_menu = menu_bar.addAction('Paramètres')
         settings_menu.triggered.connect(self.show_settings)
 
@@ -86,7 +81,7 @@ class MainWindow(QMainWindow):
         for part in list:
             self.part_catalog.add_part(part)
 
-        self.main_widget.overview.list_widget.draw_list(list)
+        self.main_widget.catalog_overview.list_widget.draw_list(list)
 
 
     def part_catalog_update(self):
@@ -94,8 +89,8 @@ class MainWindow(QMainWindow):
         Function to run when new catalog update to update UI
         :return:
         """
-        self.main_widget.overview.list_widget.draw_list(PartCatalog.catalog)
-        self.main_widget.overview.filter_widget.update_dropdown()
+        self.main_widget.catalog_overview.update_catalog_overview_features()
+
 
 
     def create_status_bar(self):

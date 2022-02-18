@@ -2,9 +2,41 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QShortcut, QKeySequence
 from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QLineEdit, QComboBox
 from backend.PartCatalog import PartCatalog
-
+from layout.settings.settings import Settings
 
 class FilterWidget(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.resize(500, 200)
+        self.setStyleSheet('background-color:#bababa')
+        self.main_vbox = QVBoxLayout()
+
+        # search by text
+        self.text_edit = QLineEdit()
+        self.create_text_search()
+
+        # drop down for type (in settings)
+        self.dropdown = QComboBox()
+        self.create_type_filter()
+
+        self.setLayout(self.main_vbox)
+
+    def create_text_search(self):
+        hbox = QHBoxLayout()
+        search_label = QLabel('Rechercher: ')
+        hbox.addWidget(search_label)
+        hbox.addWidget(self.text_edit)
+        self.main_vbox.addLayout(hbox)
+
+    def create_type_filter(self):
+        print('create type filter')
+        PartCatalog.get_all_values_instance_for_property(Settings.dropdown_filter_property)
+
+
+        
+
+
+class FilterWidget_old(QWidget):
     def __init__(self, parent=None):
         super().__init__()
         self.resize(500, 200)

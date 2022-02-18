@@ -2,6 +2,7 @@ import xml.etree.ElementTree as ET
 from backend.PartCatalog import PartCatalog
 from part.usage.usageDataClasses import Order, Date
 from part.Part import Part
+from layout.settings.settings import Settings
 
 
 class PartCatalogLoader:
@@ -55,7 +56,7 @@ class PartCatalogLoader:
 
         # getting instructions on object structure/instructions in part_model
         default_xml_tree = ET.ElementTree()
-        file = 'backend/appData/partModels/default_part_model.xml'  # file on how to get instructions
+        file = Settings.part_model_path  # file on how to get instructions
         default_xml_tree.parse(file)       # parsing instructions
         instructions_root = default_xml_tree.getroot()  # getting root of instructions
         decoder_instructions = Part.inspect_xml_tree(instructions_root)

@@ -3,13 +3,14 @@ from PyQt6.QtGui import QFont, QShortcut, QKeySequence
 from PyQt6.QtWidgets import QWidget, QTreeWidget, QLabel, QPushButton, QLineEdit, QVBoxLayout, QTreeWidgetItem, \
     QHBoxLayout
 import xml.etree.ElementTree as et
+from layout.settings.settings import Settings
 
 
 class TreePropretiesEditor(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.template = 'backend/appData/partModels/default_part_model.xml'  # template xml file
+        self.template = Settings.part_model_path  # template xml file
         self.xml_tree = et.ElementTree()
         self.xml_tree.parse(self.template)
 
@@ -168,4 +169,4 @@ class TreePropretiesEditor(QWidget):
 
     def submit_template(self):
         print('submit template')
-        self.xml_tree.write('backend/appData/partModels/default_part_model.xml')
+        self.xml_tree.write(Settings.part_model_path)

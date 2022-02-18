@@ -47,23 +47,12 @@ class PartCatalog:
         return results
 
     @classmethod
-    def get_all_types(cls):
-        """
-        Gets all the parts types present in the catalog
-        :return: list of types (string)
-        """
-        types = []
+    def get_all_values_instance_for_property(cls, property_path):
         for part in cls.catalog:
-            if hasattr(part, 'general_information'):
-                if hasattr(part.general_information, 'type'):
-                    if part.general_information.type != 'error':
-                        if part.general_information.type not in types:
-                            types.append(part.general_information.type)
+            value = part.get_path_property_value(property_path)
+            print(value)
 
-        # should add sort in alpabetical order
-        print(type(types), types)
 
-        return types
 
     @classmethod
     def get_catalog(cls):

@@ -1,20 +1,19 @@
 from PyQt6.QtWidgets import QWidget, QLabel, QHBoxLayout, QStackedLayout
 import sys
-from layout.central.overview.overview import Overview
+from layout.central.catalogOverview.catalogOverview import CatalogOverview
 
 
 class CentralWidget(QWidget):
     def __init__(self):
         super().__init__()
         self.setGeometry(10, 10, 400, 400)
-        self.setStyleSheet('background-color:blue')
+        # self.setStyleSheet('background-color:blue')
 
         self.stackedlayout = QStackedLayout()
         self.stackedlayout.setCurrentIndex(0)
-        self.overview = Overview()
+        self.catalog_overview = CatalogOverview()
 
-        self.screen1 = self.overview
-        self.screen1.setStyleSheet('background-color:red')
+
         self.screen2 = QWidget()
         self.screen2.setStyleSheet('background-color:blue')
         self.screen3 = QWidget()
@@ -41,7 +40,7 @@ class CentralWidget(QWidget):
 
     def create_layout(self):
 
-        self.stackedlayout.addWidget(self.screen1)
+        self.stackedlayout.addWidget(self.catalog_overview)
         self.stackedlayout.addWidget(self.screen2)
         self.stackedlayout.addWidget(self.screen3)
         self.setLayout(self.stackedlayout)

@@ -59,6 +59,27 @@ class Part:
 
         }
 
+    def get_path_property_value(self, property_path):
+        """
+        Might not work for properties that are dict and not object
+        :param property_path:
+        :return:
+        """
+        def go_to_next_step(root, next_steps):
+            if len(next_steps) > 1:
+                print(vars(root))
+                print('next_step', next_steps)
+                if hasattr(root, next_steps[0]):
+                    print('yes')
+                    go_to_next_step(root.__getattribute__(next_steps[0]), next_steps[1:])
+                else:
+                    print('error')
+            else:
+                return root.__getattribute__(next_steps[0])
+        return go_to_next_step(self, property_path.split('/')[1:])
+
+
+
 
 
     @classmethod
@@ -228,6 +249,7 @@ class Part:
     @staticmethod
     def go_to_element(current_part, directions, current_value):
         """
+        *might change name
         Go to path, assign value and returns part
         :param current_part: part object
         :param directions: directions of path split array ex: ['part', 'general_information', 'description']
@@ -296,14 +318,6 @@ class Part:
                 part = Part.go_to_element(part, object_dir, value)
 
         return part
-
-    @classmethod
-    def make_part_from_instructions(cls, instructions, data):
-        """
-        :param instructions:
-        :param data:
-        :return:
-        """
 
 
 def target(xml_root, obj):

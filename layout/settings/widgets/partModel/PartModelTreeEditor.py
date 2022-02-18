@@ -1,6 +1,8 @@
+from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QWidget, QMainWindow, QLabel, QPushButton, QLineEdit, QTreeWidget, QVBoxLayout, QHBoxLayout, \
     QTreeWidgetItem
 import xml.etree.ElementTree as eT
+from layout.settings.settings import Settings
 
 
 class TreeWindow(QMainWindow):
@@ -14,7 +16,7 @@ class PartModelTreeEditor(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.file = 'backend/appData/partModels/partModel.xml'
+        self.file = Settings.part_model_path
 
         self.xml_tree_object = eT.ElementTree()
         self.xml_tree_object.parse(self.file)
@@ -66,7 +68,7 @@ class PartModelTreeEditor(QWidget):
 
     def save_part_model(self):
         print('saving part model')
-        self.xml_tree_object.write('backend/appData/partModels/partModel.xml')
+        self.xml_tree_object.write(Settings.part_model_path)
 
     def create_input_widget(self):
         hbox = QHBoxLayout()
