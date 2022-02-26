@@ -1,6 +1,8 @@
+from layout.settings.settings import Settings
 from part.dataClasses import GeneralInformation, Specifications
 from part.usage.orderHistory import OrderHistory
 from part.usage.usageDataClasses import Date, Order
+import xml.etree.ElementTree as et
 """
     **TF
     ----- NOMENCLATURE -----
@@ -62,29 +64,62 @@ class Part:
     def get_path_property_value(self, property_path):
         """
         Might not work for properties that are dict and not object
+        returns the value associated with the property path
         :param property_path:
         :return:
         """
         def go_to_next_step(root, next_steps):
             if len(next_steps) > 1:
-                print(vars(root))
-                print('next_step', next_steps)
+                # print(vars(root))
+                # print('next_step', next_steps)
                 if hasattr(root, next_steps[0]):
-                    print('yes')
-                    go_to_next_step(root.__getattribute__(next_steps[0]), next_steps[1:])
+                    # print('yes')
+                    # print(root.__getattribute__(next_steps[0]))
+                    return go_to_next_step(root.__getattribute__(next_steps[0]), next_steps[1:])
                 else:
-                    print('error')
+                    if next_steps[0] in root:
+                        return go_to_next_step(root[next_steps[0]], next_steps[1:])
+                    else:
+                        print('error in get_path_property_value->go_to_next_step')
+                        return None
             else:
-                return root.__getattribute__(next_steps[0])
+                if hasattr(root, next_steps[0]):
+                    return root.__getattribute__(next_steps[0])
+
+                elif next_steps[0] in root:
+                    return root[next_steps[0]]
+                else:
+                    print('error in get_path_property_value')
+                    print(root, next_steps)
+
         return go_to_next_step(self, property_path.split('/')[1:])
 
+    @staticmethod
+    def get_default_properties_list():
+        """
+        Dict of all child properties and their paths
+        (property: property_path)
+        :return: list
+        """
+        properties = []
+        tree = et.ElementTree()
+        tree.parse(Settings.part_model_path)
+        for path in Part.inspect_xml_tree(tree.getroot()):
+            properties.append(path)
+
+        return properties
 
 
 
-
-    @classmethod
-    def inspect_part_object(cls, part):
+    @staticmethod
+    def inspect_part_object(part):
+        """
+        DOC
+        :param part:
+        :return:
+        """
         rec = {}
+
         def scan(obj, root):
             if hasattr(obj, '__dict__'):
                 for child in vars(obj):
@@ -98,9 +133,8 @@ class Part:
                 else:
                     rec[root] = obj
 
-        scan(part, 'part')
+        scan(part, 'part')  # replace string by setting prop
         return rec
-
 
     @staticmethod
     def inspect_xml_tree(tree):

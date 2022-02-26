@@ -18,8 +18,40 @@ class PartCatalog:
         return output
 
     @classmethod
+    def filter_path(cls, source, property_path, search_value: str):
+        """
+        Searches the catalog for value in path
+        :param source: source to look for search value
+        :param property_path: list or string
+        :param search_value: string value to search for
+        :return:
+        """
+        if source is None:
+            source = cls.catalog
+
+        if search_value is None:
+            return source
+
+        results = []
+        for part in source:
+            if type(property_path) is str:
+                value = part.get_path_property_value(property_path)
+                if search_value.casefold() is not None and search_value.casefold() in str(value).casefold():
+                    if part not in results:
+                        results.append(part)
+            elif type(property_path) is list:
+                for path in property_path:
+                    value = part.get_path_property_value(path)
+                    if value is not None and search_value.casefold() in str(value).casefold():
+                        if part not in results:
+                            results.append(part)
+
+        return results
+
+    @classmethod
     def text_search(cls, source, text):
         """
+        OLD
         Search for string in all prop of part
         :param text: string
         :return: list of part object
@@ -48,9 +80,17 @@ class PartCatalog:
 
     @classmethod
     def get_all_values_instance_for_property(cls, property_path):
+        """
+        Gets a list of values in PartCatalog for a given property path
+        :param property_path:
+        :return: list of values
+        """
+        existing_values = []
         for part in cls.catalog:
             value = part.get_path_property_value(property_path)
-            print(value)
+            if value not in existing_values and value is not None:
+                existing_values.append(value)
+        return existing_values
 
 
 

@@ -8,5 +8,5 @@ class Settings:
     part_model_path = 'backend/appData/partModels/default_part_model.xml'
 
     # property to filter in dropbox of filterWidget
-    dropdown_filter_property = 'part/general_information/type'
+    filter_dropdown_types = 'part/general_information/type'
 

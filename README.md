@@ -16,14 +16,12 @@
     - import for orders dates and qte
 
 ## where I am:
-- finish catalogWriter and do catalogLoader for order_history
-- bug filterWidget
 
 
 ## Mid term
 - fix ENTER shortcut in part search
+- nomenclature naming module
 
-- add selector for part model in settings
 - partModel vs default_part_model setting vs importer/writer + modifications
 
 
@@ -31,3 +29,17 @@
 - add global code path variable in setting for part/code
 - reload partModel in treePropertiesEditor when saved
   - properties path stays when switching part->props after saving
+
+# STORE V2
+fomr the start, divided in 2 parts, visual and backend
+- VISUAL:
+  - store top view
+  - move things
+## Store generation
+- draw/view store in 2d map, (coordinate system)
+  - view racking top view
+  - view racking content (shelves) when click on racking
+  - 
+
+## STORE ALGO V2
+- chose how parts are placed
