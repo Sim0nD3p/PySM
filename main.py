@@ -1,4 +1,5 @@
-from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QWidget, QVBoxLayout
+from PyQt6.QtGui import QAction
+from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QWidget, QVBoxLayout, QMenu
 import sys
 from layout.central.centralWidget import CentralWidget
 from layout.settings.settingsLayout import SettingsWindow
@@ -6,6 +7,8 @@ from layout.importer.importer import ImporterWindow
 from backend.PartCatalog import PartCatalog
 from backend.writers.partCatalogWriter import PartCatalogWriter
 from backend.loaders.partCatalogLoader import PartCatalogLoader
+
+from layout.central.storeOverview.physicalViewer.actions import MoveUp
 
 
 class MainWindow(QMainWindow):
@@ -54,6 +57,21 @@ class MainWindow(QMainWindow):
 
         settings_menu = menu_bar.addAction('Paramètres')
         settings_menu.triggered.connect(self.show_settings)
+
+        store_menu = menu_bar.addMenu('Magasin')
+        # mu = MoveUp(self)
+        def create_store_menu(sm):
+            view = sm.addMenu('Vue')
+            ac = QAction('new', self)
+
+            # print(mu, type(mu))
+            view.addAction(ac)
+            # view.addAction(mu)
+
+        create_store_menu(store_menu)
+
+
+
 
 
 

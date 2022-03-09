@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import QWidget, QLabel, QHBoxLayout, QStackedLayout
 import sys
 from layout.central.catalogOverview.catalogOverview import CatalogOverview
+from layout.central.storeOverview.storeOverview import StoreOverview
 
 
 class CentralWidget(QWidget):
@@ -10,16 +11,16 @@ class CentralWidget(QWidget):
         # self.setStyleSheet('background-color:blue')
 
         self.stackedlayout = QStackedLayout()
-        self.stackedlayout.setCurrentIndex(0)
         self.catalog_overview = CatalogOverview()
 
 
-        self.screen2 = QWidget()
+        self.screen2 = StoreOverview()
         self.screen2.setStyleSheet('background-color:blue')
         self.screen3 = QWidget()
         self.screen3.setStyleSheet('background-color:green')
 
         self.create_layout()
+        self.stackedlayout.setCurrentIndex(1)
 
     def handle_stack_change(self, index):
         if type(index) is int:

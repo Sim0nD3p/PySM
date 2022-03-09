@@ -22,8 +22,6 @@
 - fix ENTER shortcut in part search
 - nomenclature naming module
 
-- partModel vs default_part_model setting vs importer/writer + modifications
-
 
 ## Thing to eventually do
 - add global code path variable in setting for part/code

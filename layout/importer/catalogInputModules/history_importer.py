@@ -6,7 +6,12 @@ from backend.PartCatalog import PartCatalog
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QFileDialog, QPushButton
 from os import listdir
 
+
 class HistoryImporter(QWidget):
+    """
+    Chose importer formatter script and input file and then work things out
+    1. Gets order pool
+    """
     def __init__(self):
         super().__init__()
 
