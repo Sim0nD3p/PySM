@@ -38,14 +38,18 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
     def __init__(self):
         super().__init__()
         self.elements = []
+        self.selected_elements = []
         self.coord_scale_x = 100
         self.x_offset = 0
         self.y_offset = 0
-        # self.mousePressed = QMouseEvent('MouseButtonPressed')
         self.current_drawing = None
+        self.mouse_pressed_position = None
+        self.mouse_action_type = ACTION_MOVE
+        self.default_mouse_action_type = ACTION_MOVE
 
     def get_logical_coordinates(self, mouse_event):
         """
+        * USE INVERSE MATRIX INSTEAD? SEE LINEAR ALGEBRA CONCEPTS
         Gets the logical coordinates of the mouse from mouseEvent
         :param mouse_event: PyQt6.QtGui.QMouseEvent
         :return: (x, y) logical coordinates
@@ -63,30 +67,52 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
 
     def mousePressEvent(self, a0: PyQt6.QtGui.QMouseEvent):
         print('mouse pressed')
-        ne = NewDrawing(self)
-
-        print(ne.isChecked())
-
-        print(ne.painter_active)
-
         x, y = self.get_logical_coordinates(a0)
-        dr = DrawingRectangle(self)
-        if dr.drawing_active:
-            # print('starting points', math.ceil(x), math.ceil(y))
-            dr.set_starting_point(math.ceil(x), math.ceil(y))
+
+        if self.mouse_action_type is ACTION_SELECT:
+            print('check for select')
+            for e in self.elements:
+                if e.contains(QPointF(x, y)):
+                    if e not in self.selected_elements:
+                        self.selected_elements.append(e)
+                    print('found element')
+                    self.paintGL()
+                    self.repaint()
+
+        elif self.mouse_action_type is ACTION_DRAW:
+            self.mouse_pressed_position = QPointF(x, y)
+
+
+
+
+
 
     def mouseMoveEvent(self, a0: PyQt6.QtGui.QMouseEvent):
-        print('move')
-        dr = DrawingRectangle(self)
-        if dr.drawing_active:
-            x, y = self.get_logical_coordinates(a0)
-            path = dr.create_currently_drawn_rectangle(math.ceil(x), math.ceil(y))
-            self.current_drawing = path
-            self.paintGL()
-            self.repaint()
+        x, y = self.get_logical_coordinates(a0)
+        if self.mouse_action_type is ACTION_DRAW:
+            if type(self.mouse_pressed_position) is PyQt6.QtCore.QPointF:
+                pp = QPainterPath()
+                rect = QRectF(self.mouse_pressed_position, QPointF(x, y))
+                pp.addRect(rect)
+                self.current_drawing = pp
+                self.paintGL()
+                self.repaint()
+
+
 
     def mouseReleaseEvent(self, a0: PyQt6.QtGui.QMouseEvent):
         print('release')
+        if self.mouse_action_type is ACTION_DRAW:
+            if self.current_drawing not in self.elements:
+                self.elements.append(self.current_drawing)
+
+            self.current_drawing = None
+            self.mouse_pressed_position = None
+
+
+        # self.mouse_action_type = self.default_mouse_action_type
+
+
 
 
 
@@ -143,19 +169,9 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
         print('resize GL')
 
 
-    def paintEvent(self, e: PyQt6.QtGui.QPaintEvent):
-        print('fdsfs')
     def paintGL(self):
-        # called on resize
-        print('paint GL')
-        # print('size', self.height(), self.width())
-
-        # setting background color directly on the OpenGL window
 
         painter = QPainter(self)
-        print(self.x_offset, self.y_offset)
-
-
         coord_scale_y = math.floor((self.height() / self.width()) * self.coord_scale_x)
         painter.setWindow(
             -self.coord_scale_x / 2 + self.x_offset,
@@ -166,44 +182,46 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
 
         # sets the coordinates system
         # TODO: add aspect ratio handling from widget source
-        # painter.setWindow(QRect(-20, -20, 40, 40))
-        # 652, 513
         # 2 first to move view, 2 last to set apsect ratio
         painter.setViewport(QRect(0, 0, self.width(), self.height()))
-
-
-        # vprint(painter.viewport())
-        # rect = Rect()
-
 
         pen = QPen()
         pen.setWidth(0.5)
         pen.setColor(QColor(102, 102, 109))
-
-        print('pen', pen)
         painter.setPen(pen)
+
         painter.setBrush(QColor(102, 102, 109))
 
-        # print('window', painter.window())
-        # print('viewport', painter.viewport())
         painter.eraseRect(
             -self.coord_scale_x/2,
             -coord_scale_y/2,
             self.coord_scale_x,
-            coord_scale_y)
-
+            coord_scale_y
+        )
+        # has to be after the eraseRect
         glClearColor(1, 1, 1, 1.0)
         glClear(GL_COLOR_BUFFER_BIT)
 
-
-
         for element in self.elements:
             if type(element) is PyQt6.QtGui.QPainterPath:
-                print('eme')
                 painter.drawPath(element)
 
+        pen = QPen()
+        pen.setWidth(0.5)
+        pen.setColor(QColor(210, 213, 73))
+        painter.setPen(pen)
+
+        painter.setBrush(QColor(210, 213, 73))
+
+
+        for selected_element in self.selected_elements:
+            # painter.drawPath(selected_element)
+            if type(selected_element) is PyQt6.QtGui.QPainterPath:
+                print('should draw element')
+                print(selected_element)
+                painter.drawPath(selected_element)
+
         if self.current_drawing:
-            print('drawing current')
             painter.drawPath(self.current_drawing)
 
         self.device_matrix = painter.deviceTransform()

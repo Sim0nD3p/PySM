@@ -5,8 +5,7 @@ from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QToolBar, QPushBu
 from PySide2.QtWidgets import QToolButton
 from layout.central.storeOverview.physicalViewer.toolBarControls import StoreViewerControls
 from layout.central.storeOverview.physicalViewer.storeOverallTopView import StoreTopVisualizer
-from layout.central.storeOverview.physicalViewer.actions import MoveUp, MoveLeft, MoveDown, MoveRight, ZoomOut,\
-    ZoomIn, DrawingRectangle
+from layout.central.storeOverview.physicalViewer.actions import *
 
 class StoreOverview(QWidget):
     def __init__(self):
@@ -18,22 +17,6 @@ class StoreOverview(QWidget):
         self.controls = StoreViewerControls(self.store_visual)
 
         self.main_grid_layout.addWidget(self.controls, 1, 1)
-
-
-        dr = DrawingRectangle(self)
-
-
-
-
-        self.addAction(dr)
-
-
-
-
-        dr.triggered.connect(lambda: dr.set_drawing_state(True))
-
-
-
 
 
         # TODO: add splitter to change width

@@ -48,6 +48,8 @@ class PartCatalog:
 
         return results
 
+
+
     @classmethod
     def text_search(cls, source, text):
         """

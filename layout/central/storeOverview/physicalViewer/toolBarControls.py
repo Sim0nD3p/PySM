@@ -15,10 +15,11 @@ class StoreViewerControls(QToolBar):
         self.addAction(ZoomOut(self, store_viewer))
         self.addAction(ZoomIn(self, store_viewer))
 
-
-        self.new_drawing_action = NewDrawing(self)
-
+        self.new_drawing_action = NewDrawing(self, store_viewer)
         self.addAction(self.new_drawing_action)
+
+        self.select_action = Select(self, store_viewer)
+        self.addAction(self.select_action)
         # self.setStyleSheet('background-color:red')
 
     def mousePressEvent(self, a0: QMouseEvent):

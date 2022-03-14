@@ -3,6 +3,11 @@ from PyQt6.QtGui import QAction, QShortcut, QKeySequence, QPainterPath, QIcon
 from PyQt6.QtCore import Qt, QPointF, QRectF
 from layout.settings.settings import Settings
 
+ACTION_DRAW = 'DRAW_ACTION'
+ACTION_MOVE = 'MOVE_ACTION'
+ACTION_ZOOM = 'ZOOM_ACTION'
+ACTION_SELECT = "ACTION_SELECT"
+
 
 class MoveUp(QAction):
     def __init__(self, parent, viewer):
@@ -11,7 +16,6 @@ class MoveUp(QAction):
         self.setShortcut(QKeySequence(Qt.Key.Key_Up))
         self.setIcon(QIcon('res/icons/north_black_24dp.svg'))
         self.triggered.connect(lambda: self.viewer.move_offset(0, -Settings().move_click_offset))
-
 
 
 class MoveDown(QAction):
@@ -58,66 +62,44 @@ class ZoomIn(QAction):
         self.setIcon(QIcon('res/icons/zoom_in_black_24dp.svg'))
         self.triggered.connect(lambda: self.viewer.zoom_scalar(-Settings.zoom_click_offset))
 
-class NewDrawing(QAction):
-    painter_active = False
 
-    def __init__(self, parent):
+class NewDrawing(QAction):
+    def __init__(self, parent, viewer):
         super().__init__('Nouvel élément', parent)
+        # TODO: auto uncheck toolButton
+        self.viewer = viewer
+        self.setCheckable(True)
         self.setShortcut(QKeySequence(Qt.Key.Key_N))
         self.setIcon(QIcon('res/icons/add_black_24dp.svg'))
-        self.setCheckable(True)
+        self.triggered.connect(self.set_viewer_mouse_action_type)
 
-
-
-
-
-
-
-
-
-class DrawingRectangle(QAction):
-    drawing_active = False
-    starting_point = QPointF(0, 0)
-
-    def __init__(self, parent):
-        super().__init__('Dessiner rectangle', parent)
-        self.setShortcut(QKeySequence(Qt.Key.Key_M))
-        self.setIcon(QIcon('res/icons/add_black_24dp.svg'))
-        self.setCheckable(True)
-
-    @classmethod
-    def set_drawing_state(cls, status):
+    def set_viewer_mouse_action_type(self):
         """
-        Sets the status of drawing active | inactive (bool)
-        :param status: bool
+        Sets the viewer's mouse action type to drawing
         :return: void
         """
-        cls.drawing_active = status
+        print('set ACTION_DRAW')
+        self.viewer.mouse_action_type = ACTION_DRAW
 
-    @classmethod
-    def set_starting_point(cls, x, y):
+class Select(QAction):
+    def __init__(self, parent, viewer):
+        super().__init__('Sélectionner', parent)
+        self.viewer = viewer
+        self.setCheckable(True)
+        self.setShortcut(QKeySequence(Qt.Key.Key_V))
+        self.setIcon(QIcon('res/icons/search_black_24dp.svg'))
+        self.triggered.connect(self.set_mouse_action_type)
+
+    def set_mouse_action_type(self):
         """
-        Stores the logical coordinates of the starting point of the currently drawn rectangle
-        :param x: logical coordinate x
-        :param y: logical coordinate y
+        Sets the viewer's mouse action type to select
         :return: void
         """
-        cls.starting_point = QPointF(x, y)
+        self.viewer.mouse_action_type = ACTION_SELECT
 
-    @classmethod
-    def create_currently_drawn_rectangle(cls, current_x, current_y):
-        """
-        Creates the currently drawn rectangle and returns painterPath
-        :param current_x: logical coordinate x
-        :param current_y: logical coordinate y
-        :return: QPainterPath
-        """
-        final_point = QPointF(current_x, current_y)
-        pp = QPainterPath()
-        rect = QRectF(cls.starting_point, final_point)
 
-        pp.addRect(rect)
-        return pp
+
+
 
 
 
