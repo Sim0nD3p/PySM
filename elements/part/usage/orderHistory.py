@@ -1,6 +1,6 @@
 import datetime, math
-from datetime import date, timedelta
-from part.usage.usageDataClasses import Order, Date
+from datetime import date
+from elements.part.usage.usageDataClasses import Order, Date
 
 
 

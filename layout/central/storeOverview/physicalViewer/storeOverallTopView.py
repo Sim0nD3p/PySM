@@ -20,6 +20,7 @@ from PyQt6.QtGui import QPainter, QPen, QPixmap, QPainterPath, QPaintDevice, QOp
 from PyQt6.QtGui import QColor, QPainter, QBrush, QPen, QPainterPath, QMouseEvent
 from OpenGL.GL import *
 from layout.central.storeOverview.physicalViewer.actions import *
+from elements.racking.racking import Racking
 # https://nrotella.github.io/journal/first-steps-python-qt-opengl.html#pyopengl
 
 # solution is QOpenGLWidget
@@ -40,12 +41,15 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
         self.elements = []
         self.selected_elements = []
         self.coord_scale_x = 100
+        self.rack = Racking(0, 0, 25, 50, 0)
         self.x_offset = 0
         self.y_offset = 0
         self.current_drawing = None
         self.mouse_pressed_position = None
         self.mouse_action_type = ACTION_MOVE
         self.default_mouse_action_type = ACTION_MOVE
+
+        self.rect = None
 
     def get_logical_coordinates(self, mouse_event):
         """
@@ -102,9 +106,11 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
 
     def mouseReleaseEvent(self, a0: PyQt6.QtGui.QMouseEvent):
         print('release')
+        super().mouseReleaseEvent(a0)
         if self.mouse_action_type is ACTION_DRAW:
             if self.current_drawing not in self.elements:
                 self.elements.append(self.current_drawing)
+
 
             self.current_drawing = None
             self.mouse_pressed_position = None
@@ -117,11 +123,22 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
 
 
 
-    def draw_rect(self):
-        rect = QPainterPath()
-        rect.addRect(0, 0, 10, 10)
-        self.elements.append(rect)
+    def draw_shape(self):
+        # print('draw rect')
+        re = Racking(x_position=0, y_position=0, width=25, length=50, angle=0)
+        pp = QPainterPath()
+
+        vertices = re.vertices()
+        for vertex in vertices:
+            pp.lineTo(QPointF(vertex[0, 0], vertex[0, 1]))
+            print(vertices[0, 0])
+        pp.lineTo(QPointF(vertices[0, 0], vertices[0, 1]))
+        self.rect = pp
         self.paintGL()
+
+
+
+
 
 
     def move_offset(self, x: int, y: int):
@@ -186,7 +203,7 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
         painter.setViewport(QRect(0, 0, self.width(), self.height()))
 
         pen = QPen()
-        pen.setWidth(0.5)
+        pen.setWidth(1)
         pen.setColor(QColor(102, 102, 109))
         painter.setPen(pen)
 
@@ -201,6 +218,11 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
         # has to be after the eraseRect
         glClearColor(1, 1, 1, 1.0)
         glClear(GL_COLOR_BUFFER_BIT)
+
+        # self.draw_rect()
+        if self.rect is not None:
+            print('paint rect')
+            painter.drawPath(self.rect)
 
         for element in self.elements:
             if type(element) is PyQt6.QtGui.QPainterPath:

@@ -1,4 +1,4 @@
-from part.Part import Part
+from elements.part.Part import Part
 
 class PartCatalog:
     catalog = []

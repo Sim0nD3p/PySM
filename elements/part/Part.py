@@ -1,7 +1,7 @@
 from layout.settings.settings import Settings
-from part.dataClasses import GeneralInformation, Specifications
-from part.usage.orderHistory import OrderHistory
-from part.usage.usageDataClasses import Date, Order
+from elements.part.dataClasses import GeneralInformation, Specifications
+from elements.part.usage.orderHistory import OrderHistory
+from elements.part.usage.usageDataClasses import Date
 import xml.etree.ElementTree as et
 """
     **TF

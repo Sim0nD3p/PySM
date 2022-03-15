@@ -1,6 +1,6 @@
 from layout.importer.catalogInputModules.part_importer import Importer
 from backend.PartCatalog import PartCatalog
-from part.Part import Part
+from elements.part.Part import Part
 
 
 class PropsImporter(Importer):

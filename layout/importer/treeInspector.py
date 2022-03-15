@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import QPushButton
 
 from layout.importer.treePropertiesEditor import TreePropretiesEditor
-from part.Part import Part
+from elements.part.Part import Part
 
 class TreeInspector(TreePropretiesEditor):
     def __init__(self):

@@ -1,9 +1,7 @@
-from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QLabel, QTreeWidget, QTreeWidgetItem
-from layout.importer.treePropertiesEditor import TreePropretiesEditor
 from layout.importer.treeInspector import TreeInspector
 import json
 from layout.settings.settings import Settings
-from part.Part import Part
+from elements.part.Part import Part
 
 class JsonImporter(TreeInspector):
     def __init__(self):

@@ -15,7 +15,6 @@ class CentralWidget(QWidget):
 
 
         self.screen2 = StoreOverview()
-        self.screen2.setStyleSheet('background-color:blue')
         self.screen3 = QWidget()
         self.screen3.setStyleSheet('background-color:green')
 

@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 from backend.PartCatalog import PartCatalog
-from part.usage.usageDataClasses import Order, Date
-from part.Part import Part
+from elements.part.usage.usageDataClasses import Order, Date
+from elements.part.Part import Part
 from layout.settings.settings import Settings
 
 

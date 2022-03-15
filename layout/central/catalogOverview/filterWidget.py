@@ -3,7 +3,7 @@ from PyQt6.QtGui import QShortcut, QKeySequence
 from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QLineEdit, QComboBox, QFrame
 from backend.PartCatalog import PartCatalog
 from layout.settings.settings import Settings
-from part.Part import Part
+from elements.part.Part import Part
 
 
 class FilterWidget(QFrame):

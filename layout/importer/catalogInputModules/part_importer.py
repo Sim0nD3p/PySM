@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import QWidget, QHBoxLayout, QLabel, QStackedLayout
 from layout.importer.file_selector import FileSelector
 from layout.importer.fileParsers.jsonImporter import JsonImporter
 from layout.importer.fileParsers.xmlImporter import XmlImporter
-from part.Part import Part
+from elements.part.Part import Part
 from backend.PartCatalog import PartCatalog
 
 

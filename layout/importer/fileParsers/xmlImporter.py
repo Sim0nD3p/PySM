@@ -1,8 +1,5 @@
-from PyQt6.QtWidgets import QWidget, QHBoxLayout, QPushButton, QVBoxLayout
-
 from layout.importer.treeInspector import TreeInspector
-from layout.importer.treePropertiesEditor import TreePropretiesEditor
-from part.Part import Part
+from elements.part.Part import Part
 import xml.etree.ElementTree as et
 
 class XmlImporter(TreeInspector):

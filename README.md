@@ -2,13 +2,6 @@
 # PySM
 ##To do:
 - add way to select multiple items and modify their prop in batch
-- streamline partModel.xml
-- add filter type 
-- think about storage
-
-
-  - template for importing (create and select)
-  - add more props
 
   - continue work on import
     - confirmationWidget, add props vs add part (merge, remplacer)
@@ -16,10 +9,10 @@
     - import for orders dates and qte
 
 ## where I am:
-
+- create racking object when drawing rectangle and set prop racking_card to enter informations about racking drawn
+- mouseRelease in storeViewer should act in storeOverview.
 
 ## Mid term
-- fix ENTER shortcut in part search
 - nomenclature naming module
 
 

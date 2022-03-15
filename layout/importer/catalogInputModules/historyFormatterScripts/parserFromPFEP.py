@@ -1,8 +1,7 @@
 import json
 import math
-from part.usage.usageDataClasses import Order, Date
-import xml.etree.ElementTree as ET
-from layout.importer.catalogInputModules.historyFormatterScripts.suppInfos import suppliers
+from elements.part.usage.usageDataClasses import Order, Date
+
 
 def number_to_int(number):
     """
