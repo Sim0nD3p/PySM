@@ -1,23 +1,9 @@
-import sys
-import random
-from threading import Timer
-import OpenGL.GL
-import OpenGL.arrays.ctypesparameters
-import glfw
-from PyQt6.QtCore import Qt, QSize, QRect, QPoint
+from PyQt6.QtCore import Qt, QRect, pyqtSignal
 import math
 import PyQt6
-from PyQt6.QtCore import Qt
-from PySide2.QtWidgets import QOpenGLWidget
-from PyQt6.QtOpenGL import QOpenGLPaintDevice, QOpenGLWindow
-from PyQt6 import QtOpenGL, QtCore
 from PyQt6 import QtOpenGLWidgets
-import numpy as np
-from PyQt6.QtCore import Qt
-from OpenGL.arrays import vbo
-from PyQt6.QtWidgets import QWidget, QApplication
-from PyQt6.QtGui import QPainter, QPen, QPixmap, QPainterPath, QPaintDevice, QOpenGLContext
-from PyQt6.QtGui import QColor, QPainter, QBrush, QPen, QPainterPath, QMouseEvent
+from PyQt6.QtGui import QPainter
+from PyQt6.QtGui import QColor, QPainter, QPen
 from OpenGL.GL import *
 from layout.central.storeOverview.physicalViewer.actions import *
 from elements.racking.racking import Racking
@@ -36,12 +22,14 @@ class Rect(QPainterPath):
 
 
 class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
+    mouse_release_signal = pyqtSignal(PyQt6.QtGui.QMouseEvent, name='name')
+    new_rect_signal = pyqtSignal(PyQt6.QtCore.QPointF, PyQt6.QtCore.QPointF, name='new_shape')
     def __init__(self):
         super().__init__()
         self.elements = []
         self.selected_elements = []
         self.coord_scale_x = 100
-        self.rack = Racking(0, 0, 25, 50, 0)
+        self.racking = Racking(x_position=0, y_position=0, length=100, width=50, angle=90, height=100)
         self.x_offset = 0
         self.y_offset = 0
         self.current_drawing = None
@@ -50,6 +38,9 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
         self.default_mouse_action_type = ACTION_MOVE
 
         self.rect = None
+
+    def test(self):
+        print('this is test')
 
     def get_logical_coordinates(self, mouse_event):
         """
@@ -105,15 +96,18 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
 
 
     def mouseReleaseEvent(self, a0: PyQt6.QtGui.QMouseEvent):
-        print('release')
-        super().mouseReleaseEvent(a0)
         if self.mouse_action_type is ACTION_DRAW:
+            x, y = self.get_logical_coordinates(a0)
+            mouse_released_position = QPointF(x, y)
+            self.new_rect_signal.emit(self.mouse_pressed_position, mouse_released_position)
             if self.current_drawing not in self.elements:
                 self.elements.append(self.current_drawing)
 
 
             self.current_drawing = None
             self.mouse_pressed_position = None
+
+        self.repaint()
 
 
         # self.mouse_action_type = self.default_mouse_action_type
@@ -124,8 +118,12 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
 
 
     def draw_shape(self):
-        # print('draw rect')
-        re = Racking(x_position=0, y_position=0, width=25, length=50, angle=0)
+        """
+        Drawing shape based on vertices
+        :return:
+        """
+        print('draw rect')
+        re = Racking(x_position=0, y_position=0, width=25, length=50, angle=0, height=100)
         pp = QPainterPath()
 
         vertices = re.vertices()

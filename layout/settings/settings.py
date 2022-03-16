@@ -26,3 +26,7 @@ class Settings:
     move_click_offset = 10
     zoom_click_offset = 10
 
+
+    # ----- STORE SETTINGS -----
+    store_object_max_height = 1000
+
