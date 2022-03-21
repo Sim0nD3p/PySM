@@ -30,6 +30,7 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
     mouse_release_signal = pyqtSignal(PyQt6.QtGui.QMouseEvent, name='name')
     new_rect_signal = pyqtSignal(ElementConstructorData, name='new_shape')
     selection_signal = pyqtSignal(StoreObject, name='selection')
+    unselect_signal = pyqtSignal(name='unselect')
 
 
     def __init__(self):
@@ -134,16 +135,17 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
     def mousePressEvent(self, a0: PyQt6.QtGui.QMouseEvent):
         x, y = self.get_logical_coordinates(a0)
         if self.mouse_action_type is ACTION_SELECT:
-            print('check for select')
             self.selected_element = None
+            self.current_drawing = None
             for e in StoreFloor().objects:
-                print('storeObject floor', e)
                 if issubclass(type(e), StoreObject):
                     print(e.painter_path)
                     if e.painter_path.contains(QPointF(x, y)):
-                        print('setting selected')
                         self.selected_element = e
-                        self.selection_signal.emit(e)
+                        self.selection_signal.emit(self.selected_element)
+            if self.selected_element is None:
+                self.unselect_signal.emit()
+
 
 
         elif self.mouse_action_type is ACTION_DRAW:
@@ -197,7 +199,7 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
         painter.setViewport(QRect(0, 0, self.width(), self.height()))
 
         pen = QPen()
-        pen.setWidth(1)
+        pen.setWidth(0)
         pen.setColor(QColor(102, 102, 109))
         painter.setPen(pen)
 
@@ -224,11 +226,10 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
                 painter.drawPath(element)
 
         for element in StoreFloor.objects:
-            print(element.geometry_matrix)
             painter.drawPath(element.painter_path)
 
         pen = QPen()
-        pen.setWidth(0.5)
+        pen.setWidth(0)
         pen.setColor(QColor(210, 213, 73))
         painter.setPen(pen)
 
@@ -236,7 +237,6 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
 
 
         if self.selected_element is not None:
-            print('should draw selected element')
             painter.drawPath(self.selected_element.painter_path)
 
         if self.current_drawing:

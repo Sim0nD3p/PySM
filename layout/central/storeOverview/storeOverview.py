@@ -23,6 +23,7 @@ class StoreOverview(QWidget):
         self.store_visual.setMinimumSize(PyQt6.QtCore.QSize(200, 400))
         self.store_visual.new_rect_signal.connect(self.handle_element_selection)
         self.store_visual.selection_signal.connect(self.handle_element_selection)
+        self.store_visual.unselect_signal.connect(self.handle_unselect)
 
         # self.controls = StoreViewerControls(self.store_visual)
 
@@ -47,7 +48,12 @@ class StoreOverview(QWidget):
         self.panel.element_inspector.update_child_informations(constructor)
 
     def handle_element_selection(self, element: StoreObject):
-        self.panel.element_inspector.update_child_informations(element)
+        if element is not None:
+            self.panel.element_inspector.update_child_informations(element)
+
+
+    def handle_unselect(self):
+        self.panel.element_inspector.update_child_informations(None)
 
 
 

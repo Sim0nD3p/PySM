@@ -68,7 +68,13 @@ class ElementInspector(QTabWidget):
         :param element: StoreObject
         :return:
         """
-        if type(element) is ElementConstructorData:
+        print('update child infos')
+        self.element_properties.enable_all()
+        if element is None:
+            self.element_properties.display_blank()
+            self.element_properties.element = None
+            self.element_properties.disable_all()
+        elif type(element) is ElementConstructorData:
             self.element_properties.element = None
             self.element_properties.update_informations(element)
         elif issubclass(type(element), StoreObject):

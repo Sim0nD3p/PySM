@@ -9,6 +9,7 @@ class StoreObject:
     """
     Parent class for all rectanglar store objects that have dimensions, position
     should have painterPath directly implemented (isolated to the best we can)
+    TODO: meaning of length and width when variable length/width
     """
     def __init__(self, name, id, x_position, y_position, length, width, height, angle, element_type):
         self.name = name
@@ -87,7 +88,7 @@ class StoreObject:
         :return: void
         """
         if length > 0:
-            self.geometry_matrix[1, 1] = length
+            self.geometry_matrix[1, 0] = length
             self.update_painter_path()
         else:
             print('error length should be > 0')
@@ -105,6 +106,8 @@ class StoreObject:
         :param width: width
         :return: void
         """
+        print('setting width')
+        print(width)
         if width > 0:
             self.geometry_matrix[1, 1] = width
             self.update_painter_path()

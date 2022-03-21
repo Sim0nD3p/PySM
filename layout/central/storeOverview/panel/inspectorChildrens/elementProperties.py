@@ -18,6 +18,7 @@ class ElementProperties(QWidget):
         self.setAutoFillBackground(True)
         self.setFocusPolicy(Qt.FocusPolicy.ClickFocus)
         self.setBackgroundRole(QPalette.ColorRole.Base)
+        self.input_elements = []
 
         # TITLE
         title = QLabel('Propriétés')
@@ -30,6 +31,7 @@ class ElementProperties(QWidget):
         # NAME
         self.name_label = QLabel('Nom')
         self.name_le = QLineEdit()
+        self.input_elements.append(self.name_le)
         self.name_le.setFocusPolicy(Qt.FocusPolicy.ClickFocus)
         name_hbox = QHBoxLayout()
         name_hbox.addWidget(self.name_label)
@@ -39,6 +41,7 @@ class ElementProperties(QWidget):
         # TYPE
         type_hbox = QHBoxLayout()
         self.type_cb = QComboBox()
+        self.input_elements.append(self.type_cb)
         self.type_cb.setPlaceholderText('type')
         self.draw_types_cb()
         type_label = QLabel('Type')
@@ -49,10 +52,12 @@ class ElementProperties(QWidget):
         # POSITION
         pos_hbox = QHBoxLayout()
         self.x_pos_sb = QSpinBox()
+        self.input_elements.append(self.x_pos_sb)
         self.x_pos_sb.setMaximum(9999)
         self.x_pos_sb.setMinimum(-9999)
         x_pos_label = QLabel('Position x')
         self.y_pos_sb = QSpinBox()
+        self.input_elements.append(self.y_pos_sb)
         self.y_pos_sb.setMaximum(9999)
         self.y_pos_sb.setMinimum(-9999)
         y_pos_label = QLabel('Position y')
@@ -66,9 +71,11 @@ class ElementProperties(QWidget):
         dim_hbox = QHBoxLayout()
         len_label = QLabel('Longueur')
         self.len_sb = QSpinBox()
+        self.input_elements.append(self.len_sb)
         self.len_sb.setMaximum(9999)
         wid_label = QLabel('Largeur')
         self.wid_sb = QSpinBox()
+        self.input_elements.append(self.wid_sb)
         self.wid_sb.setMaximum(9999)
         dim_hbox.addWidget(len_label)
         dim_hbox.addWidget(self.len_sb)
@@ -79,10 +86,12 @@ class ElementProperties(QWidget):
         # ANGLE | HEIGHT
         ah_hbox = QHBoxLayout()
         self.ang_sb = QSpinBox()
+        self.input_elements.append(self.ang_sb)
         self.ang_sb.setMinimum(0)
         self.ang_sb.setMaximum(360)
         ang_label = QLabel('Angle')
         self.hei_sb = QSpinBox()
+        self.input_elements.append(self.hei_sb)
         self.hei_sb.setMaximum(Settings().store_object_max_height)
         hei_label = QLabel('Hauteur')
         ah_hbox.addWidget(ang_label)
@@ -129,6 +138,7 @@ class ElementProperties(QWidget):
         :param element: StoreObject
         :return: void
         """
+        print('modify store')
         element.name = self.name_le.text()
         element.set_x_position(self.x_pos_sb.value())
         element.set_y_position(self.y_pos_sb.value())
@@ -148,12 +158,11 @@ class ElementProperties(QWidget):
         """
         # type existant or new
         if type(element) is ElementConstructorData:
+            self.element = None
             self.display_from_constructor(element)
         elif issubclass(type(element), StoreObject):
             self.element = element
-            # print(element)
             self.display_from_object(element)
-            # self.name_label.setText()
 
     def display_from_constructor(self, constructor: ElementConstructorData):
         """
@@ -181,11 +190,36 @@ class ElementProperties(QWidget):
         self.y_pos_sb.setValue(store_object.y_position())
         self.ang_sb.setValue(store_object.angle())
         self.hei_sb.setValue(store_object.height())
+        self.type_cb.setCurrentIndex(self.type_cb.findData(store_object.type))
+
+    def display_blank(self):
+        """
+        Resets all values of input widgets
+        :return: void
+        """
+        self.name_le.setText('')
+        self.len_sb.setValue(0)
+        self.wid_sb.setValue(0)
+        self.x_pos_sb.setValue(0)
+        self.y_pos_sb.setValue(0)
+        self.ang_sb.setValue(0)
+        self.hei_sb.setValue(0)
+
+    def disable_all(self):
+        for element in self.input_elements:
+            element.setDisabled(True)
+
+    def enable_all(self):
+        for element in self.input_elements:
+            element.setDisabled(False)
+
+
 
 
 
     def draw_types_cb(self):
         self.type_cb.addItem('Racking', userData=RACKING)
+        self.type_cb.addItem('Autre', userData=OTHER)
 
     def create_layout(self):
         self.setLayout(self.main_vbox)
