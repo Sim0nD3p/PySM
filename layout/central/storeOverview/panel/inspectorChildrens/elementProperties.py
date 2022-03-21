@@ -3,17 +3,17 @@ from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QHBoxLayout, QVBoxLayout
 from PyQt6.QtGui import QPalette
 from PyQt6.QtCore import Qt
 from elements.store.dataClasses import *
+from elements.elementsTypes import *
+from elements.store.storeObject import StoreObject
 from layout.settings.settings import Settings
-
-RACKING = 'RACKING'
-OTHER = 'OTHER'
 
 
 class ElementProperties(QWidget):
-    def __init__(self, submit_signal):
+    def __init__(self, submit_signal, new_element_signal):
         super().__init__()
         self.element = None
         self.submit_signal = submit_signal
+        self.new_element_signal = new_element_signal
         self.main_vbox = QVBoxLayout()
         self.setAutoFillBackground(True)
         self.setFocusPolicy(Qt.FocusPolicy.ClickFocus)
@@ -91,47 +91,101 @@ class ElementProperties(QWidget):
         ah_hbox.addWidget(self.hei_sb)
         self.main_vbox.addLayout(ah_hbox)
 
-
-
         # SUBMIT BUTTON
         self.sub_button = QPushButton('Ok')
         self.sub_button.clicked.connect(self.send_submit_signal)
         self.main_vbox.addWidget(self.sub_button)
 
-
-
         self.create_layout()
 
     def send_submit_signal(self):
         """"
+        when creating and modifying elements
         Sends submit signal to main inspector widget
+        Gets data from widget and sends it to ElementInspector if new element (self.element = None)
         """
         index = self.type_cb.currentIndex()
-        print(self.type_cb.itemData(index, role=))
-        self.submit_signal.emit('test')
+        if self.element is None:
+            constructor = ElementConstructorData(
+                x_position=self.x_pos_sb.value(),
+                y_position=self.y_pos_sb.value(),
+                length=self.len_sb.value(),
+                width=self.wid_sb.value(),
+                angle=self.ang_sb.value(),
+                height=self.hei_sb.value(),
+                type=self.type_cb.itemData(self.type_cb.currentIndex()),
+                name=self.name_le.text()
+            )
+            self.new_element_signal.emit(constructor)
+            # new element, create constructor
+        else:
+            self.modify_store_object(self.element)
 
-    def draw_types_cb(self):
-        self.type_cb.addItem('Racking', userData=RACKING)
+            self.submit_signal.emit('repaint submit')
+
+    def modify_store_object(self, element: StoreObject):
+        """
+        Modify the given StoreObject with the values in widget
+        :param element: StoreObject
+        :return: void
+        """
+        element.name = self.name_le.text()
+        element.set_x_position(self.x_pos_sb.value())
+        element.set_y_position(self.y_pos_sb.value())
+        element.set_length(self.len_sb.value())
+        element.set_width(self.wid_sb.value())
+        element.set_angle(self.ang_sb.value())
+        element.set_height(self.hei_sb.value())
+
+
 
     def update_informations(self, element):
         """
-        DOC
+        Element is either ElementConstructorData or storeObject,
+        updates informations in widget
         :param element:
         :return:
         """
         # type existant or new
         if type(element) is ElementConstructorData:
-            print(element)
-            self.len_sb.setValue(element.length)
-            self.wid_sb.setValue(element.width)
-            self.x_pos_sb.setValue(element.x_position)
-            self.y_pos_sb.setValue(element.y_position)
-        else:
+            self.display_from_constructor(element)
+        elif issubclass(type(element), StoreObject):
             self.element = element
-            self.name_label.setText(self.element)
-            target = self.type_cb.findData(element.element_type, Qt.ItemDataRole.)
+            # print(element)
+            self.display_from_object(element)
+            # self.name_label.setText()
+
+    def display_from_constructor(self, constructor: ElementConstructorData):
+        """
+        Displays values of new drawing in widget
+        :param constructor: ElementConstructorData
+        :return: void
+        """
+        self.name_le.setText(constructor.name)
+        self.len_sb.setValue(constructor.length)
+        self.wid_sb.setValue(constructor.width)
+        self.x_pos_sb.setValue(constructor.x_position)
+        self.y_pos_sb.setValue(constructor.y_position)
+        self.ang_sb.setValue(constructor.angle)
+
+    def display_from_object(self, store_object: StoreObject):
+        """
+        Displays values of properties of object in widget
+        :param store_object: StoreObject
+        :return:
+        """
+        self.name_le.setText(store_object.name)
+        self.len_sb.setValue(store_object.length())
+        self.wid_sb.setValue(store_object.width())
+        self.x_pos_sb.setValue(store_object.x_position())
+        self.y_pos_sb.setValue(store_object.y_position())
+        self.ang_sb.setValue(store_object.angle())
+        self.hei_sb.setValue(store_object.height())
 
 
+
+    def draw_types_cb(self):
+        self.type_cb.addItem('Racking', userData=RACKING)
 
     def create_layout(self):
         self.setLayout(self.main_vbox)

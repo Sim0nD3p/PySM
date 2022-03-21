@@ -7,11 +7,15 @@ Racking need dimensions, position, name
 
 """
 class Racking(StoreObject):
-    def __init__(self, x_position, y_position, width, length, angle, height):
-        super().__init__(x_position=x_position,
-                         y_position=y_position,
-                         width=width,
-                         length=length,
-                         angle=angle,
-                         height=height,
-                         element_type=RACKING)
+    def __init__(self, name, id, x_position, y_position, width, length, angle, height):
+        super().__init__(
+            name=name,
+            id=id,
+            x_position=x_position,
+            y_position=y_position,
+            width=width,
+            length=length,
+            angle=angle,
+            height=height,
+            element_type=RACKING
+        )

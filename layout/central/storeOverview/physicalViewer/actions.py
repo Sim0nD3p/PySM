@@ -78,7 +78,6 @@ class NewDrawing(QAction):
         Sets the viewer's mouse action type to drawing
         :return: void
         """
-        print('set ACTION_DRAW')
         self.viewer.mouse_action_type = ACTION_DRAW
 
 class Select(QAction):

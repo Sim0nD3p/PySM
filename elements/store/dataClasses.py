@@ -2,6 +2,8 @@ from dataclasses import dataclass
 
 @dataclass
 class ElementConstructorData:
+    name: str
+    type: str
     x_position: float
     y_position: float
     length: float

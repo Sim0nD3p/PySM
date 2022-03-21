@@ -8,13 +8,10 @@ class StoreOverviewPanel(QWidget):
         super().__init__()
         self.setMaximumWidth(500)
         self.main_vbox = QVBoxLayout()
-        self.sv = store_viewer
-
-
-
+        self.store_viewer = store_viewer
 
         self.store_viewer_controls = StoreViewerControls(store_viewer=store_viewer)
-        self.element_inspector = ElementInspector()
+        self.element_inspector = ElementInspector(store_viewer=self.store_viewer)
 
 
         self.main_vbox.addWidget(self.store_viewer_controls)
@@ -23,14 +20,10 @@ class StoreOverviewPanel(QWidget):
         # buttons for testing
         hbox = QHBoxLayout()
         but = QPushButton('test1')
-        but.clicked.connect(self.sv.draw_shape)
+        # but.clicked.connect(self.sv.draw_shape)
         hbox.addWidget(but)
 
         self.main_vbox.addLayout(hbox)
 
         self.setLayout(self.main_vbox)
-
-
-    def test(self):
-        print('winner test')
 

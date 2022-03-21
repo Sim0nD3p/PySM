@@ -1,11 +1,16 @@
 from PyQt6.QtCore import Qt, QRect, pyqtSignal
 import math
 import PyQt6
+from backend.storeFloor import StoreFloor
 from PyQt6 import QtOpenGLWidgets
 from PyQt6.QtGui import QPainter
 from PyQt6.QtGui import QColor, QPainter, QPen
 from OpenGL.GL import *
 from layout.central.storeOverview.physicalViewer.actions import *
+from elements.store.storeObject import StoreObject
+from backend.storeFloor import StoreFloor
+from elements.store.dataClasses import *
+from elements.elementsTypes import *
 from elements.racking.racking import Racking
 # https://nrotella.github.io/journal/first-steps-python-qt-opengl.html#pyopengl
 
@@ -23,24 +28,46 @@ class Rect(QPainterPath):
 
 class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
     mouse_release_signal = pyqtSignal(PyQt6.QtGui.QMouseEvent, name='name')
-    new_rect_signal = pyqtSignal(PyQt6.QtCore.QPointF, PyQt6.QtCore.QPointF, name='new_shape')
+    new_rect_signal = pyqtSignal(ElementConstructorData, name='new_shape')
+    selection_signal = pyqtSignal(StoreObject, name='selection')
+
+
     def __init__(self):
         super().__init__()
         self.elements = []
-        self.selected_elements = []
+        self.selected_element = None
         self.coord_scale_x = 100
-        self.racking = Racking(x_position=0, y_position=0, length=100, width=50, angle=90, height=100)
         self.x_offset = 0
         self.y_offset = 0
+
+
         self.current_drawing = None
         self.mouse_pressed_position = None
         self.mouse_action_type = ACTION_MOVE
         self.default_mouse_action_type = ACTION_MOVE
 
-        self.rect = None
+    def move_offset(self, x: int, y: int):
+        """
+        Move the store around by the offset specified
+        ** might be scalable with zoom so that we always move by the same amount on screen
 
-    def test(self):
-        print('this is test')
+        :param x: int: x offset
+        :param y: int: y offset
+        :return:
+        """
+        self.x_offset += x
+        self.y_offset += y
+
+        self.repaint()
+
+    def zoom_scalar(self, scalar):
+        """
+        Modify the self.current_scale_x with the scalar by addition
+        :param scalar:
+        :return:
+        """
+        self.coord_scale_x += scalar
+        self.repaint()
 
     def get_logical_coordinates(self, mouse_event):
         """
@@ -60,27 +87,67 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
 
             return logical_x, logical_y
 
-    def mousePressEvent(self, a0: PyQt6.QtGui.QMouseEvent):
-        print('mouse pressed')
-        x, y = self.get_logical_coordinates(a0)
+    def get_drawing_geometry(self, point1: QPointF, point2: QPointF):
+        """
+        Gets the geometry of the rectangle drawn from positions of pressed and released mouseEvent
+        Calculate the x_position, y_position, length and width and return a constructorElement with the values
+        :param point1: QPointF
+        :param point2: QPointF
+        :return: constructorElement
+        """
+        minx = min([point1.x(), point2.x()])
+        maxx = max([point1.x(), point2.x()])
+        miny = min([point1.y(), point2.y()])
+        maxy = max([point1.y(), point2.y()])
 
+        dx = maxx - minx
+        dy = maxy - miny
+
+        if abs(dx) >= abs(dy):
+            length = dx
+            width = dy
+            x_position = minx
+            y_position = -maxy
+            angle = 0
+        else:
+            length = dy
+            width = dx
+            x_position = minx + width
+            y_position = -maxy
+            angle = 90
+
+        element = ElementConstructorData(
+            x_position=x_position,
+            y_position=y_position,
+            length=length,
+            width=width,
+            angle=angle,
+            height=0,
+            type=NONE,
+            name=''
+        )
+        return element
+
+
+
+
+    def mousePressEvent(self, a0: PyQt6.QtGui.QMouseEvent):
+        x, y = self.get_logical_coordinates(a0)
         if self.mouse_action_type is ACTION_SELECT:
             print('check for select')
-            for e in self.elements:
-                if e.contains(QPointF(x, y)):
-                    if e not in self.selected_elements:
-                        self.selected_elements.append(e)
-                    print('found element')
-                    self.paintGL()
-                    self.repaint()
+            self.selected_element = None
+            for e in StoreFloor().objects:
+                print('storeObject floor', e)
+                if issubclass(type(e), StoreObject):
+                    print(e.painter_path)
+                    if e.painter_path.contains(QPointF(x, y)):
+                        print('setting selected')
+                        self.selected_element = e
+                        self.selection_signal.emit(e)
+
 
         elif self.mouse_action_type is ACTION_DRAW:
             self.mouse_pressed_position = QPointF(x, y)
-
-
-
-
-
 
     def mouseMoveEvent(self, a0: PyQt6.QtGui.QMouseEvent):
         x, y = self.get_logical_coordinates(a0)
@@ -90,102 +157,32 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
                 rect = QRectF(self.mouse_pressed_position, QPointF(x, y))
                 pp.addRect(rect)
                 self.current_drawing = pp
-                self.paintGL()
                 self.repaint()
 
-
-
     def mouseReleaseEvent(self, a0: PyQt6.QtGui.QMouseEvent):
+        print(self.mouse_action_type)
+        x, y = self.get_logical_coordinates(a0)
+        mouse_released_position = QPointF(x, y)
         if self.mouse_action_type is ACTION_DRAW:
-            x, y = self.get_logical_coordinates(a0)
-            mouse_released_position = QPointF(x, y)
-            self.new_rect_signal.emit(self.mouse_pressed_position, mouse_released_position)
-            if self.current_drawing not in self.elements:
-                self.elements.append(self.current_drawing)
-
-
-            self.current_drawing = None
+            constructor = self.get_drawing_geometry(self.mouse_pressed_position, mouse_released_position)
+            self.new_rect_signal.emit(constructor)
             self.mouse_pressed_position = None
+            # set up logic for how to handle the switch to active drawing to null
+        # elif self.mouse_action_type is ACTION_SELECT:
+          #   print('repainte')
 
-        self.repaint()
-
-
-        # self.mouse_action_type = self.default_mouse_action_type
-
-
-
-
-
-
-    def draw_shape(self):
-        """
-        Drawing shape based on vertices
-        :return:
-        """
-        print('draw rect')
-        re = Racking(x_position=0, y_position=0, width=25, length=50, angle=0, height=100)
-        pp = QPainterPath()
-
-        vertices = re.vertices()
-        for vertex in vertices:
-            pp.lineTo(QPointF(vertex[0, 0], vertex[0, 1]))
-            print(vertices[0, 0])
-        pp.lineTo(QPointF(vertices[0, 0], vertices[0, 1]))
-        self.rect = pp
-        self.paintGL()
-
-
-
-
-
-
-    def move_offset(self, x: int, y: int):
-        """
-        Move the store around by the offset specified
-        ** might be scalable with zoom so that we always move by the same amount on screen
-
-        :param x: int: x offset
-        :param y: int: y offset
-        :return:
-        """
-        print('move by ', x, y)
-        self.x_offset += x
-        self.y_offset += y
-
-        self.paintGL()
-        self.repaint()  # eliminate lag
-
-    def zoom_scalar(self, scalar):
-        """
-        Modify the self.current_scale_x with the scalar by addition
-        :param scalar:
-        :return:
-        """
-        print('should setup logic for zoom')
-        self.coord_scale_x += scalar
+            # self.current_drawing = None
         self.paintGL()
         self.repaint()
 
+    def draw_object(self, store_object: StoreObject):
+        path = QPainterPath()
+        vertices = store_object.vertices()
+        print(vertices)
 
-    def move_vp(self):
-        self.x_offset = self.x_offset + 10
-        self.paintGL()
-
-
-    def initializeGL(self):
-        # we can start to use OpenGL context
-        print('initialize GL')
-
-        # print(painter.device())
-
-
-
-    def resizeGL(self, width: int, height: int):
-        print('resize GL')
 
 
     def paintGL(self):
-
         painter = QPainter(self)
         coord_scale_y = math.floor((self.height() / self.width()) * self.coord_scale_x)
         painter.setWindow(
@@ -196,7 +193,6 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
         )
 
         # sets the coordinates system
-        # TODO: add aspect ratio handling from widget source
         # 2 first to move view, 2 last to set apsect ratio
         painter.setViewport(QRect(0, 0, self.width(), self.height()))
 
@@ -217,14 +213,19 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
         glClearColor(1, 1, 1, 1.0)
         glClear(GL_COLOR_BUFFER_BIT)
 
-        # self.draw_rect()
-        if self.rect is not None:
-            print('paint rect')
-            painter.drawPath(self.rect)
+        """
+        We draw painterPaths
+        """
+
+
 
         for element in self.elements:
             if type(element) is PyQt6.QtGui.QPainterPath:
                 painter.drawPath(element)
+
+        for element in StoreFloor.objects:
+            print(element.geometry_matrix)
+            painter.drawPath(element.painter_path)
 
         pen = QPen()
         pen.setWidth(0.5)
@@ -234,12 +235,9 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
         painter.setBrush(QColor(210, 213, 73))
 
 
-        for selected_element in self.selected_elements:
-            # painter.drawPath(selected_element)
-            if type(selected_element) is PyQt6.QtGui.QPainterPath:
-                print('should draw element')
-                print(selected_element)
-                painter.drawPath(selected_element)
+        if self.selected_element is not None:
+            print('should draw selected element')
+            painter.drawPath(self.selected_element.painter_path)
 
         if self.current_drawing:
             painter.drawPath(self.current_drawing)
