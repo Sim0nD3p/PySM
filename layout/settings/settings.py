@@ -30,3 +30,10 @@ class Settings:
     # ----- STORE SETTINGS -----
     store_object_max_height = 1000
 
+
+    # ----- SHELVES SETTINGS -----
+    default_shelf_net_height = 10   # cm
+
+    # ----- CONTAINER SETTINGS -----
+    bin_weight_capacity = 45    # kg
+

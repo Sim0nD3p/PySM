@@ -7,6 +7,9 @@ from layout.importer.importer import ImporterWindow
 from backend.PartCatalog import PartCatalog
 from backend.writers.partCatalogWriter import PartCatalogWriter
 from backend.loaders.partCatalogLoader import PartCatalogLoader
+from backend.writers.storeFloorWriter import *
+from backend.storeFloor import *
+from backend.loaders.storeFloorLoader import *
 
 from layout.central.storeOverview.physicalViewer.actions import MoveUp
 
@@ -61,12 +64,9 @@ class MainWindow(QMainWindow):
         store_menu = menu_bar.addMenu('Magasin')
         # mu = MoveUp(self)
         def create_store_menu(sm):
-            view = sm.addMenu('Vue')
-            ac = QAction('new', self)
+            save = sm.addAction('Sauvegarder')
+            save.triggered.connect(lambda: StoreFloorWriter().save_default(StoreFloor()))
 
-            # print(mu, type(mu))
-            view.addAction(ac)
-            # view.addAction(mu)
 
         create_store_menu(store_menu)
 
@@ -77,8 +77,10 @@ class MainWindow(QMainWindow):
 
     def backend_startup(self):
         print('initiating app')
+        StoreFloorLoader.load_floor_from_xml(file_path='backend/appData/storeFloor.xml')
         PartCatalogLoader.load_xml_catalog('backend/appData/catalog_new.xml')
         self.part_catalog_update()
+        # self.main_widget.store_overview.store_visual.paintGL()
 
 
     def show_settings(self):

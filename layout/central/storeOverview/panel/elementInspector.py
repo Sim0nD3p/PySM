@@ -2,6 +2,8 @@ from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QHBoxLayout, QVBoxLayout, QPushButton, QTabWidget, QComboBox, QSpinBox
 from PyQt6.QtGui import QPalette
 from PyQt6.QtCore import Qt, pyqtSignal
+
+from layout.central.storeOverview.panel.inspectorChildrens.elementContent import ElementContent
 from layout.central.storeOverview.panel.inspectorChildrens.elementProperties import ElementProperties
 from layout.central.storeOverview.physicalViewer.storeOverallTopView import StoreTopVisualizer
 from elements.store.dataClasses import *
@@ -22,6 +24,9 @@ class ElementInspector(QTabWidget):
         self.element_properties = ElementProperties(submit_signal=self.submit_signal,
                                                     new_element_signal=self.new_element_signal)
         self.addTab(self.element_properties, 'Informations générales')
+        self.element_content = ElementContent(submit_signal=self.submit_signal)
+
+        self.addTab(self.element_content, 'Contenu')
         self.current_element = None
         self.submit_signal.connect(self.handle_submit)
         self.new_element_signal.connect(self.create_element)

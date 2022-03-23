@@ -14,7 +14,7 @@ class CentralWidget(QWidget):
         self.catalog_overview = CatalogOverview()
 
 
-        self.screen2 = StoreOverview()
+        self.store_overview = StoreOverview()
         self.screen3 = QWidget()
         self.screen3.setStyleSheet('background-color:green')
 
@@ -41,7 +41,7 @@ class CentralWidget(QWidget):
     def create_layout(self):
 
         self.stackedlayout.addWidget(self.catalog_overview)
-        self.stackedlayout.addWidget(self.screen2)
+        self.stackedlayout.addWidget(self.store_overview)
         self.stackedlayout.addWidget(self.screen3)
         self.setLayout(self.stackedlayout)
 

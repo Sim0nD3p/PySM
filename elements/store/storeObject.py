@@ -15,9 +15,9 @@ class StoreObject:
         self.name = name
         self.id = id
         self.type = element_type
-        self.geometry_matrix = np.matrix([
-            [x_position, y_position],
+        self.geometry_matrix = np.array([
             [length, width],
+            [x_position, y_position],
             [angle, height]
         ], dtype='float64')
         self.painter_path = self.update_painter_path()
@@ -47,7 +47,7 @@ class StoreObject:
         x_position: horizontal position of the bottom-left corner would the rectangle be horizontal
         :return: x_position
         """
-        return self.geometry_matrix[0, 0]
+        return self.geometry_matrix[1, 0]
 
     def set_x_position(self, x_position: float):
         """
@@ -55,7 +55,7 @@ class StoreObject:
         :param x_position: x_position
         :return: void
         """
-        self.geometry_matrix[0, 0] = x_position
+        self.geometry_matrix[1, 0] = x_position
         self.update_painter_path()
 
     def y_position(self):
@@ -63,7 +63,7 @@ class StoreObject:
         y_position: vertical position of the bottom-left corner would the rectangle be horizontal
         :return: y_position
         """
-        return self.geometry_matrix[0, 1]
+        return self.geometry_matrix[1, 1]
 
     def set_y_position(self, y_position: float):
         """
@@ -71,7 +71,7 @@ class StoreObject:
         :param y_position: y_position
         :return: void
         """
-        self.geometry_matrix[0, 1] = y_position
+        self.geometry_matrix[1, 1] = y_position
         self.update_painter_path()
 
     def length(self):
@@ -79,7 +79,7 @@ class StoreObject:
         length: length of the longest side of the rectangle
         :return: length
         """
-        return self.geometry_matrix[1, 0]
+        return self.geometry_matrix[0, 0]
 
     def set_length(self, length: float):
         """
@@ -88,7 +88,7 @@ class StoreObject:
         :return: void
         """
         if length > 0:
-            self.geometry_matrix[1, 0] = length
+            self.geometry_matrix[0, 0] = length
             self.update_painter_path()
         else:
             print('error length should be > 0')
@@ -98,7 +98,7 @@ class StoreObject:
         width: length of the shortest side of the rectangle
         :return: width
         """
-        return self.geometry_matrix[1, 1]
+        return self.geometry_matrix[0, 1]
 
     def set_width(self, width: float):
         """
@@ -109,7 +109,7 @@ class StoreObject:
         print('setting width')
         print(width)
         if width > 0:
-            self.geometry_matrix[1, 1] = width
+            self.geometry_matrix[0, 1] = width
             self.update_painter_path()
         else:
             print('error width should be > 0')
@@ -155,7 +155,23 @@ class StoreObject:
         :return: vertices of the StoreObject (np.matrix 4x2)
         """
         angle = self.geometry_matrix[2, 0]
-        transformation = np.matrix([
+        transformation = np.array([
+            [0, 0, 1, 0],   # x1
+            [0, 0, 0, -1],   # y1
+            [cos(rad(angle)), 0, 1, 0],     # x2
+            [-sin(rad(angle)), 0, 0, -1],     # y2
+            [cos(rad(angle)), -sin(rad(angle)), 1, 0],  # x3
+            [-sin(rad(angle)), -cos(rad(angle)), 0, -1],   # y3
+            [0, -sin(rad(angle)), 1, 0],    # x4
+            [0, -cos(rad(angle)), 0, -1]  # y4
+        ], dtype='float64')
+
+        vertices = np.matmul(transformation, np.resize(self.geometry_matrix, (4, 1)), dtype='float64')
+        vertices = vertices.reshape(4, 2)
+        return vertices
+
+"""
+transformation = np.array([
             [1, 0, 0, 0],   # x1
             [0, -1, 0, 0],   # y1
             [1, 0, cos(rad(angle)), 0],     # x2
@@ -165,8 +181,5 @@ class StoreObject:
             [1, 0, 0, -sin(rad(angle))],    # x4
             [0, -1, 0, -cos(rad(angle))]  # y4
         ], dtype='float64')
-
-        vertices = np.matmul(transformation, np.resize(self.geometry_matrix, (4, 1)), dtype='float64')
-        vertices = vertices.reshape(4, 2)
-        return vertices
+"""
 
