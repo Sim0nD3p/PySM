@@ -3,34 +3,33 @@
 ##To do:
 - add way to select multiple items and modify their prop in batch
 
-  - continue work on import
+- Work on import
     - confirmationWidget, add props vs add part (merge, remplacer)
     - standard import for parts and props
     - import for orders dates and qte
+    - reload partModel in treePropertiesEditor not only on program starup
 
 ## where I am:
-- create racking object when drawing rectangle and set prop racking_card to enter informations about racking drawn
-- mouseRelease in storeViewer should act in storeOverview.
+- Store element:
+    - *integration of geometry as parent class is good should continue on that, maybe add integration of shapely
+    - **transformations matrices for coordinates between store, racking and shelves
+- Shelf and container
+  - *integration of shapely in geometry for shape
+  - **add way to find place for container in shelf
+  - ***add way to find best shelf according to place available
 
 ## Mid term
+
+
+## Long term
 - nomenclature naming module
+- add way to have hierarchy between part -> add class Subassembly and Assembly(final)
+- add way to regroup parts with usage (which are used together and how often)
+  - part A might be used with part B and part C but part A and C not used together
 
 
-## Thing to eventually do
-- add global code path variable in setting for part/code
-- reload partModel in treePropertiesEditor when saved
-  - properties path stays when switching part->props after saving
-
-# STORE V2
-fomr the start, divided in 2 parts, visual and backend
-- VISUAL:
-  - store top view
-  - move things
-## Store generation
-- draw/view store in 2d map, (coordinate system)
-  - view racking top view
-  - view racking content (shelves) when click on racking
-  - 
 
 ## STORE ALGO V2
-- chose how parts are placed
+- add optinos for how parts are placed in store
+- what happens when targeted quantities changes? no broken store
+- manually place part (before and after store generation) -> how to reorganize containers?

@@ -1,11 +1,12 @@
 import numpy as np
+from elements.ElementLogic.dataClasses import *
 
-x_position = None
-y_position = None
-angle = None
+x_position = 0
+y_position = 0
+angle = 0
 
 
-class Container:
+class Container(Geometry):
     """
     What should container do exactly?
 
@@ -19,27 +20,14 @@ class Container:
         :param width:
         :param height:
         """
+        super().__init__(length=length, width=width,
+                         x_position=x_position, y_position=y_position,
+                         angle=angle, height=height
+                         )
         self.name = name
         self.type = container_type
-        self.geometry = np.array([
-            [length, width],
-            [x_position, y_position],
-            [angle, height]
-        ])
         self.net_weight = 0     # TODO handle net-weight
 
-        self.content = np.array([])     # should it be np.array?
-
-    def weight(self):
-        """
-        Return total weight of the container
-        :return:
-        """
-        total_weight = self.net_weight
-        for element in self.content:
-            if hasattr(element, 'weight'):
-                total_weight += element.weight
-        return total_weight
 
 
 

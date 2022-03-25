@@ -23,8 +23,8 @@ class StoreFloorWriter:
         print('saving storeFloor')
         xml_root = et.Element('root')
         for element in store_floor.objects:
-            geometry_buffer = element.geometry_matrix.tobytes()
-            geo = np.array2string(element.geometry_matrix.flatten())
+            geometry_buffer = element.geometry.tobytes()
+            geo = np.array2string(element.geometry.flatten())
 
             xml_element = et.SubElement(xml_root,
                                         'object',

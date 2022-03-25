@@ -1,7 +1,12 @@
 from layout.settings.settings import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
+from shapely import *
+from shapely.geometry import *
+from elements.container.container import *
 import numpy as np
+from elements.ElementLogic.dataClasses import *
+from elements.ElementLogic.dataClasses import *
 
 """
 Multiple shelves style:
@@ -13,7 +18,7 @@ x_position = 0
 y_position = 0
 
 
-class Shelf:
+class Shelf(Geometry):
     """
     Parent class for shelf
     What should shelf do exactly
@@ -23,65 +28,43 @@ class Shelf:
 
     """
     def __init__(self, name, element_type, shelf_length, shelf_width, shelf_height):
+        super().__init__(length=shelf_length, width=shelf_width,
+                         x_position=x_position, y_position=y_position,
+                         angle=angle, height=shelf_height
+                         )
         self.name = name
         self.type = element_type
-        self.geometry_matrix = np.array([
-            [shelf_length, shelf_width],
-            [x_position, y_position],
-            [shelf_height, net_height]
-        ])
-        self.painter_path = self.update_painter_path()
-        self.content = []
 
-    def length(self):
-        """
-        Length
-        :return: length
-        """
-        return self.geometry_matrix[0, 0]
+        self.containers = []
 
-    def width(self):
-        """
-        Width
-        :return: width
-        """
-        return self.geometry_matrix[0, 1]
 
-    def vertices(self):
+
+
+    def add_container(self, container: Container, position: Position):
         """
-        Gets vertices of the shelf with bottom left corner at (0, 0)
+        Check if container have position and add it to content
+        # TODO check if all vertices are inside shelf
+        :param container:
         :return:
         """
-        geometry = np.resize(self.geometry_matrix, (4, 1))
-        transformation = np.array([
-            [0, 0, 1, 0],
-            [0, 0, 0, 1],
-            [1, 0, 1, 0],
-            [0, 0, 0, 1],
-            [1, 0, 1, 0],
-            [0, 1, 0, 1],
-            [0, 0, 1, 0],
-            [0, 1, 0, 1]
-        ])
-        vertices = np.matmul(transformation, geometry)
-        return vertices.reshape(4, 2)
+        print('adding container')
+        print(container)
+        container.set_x_position(position.x_position)
+        container.set_y_position(position.y_position)
+        container.set_angle(90)
+        self.containers.append(container)
 
-    def update_painter_path(self):
+    def find_position(self, container: Container, position_type: str):
         """
-        Vertices of the shelf (4 corners)
+        Ideas:
+        - use transformation matrix in loop to find available spot
+        :param container:
+        :param position_type:
         :return:
         """
-        path = QPainterPath()
-        vertices = self.vertices()
-        for i in range(0, len(vertices)):
-            if i == 0:
-                path.moveTo(QPointF(vertices[0, 0], vertices[0, 1]))
-            else:
-                path.lineTo(QPointF(vertices[i, 0], vertices[i, 1]))
+        pass
 
-        path.lineTo(QPointF(vertices[0, 0], vertices[0, 1]))
 
-        return path
 
 
 

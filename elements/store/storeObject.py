@@ -3,9 +3,28 @@ from math import sin, cos, radians as rad
 from PyQt6.QtGui import QPainterPath
 from PyQt6.QtCore import QPointF
 from layout.settings.settings import Settings
+from elements.ElementLogic.dataClasses import *
 
 
-class StoreObject:
+class StoreObject(Geometry):
+    def __init__(self, name, id, x_position, y_position, length, width, height, angle, element_type):
+        super().__init__(length=length, width=width,
+                         x_position=x_position, y_position=y_position,
+                         angle=angle, height=height
+                         )
+        self.name = name
+        self.id = id
+        self.type = element_type
+        self.geometry_matrix = np.array([
+            [length, width],
+            [x_position, y_position],
+            [angle, height]
+        ], dtype='float64')
+
+
+
+
+class StoreObject_old:
     """
     Parent class for all rectanglar store objects that have dimensions, position
     should have painterPath directly implemented (isolated to the best we can)

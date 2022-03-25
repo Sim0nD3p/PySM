@@ -140,7 +140,7 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
             self.current_drawing = None
             for e in StoreFloor().objects:
                 if issubclass(type(e), StoreObject):
-                    print(e.painter_path)
+
                     if e.painter_path.contains(QPointF(x, y)):
                         self.selected_element = e
                         self.selection_signal.emit(self.selected_element)
@@ -238,6 +238,7 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
 
 
         if self.selected_element is not None:
+            print('draw selected element')
             painter.drawPath(self.selected_element.painter_path)
 
         if self.current_drawing:
