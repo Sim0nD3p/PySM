@@ -6,8 +6,9 @@ from layout.central.storeOverview.physicalViewer.toolBarControls import StoreVie
 class StoreOverviewPanel(QWidget):
     def __init__(self, store_viewer: StoreTopVisualizer):
         super().__init__()
-        self.setMaximumWidth(500)
+        # self.setMaximumWidth(500)
         self.main_vbox = QVBoxLayout()
+        self.main_vbox.setContentsMargins(0, 0, 0, 0)
         self.store_viewer = store_viewer
 
         self.store_viewer_controls = StoreViewerControls(store_viewer=store_viewer)

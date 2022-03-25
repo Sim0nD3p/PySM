@@ -35,6 +35,7 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
 
     def __init__(self):
         super().__init__()
+
         self.elements = []
         self.selected_element = None
         self.coord_scale_x = 2500

@@ -1,5 +1,7 @@
-from PyQt6.QtWidgets import QWidget, QLabel, QHBoxLayout, QStackedLayout
+from PyQt6.QtWidgets import *
 import sys
+from PyQt6.QtCore import *
+from PyQt6.QtGui import *
 from layout.central.catalogOverview.catalogOverview import CatalogOverview
 from layout.central.storeOverview.storeOverview import StoreOverview
 
@@ -8,13 +10,16 @@ class CentralWidget(QWidget):
     def __init__(self):
         super().__init__()
         self.setGeometry(10, 10, 400, 400)
+        # self.setContentsMargins(10, 10, 10, 10)
         # self.setStyleSheet('background-color:blue')
 
         self.stackedlayout = QStackedLayout()
+        self.stackedlayout.setContentsMargins(0, 0, 0, 0)
+        # self.stackedlayout.setSizeConstraint(QLayout_SizeConstraint=QLayout.SizeConstraint)
         self.catalog_overview = CatalogOverview()
-
-
         self.store_overview = StoreOverview()
+
+
         self.screen3 = QWidget()
         self.screen3.setStyleSheet('background-color:green')
 
