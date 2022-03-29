@@ -6,7 +6,7 @@ from PyQt6 import QtOpenGLWidgets
 from PyQt6.QtGui import QPainter
 from PyQt6.QtGui import QColor, QPainter, QPen
 from OpenGL.GL import *
-from layout.central.storeOverview.physicalViewer.actions import *
+from layout.central.storeOverview.storeViewerWidget.actions import *
 from elements.store.storeObject import StoreObject
 from backend.storeFloor import StoreFloor
 from elements.store.dataClasses import *
@@ -73,7 +73,7 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
 
     def get_logical_coordinates(self, mouse_event):
         """
-        * USE INVERSE MATRIX INSTEAD? SEE LINEAR ALGEBRA CONCEPTS
+        * USE INVERSE MATRIX INSTEAD
         Gets the logical coordinates of the mouse from mouseEvent
         :param mouse_event: PyQt6.QtGui.QMouseEvent
         :return: (x, y) logical coordinates

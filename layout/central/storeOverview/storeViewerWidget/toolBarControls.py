@@ -1,12 +1,14 @@
 from PyQt6.QtWidgets import QWidget, QPushButton, QLabel, QToolButton, QToolBar
 from PyQt6.QtCore import QObject
-from layout.central.storeOverview.physicalViewer.actions import *
+from layout.central.storeOverview.storeViewerWidget.actions import *
+from layout.central.storeOverview.storeViewerWidget.storeOverallTopView import *
+from layout.central.storeOverview.shelfViewerWidget.shelfViewer import *
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QMouseEvent, QActionGroup
 
 
 class StoreViewerControls(QToolBar):
-    def __init__(self, store_viewer):
+    def __init__(self, store_viewer: StoreTopVisualizer, shelf_viewer: ShelfViewer):
         super().__init__()
         self.setContentsMargins(0, 0, 0, 0)
         self.ag = QActionGroup(self)
@@ -25,6 +27,8 @@ class StoreViewerControls(QToolBar):
 
         self.select_action = Select(self, store_viewer)
         self.addAction(self.select_action)
+
+        self.move_item_action = MoveItem(self, store_viewer=store_viewer, shelf_viewer=shelf_viewer)
 
         self.ag.addAction(self.new_drawing_action)
         self.ag.addAction(self.select_action)

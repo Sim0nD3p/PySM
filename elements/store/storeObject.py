@@ -15,11 +15,7 @@ class StoreObject(Geometry):
         self.name = name
         self.id = id
         self.type = element_type
-        self.geometry_matrix = np.array([
-            [length, width],
-            [x_position, y_position],
-            [angle, height]
-        ], dtype='float64')
+
 
 
 

@@ -11,14 +11,17 @@
 
 ## where I am:
 - Store element:
-    - *integration of geometry as parent class is good should continue on that, maybe add integration of shapely
+    - add wall to storeObject element
+      - *integration of geometry as parent class is good should continue on that, maybe add integration of shapely
     - **transformations matrices for coordinates between store, racking and shelves
 - Shelf and container
-  - *integration of shapely in geometry for shape
-  - **add way to find place for container in shelf
-  - ***add way to find best shelf according to place available
+  - Actions and toolbar for shelf, act on containers
+    - *integration of shapely in geometry for shape (postponed)
+    - **add way to find place for container in shelf
+    - ***add way to find best shelf according to place available (later)
 
 ## Mid term
+- StoreFloor writer loader will be broken by the addition of geometry as a parent class
 
 
 ## Long term

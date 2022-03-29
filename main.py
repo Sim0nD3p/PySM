@@ -11,7 +11,7 @@ from backend.writers.storeFloorWriter import *
 from backend.storeFloor import *
 from backend.loaders.storeFloorLoader import *
 
-from layout.central.storeOverview.physicalViewer.actions import MoveUp
+from layout.central.storeOverview.storeViewerWidget.actions import MoveUp
 
 
 class MainWindow(QMainWindow):

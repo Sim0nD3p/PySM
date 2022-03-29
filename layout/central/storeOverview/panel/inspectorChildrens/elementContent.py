@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import *
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPalette
 
-from layout.central.components.shelfViewer.shelfViewer import ShelfViewer
+from layout.central.storeOverview.shelfViewerWidget.shelfViewer import ShelfViewer
 
 class ElementContent(QWidget):
     def __init__(self, submit_signal):

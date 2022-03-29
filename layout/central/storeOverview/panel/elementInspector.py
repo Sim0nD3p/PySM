@@ -5,7 +5,7 @@ from PyQt6.QtCore import Qt, pyqtSignal
 
 from layout.central.storeOverview.panel.inspectorChildrens.elementContent import ElementContent
 from layout.central.storeOverview.panel.inspectorChildrens.elementProperties import ElementProperties
-from layout.central.storeOverview.physicalViewer.storeOverallTopView import StoreTopVisualizer
+from layout.central.storeOverview.storeViewerWidget.storeOverallTopView import StoreTopVisualizer
 from elements.store.dataClasses import *
 from elements.elementsTypes import *
 from elements.store.storeObject import StoreObject

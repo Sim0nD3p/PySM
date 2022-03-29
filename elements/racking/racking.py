@@ -38,7 +38,7 @@ class Racking(StoreObject):
         geo = properties['geometry'].removeprefix('[').removesuffix(']')
         geo = np.fromstring(geo, dtype=float, sep=' ')
         geometry = geo.reshape(3, 2)
-        ra =  cls(
+        ra = cls(
             name=properties['name'],
             id=properties['id'],
             length=geometry[1, 0],

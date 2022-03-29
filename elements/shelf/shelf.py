@@ -51,7 +51,7 @@ class Shelf(Geometry):
         print(container)
         container.set_x_position(position.x_position)
         container.set_y_position(position.y_position)
-        container.set_angle(90)
+        container.set_angle(0)
         self.containers.append(container)
 
     def find_position(self, container: Container, position_type: str):
