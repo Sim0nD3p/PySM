@@ -42,7 +42,7 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
         self.x_offset = 0
         self.y_offset = 0
 
-
+        self.setGeometry(0, 0, 100, 100)
         self.current_drawing = None
         self.mouse_pressed_position = None
         self.mouse_action_type = ACTION_MOVE
@@ -163,7 +163,6 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
                 self.repaint()
 
     def mouseReleaseEvent(self, a0: PyQt6.QtGui.QMouseEvent):
-        print(self.mouse_action_type)
         x, y = self.get_logical_coordinates(a0)
         mouse_released_position = QPointF(x, y)
         if self.mouse_action_type is ACTION_DRAW:
@@ -181,7 +180,6 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
     def draw_object(self, store_object: StoreObject):
         path = QPainterPath()
         vertices = store_object.vertices()
-        print(vertices)
 
 
 
@@ -238,7 +236,6 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
 
 
         if self.selected_element is not None:
-            print('draw selected element')
             painter.drawPath(self.selected_element.painter_path)
 
         if self.current_drawing:

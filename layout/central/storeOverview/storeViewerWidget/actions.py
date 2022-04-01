@@ -110,11 +110,13 @@ class Delete(QAction):
         self.viewer.selected_element = None
         self.viewer.repaint()
 
+
 class MoveItem(QAction):
-    def __init__(self, parent, store_viewer, shelf_viewer):
+    def __init__(self, parent, shelf_viewer):
         super().__init__('Déplacer', parent=parent)
         self.setShortcut(QKeySequence(Qt.Key.Key_M))
         self.setIcon(QIcon('res/icons/pan_tool_black_24dp.svg'))
+        self.shelf_viewer = shelf_viewer
 
 
 

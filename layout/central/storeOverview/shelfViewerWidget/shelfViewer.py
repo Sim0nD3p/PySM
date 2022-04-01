@@ -13,7 +13,7 @@ from elements.shelf.shelf import Shelf
 from elements.container.container import Container
 
 container = Container(name='container_test', container_type=BIN, length=50, width=25, height=25, weight_capacity=30)
-dummy_shelf = Shelf(name='test', shelf_length=400, shelf_width=200, shelf_height=10, element_type=BIN)
+dummy_shelf = Shelf(name='test', shelf_length=400, shelf_width=200, shelf_height=10)
 path = QPainterPath()
 path.addRect(0, 0, 25, 25)
 

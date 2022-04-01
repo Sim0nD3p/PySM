@@ -1,10 +1,8 @@
-from PyQt6.QtGui import QFont
-from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QHBoxLayout, QVBoxLayout, QPushButton, QTabWidget, QComboBox, QSpinBox
-from PyQt6.QtGui import QPalette
-from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtWidgets import QTabWidget
+from PyQt6.QtCore import pyqtSignal
 
-from layout.central.storeOverview.panel.inspectorChildrens.elementContent import ElementContent
-from layout.central.storeOverview.panel.inspectorChildrens.elementProperties import ElementProperties
+from layout.central.storeOverview.panel.rackingInspector.inspectorChildrens.rackingContent import RackingContent
+from layout.central.storeOverview.panel.rackingInspector.inspectorChildrens.rackingProperties import RackingProperties
 from layout.central.storeOverview.storeViewerWidget.storeOverallTopView import StoreTopVisualizer
 from elements.store.dataClasses import *
 from elements.elementsTypes import *
@@ -12,7 +10,7 @@ from elements.store.storeObject import StoreObject
 from elements.racking.racking import Racking
 from backend.storeFloor import StoreFloor
 
-class ElementInspector(QTabWidget):
+class RackingInspector(QTabWidget):
     """
     Interact with StoreFloor
     """
@@ -21,12 +19,14 @@ class ElementInspector(QTabWidget):
     def __init__(self, store_viewer: StoreTopVisualizer):
         super().__init__()
         self.store_viewer = store_viewer
-        self.element_properties = ElementProperties(submit_signal=self.submit_signal,
+        self.racking_properties = RackingProperties(submit_signal=self.submit_signal,
                                                     new_element_signal=self.new_element_signal)
-        self.addTab(self.element_properties, 'Informations générales')
-        self.element_content = ElementContent(submit_signal=self.submit_signal)
+        self.addTab(self.racking_properties, 'Informations générales')
 
-        self.addTab(self.element_content, 'Contenu')
+        self.racking_content = RackingContent(submit_signal=self.submit_signal)
+
+
+        self.addTab(self.racking_content, 'Contenu')
         self.current_element = None
         self.submit_signal.connect(self.handle_submit)
         self.new_element_signal.connect(self.create_element)
@@ -74,15 +74,17 @@ class ElementInspector(QTabWidget):
         :return:
         """
         print('update child infos')
-        self.element_properties.enable_all()
+        self.racking_properties.enable_all()
         if element is None:
-            self.element_properties.display_blank()
-            self.element_properties.element = None
-            self.element_properties.disable_all()
+            self.racking_properties.display_blank()
+            self.racking_properties.element = None
+            self.racking_properties.disable_all()
+            self.racking_content.disable_all()
         elif type(element) is ElementConstructorData:
-            self.element_properties.element = None
-            self.element_properties.update_informations(element)
+            self.racking_properties.element = None
+            self.racking_properties.update_informations(element)
         elif issubclass(type(element), StoreObject):
             # print('element is storeObject')
             self.current_element = element
-            self.element_properties.update_informations(element)
+            self.racking_properties.update_informations(element)
+            self.racking_content.update_informations(element)

@@ -1,27 +1,18 @@
 import numpy as np
 from numpy.linalg import *
 
-print('hello world')
-u1 = np.vstack(np.array([2, 1, 0, 4]))
-u2 = np.vstack(np.array([1, 0, 1, 3]))
-u3 = np.vstack(np.array([1, 2, 1, 0]))
 
-w1 = u1
-w2 = u2 - np.vdot(w1, u2)/np.square(norm(w1))*w1
-w3 = u3 - np.vdot(w1, u3)/np.square(norm(w1))*w1 - np.vdot(w2, u3)/np.square(norm(w2))*w2
-# print(w2)
-# print(w3)
+dist = np.array([228.52, 440.12])   # d = 211.6
+longH = np.array([172, 383.60]) # d = 211.6
+longA = np.array([192.37, 436.71])  # d = 244.34
 
-result = np.array([
-    [w1/norm(w1)],
-    [w2/norm(w2)],
-    [w3/norm(w3)]
-])
-# print(w1/norm(w1))
-# print(w2/norm(w2))
-# print(w3/norm(w3))
-# print(result.transpose())
 
-w2 = np.vstack(np.array([0, 1, 2])) - 0.5*np.vstack(np.array([1, 1, 0])) - 2/5*np.vstack(np.array([-0.5, 0.5, 0]))
-w1 = np.vstack(np.array([-1/2, 1/2, 0]))
-print(norm(w1))
+
+dDist = dist[1] - dist[0]
+dLongH = longH[1] - longH[0]
+dLongA = longA[1] - longA[0]
+
+# dLongH/dDist
+dLD = dLongH/dDist
+print(dLD)
+

@@ -18,6 +18,10 @@
   - Actions and toolbar for shelf, act on containers
     - *integration of shapely in geometry for shape (postponed)
     - **add way to find place for container in shelf
+      - shelfPanel
+        - way to save shelf to racking
+        - check shelf properties
+        - add way to add container (container selector for part, select part and container)
     - ***add way to find best shelf according to place available (later)
 
 ## Mid term

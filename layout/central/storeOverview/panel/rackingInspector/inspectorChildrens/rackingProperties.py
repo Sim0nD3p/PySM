@@ -8,7 +8,7 @@ from elements.store.storeObject import StoreObject
 from layout.settings.settings import Settings
 
 
-class ElementProperties(QWidget):
+class RackingProperties(QWidget):
     def __init__(self, submit_signal, new_element_signal):
         super().__init__()
         self.element = None

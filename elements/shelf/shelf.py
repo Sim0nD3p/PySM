@@ -27,13 +27,12 @@ class Shelf(Geometry):
     with origin in bottom left corner
 
     """
-    def __init__(self, name, element_type, shelf_length, shelf_width, shelf_height):
+    def __init__(self, name, shelf_length, shelf_width, shelf_height):
         super().__init__(length=shelf_length, width=shelf_width,
                          x_position=x_position, y_position=y_position,
                          angle=angle, height=shelf_height
                          )
         self.name = name
-        self.type = element_type
 
         self.containers = []
 
