@@ -3,6 +3,7 @@ from PyQt6.QtGui import QAction, QShortcut, QKeySequence, QPainterPath, QIcon
 from PyQt6.QtCore import Qt, QPointF, QRectF
 from layout.settings.settings import Settings
 from backend.storeFloor import *
+from PyQt6.QtCore import *
 
 ACTION_DRAW = 'DRAW_ACTION'
 ACTION_MOVE = 'MOVE_ACTION'
@@ -98,6 +99,7 @@ class Select(QAction):
         self.viewer.mouse_action_type = ACTION_SELECT
 
 class Delete(QAction):
+    delete_signal = pyqtSignal(name='delete')
     def __init__(self, parent, viewer):
         super().__init__('Supprimer', parent)
         self.viewer = viewer
@@ -108,6 +110,7 @@ class Delete(QAction):
     def delete_selected_object(self):
         StoreFloor.objects.remove(self.viewer.selected_element)
         self.viewer.selected_element = None
+        self.delete_signal.emit()
         self.viewer.repaint()
 
 

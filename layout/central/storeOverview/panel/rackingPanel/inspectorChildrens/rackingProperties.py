@@ -101,13 +101,31 @@ class RackingProperties(QWidget):
         self.main_vbox.addLayout(ah_hbox)
 
         # SUBMIT BUTTON
-        self.sub_button = QPushButton('Ok')
-        self.sub_button.clicked.connect(self.send_submit_signal)
-        self.main_vbox.addWidget(self.sub_button)
+        # self.sub_button = QPushButton('Ok')
+        # self.sub_button.clicked.connect(self.send_submit_signal)
+        # self.main_vbox.addWidget(self.sub_button)
 
         self.create_layout()
 
-    def send_submit_signal(self):
+    def create_constructor(self):
+        """
+        Creates constructor to create racking from values in properties form
+        :return:
+        """
+        constructor = ElementConstructorData(
+            x_position=self.x_pos_sb.value(),
+            y_position=self.y_pos_sb.value(),
+            length=self.len_sb.value(),
+            width=self.wid_sb.value(),
+            angle=self.ang_sb.value(),
+            height=self.hei_sb.value(),
+            type=self.type_cb.itemData(self.type_cb.currentIndex()),
+            name=self.name_le.text()
+        )
+        return constructor
+
+
+    def send_submit_signal_old(self):
         """"
         when creating and modifying elements
         Sends submit signal to main inspector widget
@@ -132,20 +150,20 @@ class RackingProperties(QWidget):
 
             self.submit_signal.emit('repaint submit')
 
-    def modify_store_object(self, element: StoreObject):
+    def modify_store_object(self):
         """
         Modify the given StoreObject with the values in widget
         :param element: StoreObject
         :return: void
         """
         print('modify store')
-        element.name = self.name_le.text()
-        element.set_x_position(self.x_pos_sb.value())
-        element.set_y_position(self.y_pos_sb.value())
-        element.set_length(self.len_sb.value())
-        element.set_width(self.wid_sb.value())
-        element.set_angle(self.ang_sb.value())
-        element.set_height(self.hei_sb.value())
+        self.element.name = self.name_le.text()
+        self.element.set_x_position(self.x_pos_sb.value())
+        self.element.set_y_position(self.y_pos_sb.value())
+        self.element.set_length(self.len_sb.value())
+        self.element.set_width(self.wid_sb.value())
+        self.element.set_angle(self.ang_sb.value())
+        self.element.set_height(self.hei_sb.value())
 
 
 

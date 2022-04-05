@@ -19,8 +19,9 @@ class StoreViewerControls(QToolBar):
         self.addAction(MoveRight(self, store_viewer))
         self.addAction(ZoomOut(self, store_viewer))
         self.addAction(ZoomIn(self, store_viewer))
-        self.addAction(Delete(self, store_viewer))
 
+        self.delete = Delete(self, store_viewer)
+        self.addAction(self.delete)
 
         self.new_drawing_action = NewDrawing(self, store_viewer)
         self.addAction(self.new_drawing_action)

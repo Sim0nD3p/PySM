@@ -23,6 +23,7 @@
         - check shelf properties
         - add way to add container (container selector for part, select part and container)
     - ***add way to find best shelf according to place available (later)
+    - bug when drawing new racking when racking already selected
 
 ## Mid term
 - StoreFloor writer loader will be broken by the addition of geometry as a parent class

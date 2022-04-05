@@ -12,10 +12,10 @@ class RackingContent(QWidget):
     """
     Manage shelves of racking
     """
-    new_shelf_signal = pyqtSignal(ElementConstructorData, name='new_shelf')
+
     shelf_selection_signal = pyqtSignal(Shelf, name='shelf_selection')
 
-    def __init__(self, submit_signal):
+    def __init__(self):
         super().__init__()
         self.element = None
         self.main_vbox = QVBoxLayout()
@@ -23,7 +23,6 @@ class RackingContent(QWidget):
         self.setFocusPolicy(Qt.FocusPolicy.ClickFocus)
         self.setBackgroundRole(QPalette.ColorRole.Base)
 
-        self.submit_signal = submit_signal
 
         self.input_elements = []
 
@@ -33,7 +32,8 @@ class RackingContent(QWidget):
         self.new_shelf_button = QPushButton('+')
         self.new_shelf_button.setDisabled(True)
         self.main_vbox.addWidget(self.new_shelf_button)
-        self.new_shelf_button.clicked.connect(self.emit_new_shelf_signal)
+
+        # self.new_shelf_button.clicked.connect(self.emit_new_shelf_signal)   # send signal new shelf with data, listen from storeOverview
 
 
 
@@ -68,41 +68,6 @@ class RackingContent(QWidget):
     def draw_shelf_properties(self):
         pass
 
-    def create_shelf(self):
-        """
-        Creates shelf object
-        :return:
-        """
-        print(self.element)
-        e = ElementConstructorData(
-            name='shelf1',
-            type=NONE,
-            length=self.element.length(),
-            width=self.element.width(),
-            height=0,
-            x_position=0,
-            y_position=0,
-            angle=0
-        )
-        print('creating shelf')
-
-    def emit_new_shelf_signal(self):
-        # useless??
-        if self.element is not None:
-            if type(self.element) == Racking:
-                constructor = ElementConstructorData(
-                    name='',
-                    length=self.element.length(),
-                    width=self.element.width(),
-                    type=SHELF,
-                    angle=0,
-                    height=0,
-                    x_position=0,
-                    y_position=0
-
-                )
-                self.new_shelf_signal.emit(constructor)
-
 
 
 
@@ -116,6 +81,10 @@ class RackingContent(QWidget):
             self.new_shelf_button.setDisabled(True)
 
     def disable_all(self):
+        self.new_shelf_button.setDisabled(True)
+
+    def display_blank(self):
+        self.list.clear()
         self.new_shelf_button.setDisabled(True)
 
 

@@ -26,3 +26,7 @@ class ShelfContent(QWidget):
         """
         self.new_container_signal.emit()
 
+    def display_blank(self):
+        self.list.clear()
+        self.add_button.setDisabled(True)
+

@@ -31,21 +31,26 @@ class StoreOverview(QWidget):
         # signals for store viewer (new, select, unselect)
         self.store_visual.new_rect_signal.connect(self.handle_racking_selection)
         self.store_visual.selection_signal.connect(self.handle_racking_selection)
-        self.store_visual.unselect_signal.connect(self.handle_unselect)
+        self.store_visual.unselect_signal.connect(self.unselect_all)
 
 
         self.racking_panel = RackingPanel(store_viewer=self.store_visual, shelf_viewer=self.shelf_visual)
         self.shelf_panel = ShelfPanel()
         self.container_panel = ContainerPanel()
 
+
+        #Actions signals
+        self.racking_panel.racking_tool_bar.delete.delete_signal.connect(self.unselect_all)
+
         # interfaces with racking inspector
-        self.racking_panel.racking_inspector.racking_content.new_shelf_signal.connect(self.handle_shelf_creation)
+        self.racking_panel.racking_inspector.new_shelf_signal.connect(self.handle_shelf_creation)
         self.racking_panel.racking_inspector.racking_content.shelf_selection_signal.connect(self.handle_shelf_selection)
+        self.racking_panel.racking_inspector.unselect_signal.connect(self.unselect_all)
         self.racking_panel.racking_inspector.racking_content.new_shelf_button.clicked.connect(self.handle_shelf_creation)
 
         # interfaces shelf panel
-        self.shelf_panel.shelf_inspector.new_shelf_signal.connect(self.racking_panel.racking_inspector.racking_content.
-                                                                  draw_list)
+        self.shelf_panel.shelf_inspector.shelf_list_update_signal.connect(self.racking_panel.racking_inspector.racking_content.
+                                                                          draw_list)
 
         self.splitter.addWidget(self.racking_panel)
         self.splitter.addWidget(self.shelf_panel)
@@ -67,6 +72,11 @@ class StoreOverview(QWidget):
         print('test')
 
     def handle_shelf_creation(self, constructor: ElementConstructorData):
+        """
+        Sends constructor to shelfInspector
+        :param constructor:
+        :return:
+        """
         print('handle shelf creation storeOverview')
         self.shelf_panel.shelf_inspector.update_child_information(constructor)
         self.shelf_panel.show_panel(300)
@@ -90,15 +100,11 @@ class StoreOverview(QWidget):
             self.racking_panel.racking_inspector.update_child_informations(element)
             self.shelf_panel.shelf_inspector.set_parent_racking(element)
 
-
-
-    def handle_unselect(self):
-        print('handle unselect')
+    def unselect_all(self):
+        print('unselect all')
         self.racking_panel.racking_inspector.update_child_informations(None)
-
-
-        self.shelf_panel.setMinimumWidth(0)
-        self.shelf_panel.setMaximumWidth(0)
+        self.store_visual.selected_element = None
+        self.shelf_panel.shelf_inspector.update_child_information(None)
 
 
 

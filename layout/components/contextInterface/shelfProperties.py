@@ -66,7 +66,6 @@ class ShelfProperties(QWidget):
         height_hb.addWidget(self.height_sb)
         self.main_vbox.addLayout(height_hb)
 
-
         # position
         pos_hb = QHBoxLayout()
         x_pos_label = QLabel('Position x')
@@ -89,11 +88,7 @@ class ShelfProperties(QWidget):
 
         self.set_constraints()
 
-
         self.setLayout(self.main_vbox)
-
-
-
 
     def update_information(self, element):
         """
@@ -120,7 +115,7 @@ class ShelfProperties(QWidget):
         self.height_sb.setValue(element.height())
         self.y_pos_sb.setValue(element.y_position())
         self.x_pos_sb.setValue(element.x_position())
-        self.type_cb.setCurrentIndex(self.type_cb.findData(type(element)))
+        self.type_cb.setCurrentIndex(self.type_cb.findData(element.type))
 
     def display_from_element_constructor(self, element: ElementConstructorData):
         """
@@ -130,14 +125,14 @@ class ShelfProperties(QWidget):
         """
         print('display values')
         print(element)
+        self.type_cb.setCurrentIndex(-1)
         self.name_le.setText(str(element.name))
         self.length_sb.setValue(int(element.length))
         self.height_sb.setValue(int(element.height))
         self.width_sb.setValue(int(element.width))
         self.x_pos_sb.setValue(int(element.x_position))
-        print('calisse')
 
-    def modify_part(self):
+    def modify_shelf_properties(self):
         if issubclass(type(self.element), Shelf):
             self.element.set_height(self.height_sb.value())
             self.element.set_x_position(self.x_pos_sb.value())
@@ -145,6 +140,14 @@ class ShelfProperties(QWidget):
             self.element.set_width(self.width_sb.value())
             self.element.set_length(self.length_sb.value())
             print(vars(self.element))
+
+    def display_blank(self):
+        self.type_cb.setCurrentIndex(-1)
+        self.name_le.setText('')
+        self.length_sb.setValue(0)
+        self.height_sb.setValue(0)
+        self.width_sb.setValue(0)
+        self.x_pos_sb.setValue(0)
 
     def disable_all(self):
         """
@@ -180,15 +183,12 @@ class ShelfProperties(QWidget):
                 self.x_pos_sb.setDisabled(False)
                 self.y_pos_sb.setDisabled(False)
 
-
-
-
     def update_type_cb(self):
         """
         Updates the content of ComboBox for type
         :return:
         """
-        self.type_cb.addItem('Flat', userData=FlatShelf)
+        self.type_cb.addItem('Flat', userData=FLAT_SHELF)
 
 
 
