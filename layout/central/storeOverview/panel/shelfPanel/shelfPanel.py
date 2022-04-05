@@ -1,11 +1,12 @@
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
-from layout.central.storeOverview.panel.shelfInspector.shelfInspector import *
+from layout.central.storeOverview.panel.shelfPanel.shelfInspector import *
 from elements.store.dataClasses import ElementConstructorData
 
 
 class ShelfPanel(QWidget):
+
     def __init__(self):
         super().__init__()
         self.setAutoFillBackground(True)
@@ -33,6 +34,11 @@ class ShelfPanel(QWidget):
         self.setLayout(self.main_vbox)
 
     def handle_submit(self):
+        """
+        Hides panel and handle submit by calling inspector' method
+        :return:
+        """
+        self.shelf_inspector.handle_submit()
         self.hide_panel()
 
     def handle_cancel(self):
@@ -57,11 +63,6 @@ class ShelfPanel(QWidget):
         """
         self.setMaximumWidth(0)
         self.setMinimumWidth(0)
-
-    def update_childrens(self, shelf):
-        if type(shelf) is ElementConstructorData:
-            self.shelf_inspector.update()
-
 
 
 

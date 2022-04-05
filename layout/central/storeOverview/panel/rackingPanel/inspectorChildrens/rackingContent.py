@@ -9,7 +9,11 @@ from elements.store.dataClasses import ElementConstructorData
 from layout.central.storeOverview.shelfViewerWidget.shelfViewer import ShelfViewer
 
 class RackingContent(QWidget):
+    """
+    Manage shelves of racking
+    """
     new_shelf_signal = pyqtSignal(ElementConstructorData, name='new_shelf')
+    shelf_selection_signal = pyqtSignal(Shelf, name='shelf_selection')
 
     def __init__(self, submit_signal):
         super().__init__()
@@ -24,6 +28,7 @@ class RackingContent(QWidget):
         self.input_elements = []
 
         self.list = QListWidget()
+        self.list.itemClicked.connect(self.handle_item_click)
         self.main_vbox.addWidget(self.list)
         self.new_shelf_button = QPushButton('+')
         self.new_shelf_button.setDisabled(True)
@@ -38,10 +43,36 @@ class RackingContent(QWidget):
 
         self.setLayout(self.main_vbox)
 
+    def draw_list(self):
+        print('draw list')
+        self.list.clear()
+        print('self.element', self.element)
+        if self.element:
+            if type(self.element) == Racking:
+                print(self.element.shelves)
+                for shelf in self.element.shelves:
+                    print(shelf.name)
+                    item = QListWidgetItem(shelf.name)
+                    item.setData(1, shelf)
+                    self.list.addItem(item)
+
+    def handle_item_click(self, item: QListWidgetItem):
+        """
+        Emits signal of new selected shelf in list
+        :param item:
+        :return:
+        """
+        self.shelf_selection_signal.emit(item.data(1))
+
+
     def draw_shelf_properties(self):
         pass
 
     def create_shelf(self):
+        """
+        Creates shelf object
+        :return:
+        """
         print(self.element)
         e = ElementConstructorData(
             name='shelf1',
@@ -56,6 +87,7 @@ class RackingContent(QWidget):
         print('creating shelf')
 
     def emit_new_shelf_signal(self):
+        # useless??
         if self.element is not None:
             if type(self.element) == Racking:
                 constructor = ElementConstructorData(
@@ -78,7 +110,8 @@ class RackingContent(QWidget):
         self.element = element
         if type(element) is Racking:
             self.new_shelf_button.setDisabled(False)
-            print('racking')
+            self.draw_list()
+            # print('racking')
         else:
             self.new_shelf_button.setDisabled(True)
 

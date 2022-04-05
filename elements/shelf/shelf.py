@@ -14,8 +14,6 @@ Multiple shelves style:
 """
 content_height = 0
 net_height = Settings.default_shelf_net_height
-x_position = 0
-y_position = 0
 
 
 class Shelf(Geometry):
@@ -27,14 +25,30 @@ class Shelf(Geometry):
     with origin in bottom left corner
 
     """
-    def __init__(self, name, shelf_length, shelf_width, shelf_height):
+    def __init__(self, name, shelf_length, shelf_width, shelf_height, x_position, y_position, type):
         super().__init__(length=shelf_length, width=shelf_width,
                          x_position=x_position, y_position=y_position,
                          angle=angle, height=shelf_height
                          )
         self.name = name
+        self.type = type
 
         self.containers = []
+
+
+
+    @classmethod
+    def get_geometry_from_xml(cls, xml_data):
+
+        print('initiating shelf from xml')
+        properties = xml_data.attrib
+        if 'geometry' in properties:
+            geo = properties['geometry'].removeprefix('[').removesuffix(']')
+            geo = np.fromstring(geo, dtype=float, sep=' ')
+            geometry = geo.reshape(3, 2)
+
+
+
 
 
 

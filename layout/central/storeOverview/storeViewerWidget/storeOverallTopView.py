@@ -38,7 +38,7 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
 
         self.elements = []
         self.selected_element = None
-        self.coord_scale_x = 2500
+        self.coord_scale_x = 8000
         self.x_offset = 0
         self.y_offset = 0
 
@@ -226,6 +226,7 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
 
         for element in StoreFloor.objects:
             painter.drawPath(element.painter_path)
+            # print('painting ', element.name)
 
         pen = QPen()
         pen.setWidth(0)

@@ -19,13 +19,13 @@ class Racking(StoreObject):
             height=height,
             element_type=RACKING
         )
-        self.content = []
+        self.shelves = []
         """
         racking have shelves:
         shelves should be represented by matrices in racking
         """
-    def add_content(self, element):
-        pass
+    def add_shelf(self, shelf):
+        self.shelves.append(shelf)
 
     @classmethod
     def init_from_xml(cls, xml_data):
@@ -41,10 +41,10 @@ class Racking(StoreObject):
         ra = cls(
             name=properties['name'],
             id=properties['id'],
-            length=geometry[1, 0],
-            width=geometry[1, 1],
-            x_position=geometry[0, 0],
-            y_position=geometry[0, 1],
+            length=geometry[0, 0],
+            width=geometry[0, 1],
+            x_position=geometry[1, 0],
+            y_position=geometry[1, 1],
             angle=geometry[2, 0],
             height=geometry[2, 1],
         )

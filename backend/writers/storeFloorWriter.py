@@ -1,5 +1,7 @@
 import xml.etree.ElementTree as et
 from backend.storeFloor import StoreFloor, StoreObject
+from elements.elementsTypes import *
+from elements.racking.racking import Racking
 import numpy as np
 
 
@@ -35,6 +37,21 @@ class StoreFloorWriter:
                                             'geometry': geo
 
                                         })
+
+            if type(element) == Racking:
+                for shelf in element.shelves:
+                    geo = np.array2string(shelf.geometry.flatten())
+                    print(shelf.geometry)
+                    print('geo', geo)
+                    et.SubElement(xml_element,
+                                  'shelf',
+                                  attrib={
+                                      'name': shelf.name,
+                                      'type': shelf.type,
+                                      'geometry': geo
+                                  }
+                                  )
+
 
             xml_element.text = 'test'
 

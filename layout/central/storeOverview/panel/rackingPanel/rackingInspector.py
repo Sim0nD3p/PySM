@@ -1,8 +1,8 @@
 from PyQt6.QtWidgets import QTabWidget
 from PyQt6.QtCore import pyqtSignal
 
-from layout.central.storeOverview.panel.rackingInspector.inspectorChildrens.rackingContent import RackingContent
-from layout.central.storeOverview.panel.rackingInspector.inspectorChildrens.rackingProperties import RackingProperties
+from layout.central.storeOverview.panel.rackingPanel.inspectorChildrens.rackingContent import RackingContent
+from layout.central.storeOverview.panel.rackingPanel.inspectorChildrens.rackingProperties import RackingProperties
 from layout.central.storeOverview.storeViewerWidget.storeOverallTopView import StoreTopVisualizer
 from elements.store.dataClasses import *
 from elements.elementsTypes import *
@@ -12,7 +12,8 @@ from backend.storeFloor import StoreFloor
 
 class RackingInspector(QTabWidget):
     """
-    Interact with StoreFloor
+    Interface between racking and backend (racking in StoreFloor), to manage racking by user
+    TODO: change submit signal to buttons in RackingInspector directly
     """
     submit_signal = pyqtSignal(str) # changed for new_element
     new_element_signal = pyqtSignal(ElementConstructorData)     # create new element

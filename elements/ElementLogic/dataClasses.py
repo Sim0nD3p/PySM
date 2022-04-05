@@ -92,8 +92,6 @@ class Geometry:
         :param width: width
         :return: void
         """
-        print('setting width')
-        print(width)
         if width > 0:
             self.geometry[0, 1] = width
             self.update_painter_path()

@@ -13,7 +13,7 @@ from elements.shelf.shelf import Shelf
 from elements.container.container import Container
 
 container = Container(name='container_test', container_type=BIN, length=50, width=25, height=25, weight_capacity=30)
-dummy_shelf = Shelf(name='test', shelf_length=400, shelf_width=200, shelf_height=10)
+dummy_shelf = Shelf(name='test', shelf_length=400, shelf_width=200, shelf_height=10, x_position=0, y_position=0, type='hello')
 path = QPainterPath()
 path.addRect(0, 0, 25, 25)
 
@@ -21,7 +21,7 @@ class ShelfViewer(QtOpenGLWidgets.QOpenGLWidget):
     def __init__(self):
         super().__init__()
         self.device_transform = None
-        print(dummy_shelf)
+        # print(dummy_shelf)
 
         self.current_shelf = dummy_shelf
         self.current_shelf.add_container(container, Position(0, 0))
@@ -31,10 +31,10 @@ class ShelfViewer(QtOpenGLWidgets.QOpenGLWidget):
         self.y_offset = 0
 
     def mousePressEvent(self, a0: QMouseEvent):
-        print('eventPosition', a0.position().x(), a0.position().y())
+        # print('eventPosition', a0.position().x(), a0.position().y())
         if self.device_transform and self.device_transform.isInvertible():
             x, y = self.device_transform.inverted()[0].map(a0.position().x(), a0.position().y())
-            print(x, y)
+            # print(x, y)
             drag = QDrag(self)
 
 
@@ -44,7 +44,7 @@ class ShelfViewer(QtOpenGLWidgets.QOpenGLWidget):
 
 
     def paintGL(self):
-        print('paintGL')
+        # print('paintGL')
         painter = QPainter(self)
 
 
@@ -75,7 +75,7 @@ class ShelfViewer(QtOpenGLWidgets.QOpenGLWidget):
 
 
         if not self.current_shelf:
-            print('nothing to show')
+            # print('nothing to show')
             # painter.drawPath(path)
             """
             coord_scale_y = math.floor((self.height() / self.width()) * self.coord_scale_x)
@@ -97,7 +97,7 @@ class ShelfViewer(QtOpenGLWidgets.QOpenGLWidget):
                 self.coord_scale_x = math.floor((self.width() / self.height()) * coord_scale_y)
             x_offset = -math.floor((self.coord_scale_x - self.current_shelf.length()) / 2)
             if self.current_shelf.length() > self.coord_scale_x:
-                print('shouldfix width')
+                # print('shouldfix width')
                 self.coord_scale_x = self.current_shelf.length()
                 coord_scale_y = math.floor((self.height() / self.width()) * self.coord_scale_x)
                 x_offset = 0
