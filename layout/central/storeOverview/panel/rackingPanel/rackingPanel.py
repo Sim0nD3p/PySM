@@ -26,6 +26,7 @@ class RackingPanel(Panel):
     def handle_submit(self):
         print('handle submit rackingPanel')
         self.racking_inspector.handle_submit()
+        # TODO: immidiately update shelf inspector (panel) when submitting (if active shelf)
 
     def handle_cancel(self):
         print('handle cancel')

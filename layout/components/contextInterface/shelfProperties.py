@@ -134,6 +134,7 @@ class ShelfProperties(QWidget):
 
     def modify_shelf_properties(self):
         if issubclass(type(self.element), Shelf):
+            self.element.name = self.name_le.text()
             self.element.set_height(self.height_sb.value())
             self.element.set_x_position(self.x_pos_sb.value())
             self.element.set_y_position(self.y_pos_sb.value())

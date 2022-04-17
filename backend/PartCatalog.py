@@ -18,6 +18,18 @@ class PartCatalog:
         return output
 
     @classmethod
+    def part_list(cls):
+        """
+        Gets a list of parts code in string format
+        :return: list of strings
+        """
+        code_list = []
+        for part in cls.catalog:
+            code_list.append(part.code)
+        return code_list
+
+
+    @classmethod
     def filter_path(cls, source, property_path, search_value: str):
         """
         Searches the catalog for value in path

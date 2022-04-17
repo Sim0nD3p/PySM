@@ -49,7 +49,7 @@ class RackingInspector(QTabWidget):
         else:
             print('modify racking')
             self.racking_properties.modify_store_object()
-        self.unselect_signal.emit()
+        # self.unselect_signal.emit()
         self.store_viewer.paintGL()
 
 
@@ -89,7 +89,7 @@ class RackingInspector(QTabWidget):
             # print('creating racking')
             racking = Racking(
                 name=constructor.name,
-                id=1010,
+                id=StoreFloor.generate_id(),
                 x_position=constructor.x_position,
                 y_position=constructor.y_position,
                 length=constructor.length,
@@ -112,9 +112,10 @@ class RackingInspector(QTabWidget):
         :return:
         """
         print('update child infos')
+        print(type(element))
         self.racking_properties.enable_all()
+        self.element = None
         if element is None:
-            self.element = None
             self.racking_properties.display_blank()
             self.racking_content.display_blank()
             self.racking_properties.disable_all()
@@ -122,13 +123,14 @@ class RackingInspector(QTabWidget):
             self.racking_properties.element = None
             self.racking_content.element = None
         elif type(element) is ElementConstructorData:
+            print('elementConstructor')
             self.racking_properties.element = None
             self.racking_content.element = None
             self.racking_content.draw_list()
             self.racking_properties.update_informations(element)
             self.racking_content.disable_all()
         elif issubclass(type(element), StoreObject):
-            # print('element is storeObject')
+            print('element is storeObject')
             self.element = element
             self.racking_properties.update_informations(element)
             self.racking_content.update_informations(element)

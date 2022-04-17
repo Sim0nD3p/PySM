@@ -7,7 +7,7 @@ from elements.container.container import *
 import numpy as np
 from elements.ElementLogic.dataClasses import *
 from elements.ElementLogic.dataClasses import *
-
+from elements.ElementLogic.StorageObject import *
 """
 Multiple shelves style:
 - flat
@@ -25,15 +25,29 @@ class Shelf(Geometry):
     with origin in bottom left corner
 
     """
-    def __init__(self, name, shelf_length, shelf_width, shelf_height, x_position, y_position, type):
+    compatible_containers = []
+
+    def __init__(self, name, id, shelf_length, shelf_width, shelf_height, x_position, y_position, type):
         super().__init__(length=shelf_length, width=shelf_width,
                          x_position=x_position, y_position=y_position,
                          angle=angle, height=shelf_height
                          )
         self.name = name
         self.type = type
+        self.id = id
+        self.parent_racking = None
 
-        self.containers = []
+        self.storage_objects = []   # storage object regrouping all containers
+        self.containers = []        # list of all containers from storage_objects
+
+
+    def set_parent_racking(self, racking):
+        """
+        Sets the parent racking value of shelf, cannot put full racking object since shelf is in racking (loop)
+        checks if shelf and racking are compatible in dimensions and put the racking name and id in property
+        :param racking:
+        :return:
+        """
 
 
 
@@ -47,6 +61,34 @@ class Shelf(Geometry):
             geo = np.fromstring(geo, dtype=float, sep=' ')
             geometry = geo.reshape(3, 2)
 
+    def containers(self):
+        """
+        gets the container list from all storage_group
+        :return:
+        """
+        container_list = []
+        for group in self.storage_objects:
+            for container in group.containers:
+                container_list.append(container)
+
+        return container_list
+
+
+    def find_storage_group(self, container: Container):
+        """
+        Find the storage_group parent to the given container
+        :param container: Container
+        :return:
+        """
+        pass
+
+    def add_storage(self, storage_object: StorageObject):
+        """
+        Adds storage_object to self.storage_objects
+        :param storage_object:
+        :return:
+        """
+        self.storage_objects.append(storage_object)
 
 
 

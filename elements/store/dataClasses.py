@@ -10,3 +10,11 @@ class ElementConstructorData:
     width: float
     height: float
     angle: float
+
+@dataclass
+# useless
+class RackingID:
+    name: str
+    id: int
+
+

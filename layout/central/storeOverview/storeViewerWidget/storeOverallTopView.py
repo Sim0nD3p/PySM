@@ -150,6 +150,7 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
 
 
         elif self.mouse_action_type is ACTION_DRAW:
+            self.selected_element = None
             self.mouse_pressed_position = QPointF(x, y)
 
     def mouseMoveEvent(self, a0: PyQt6.QtGui.QMouseEvent):
@@ -166,6 +167,7 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
         x, y = self.get_logical_coordinates(a0)
         mouse_released_position = QPointF(x, y)
         if self.mouse_action_type is ACTION_DRAW:
+            print('MouseRelease on ACTION_DRAW')
             constructor = self.get_drawing_geometry(self.mouse_pressed_position, mouse_released_position)
             self.new_rect_signal.emit(constructor)
             self.mouse_pressed_position = None

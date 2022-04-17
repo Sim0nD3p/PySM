@@ -26,7 +26,7 @@ class OrderHistory:
     def __init__(self):
         self.orders = []
 
-    def add_order(self, order):
+    def add_order(self, order: Order):
         """
         Adds order to history if it isn't already
         :param order: order object
@@ -52,10 +52,30 @@ class OrderHistory:
         return filtered_orders
 
 
-    def total_order(self):
+    def total_order(self, start_date: Date):
+        """
+        Total number of orders
+        :param start_date:
+        :return:
+        """
         t = 0
         for order in self.orders:
-            t += order.quantity
+            if order.date.get_date() >= start_date:
+                t += 1
+
+        return t
+
+
+    def total_ordered_parts(self, start_date: Date):
+        """
+        Total number of part ordered
+        :param start_date:
+        :return: int
+        """
+        t = 0
+        for order in self.orders:
+            if order.date.get_date() >= start_date:
+                t += order.quantity
 
         return t
 

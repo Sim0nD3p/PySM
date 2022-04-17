@@ -1,10 +1,14 @@
 from elements.shelf.shelf import Shelf
 from elements.elementsTypes import *
+from elements.container.bin import *
+from elements.container.spaceContainer import *
 import numpy as np
 
+
 class FlatShelf(Shelf):
-    def __init__(self, name, length, width, height):
-        super().__init__(name=name, type=FLAT_SHELF,
+    compatible_containers = [Bin, SpaceContainer]
+    def __init__(self, name, id, length, width, height):
+        super().__init__(name=name, id=id, type=FLAT_SHELF,
                          shelf_length=length, shelf_width=width,
                          shelf_height=height, x_position=0, y_position=0
                          )
@@ -25,6 +29,7 @@ class FlatShelf(Shelf):
             geometry = geo.reshape(3, 2)
             sh = cls(
                 name=properties['name'],
+                id=int(properties['id']),
                 length=geometry[0, 0],
                 width=geometry[0, 1],
                 height=geometry[2, 1],

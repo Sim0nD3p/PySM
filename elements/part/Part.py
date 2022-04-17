@@ -17,6 +17,15 @@ import xml.etree.ElementTree as et
     
 """
 
+
+def make_float(value):
+    try:
+        number = float(value)
+        return number
+    except ValueError:
+        return 'NaN'
+
+
 class Part:
     """
     essentials components of Part:
@@ -31,7 +40,15 @@ class Part:
     def __init__(self, code: str):
         self.code = code
         self.order_history = OrderHistory()
-        self.order_stats = {}
+        self.general_information = None
+        self.specifications = None
+        self.order_stats = {
+            'annual_average': None,
+            'monthly_average': None,
+            'average_order_frequency': None,
+            'average_order_size': None,
+            'order_number': None
+        }
 
     def add_orders_to_history(self, orders):
         """
@@ -57,7 +74,8 @@ class Part:
             'annual_average': self.order_history.annual_average(start_date.year),
             'monthly_average': self.order_history.monthly_average(start_date, 6, 'single'),
             'average_order_frequency': self.order_history.order_frequency(start_date.year),
-            'average_order_size': self.order_history.average_order_size(start_date.year)
+            'average_order_size': self.order_history.average_order_size(start_date.year),
+            'order_number': self.order_history.total_order(start_date.get_date())
 
         }
 
@@ -252,10 +270,10 @@ class Part:
             'height': 'part/specifications/height',
             'weight': 'part/specifications/weight'
         }
-        length = Part.get_value(data, instructions, paths['length'])
-        width = Part.get_value(data, instructions, paths['width'])
-        height = Part.get_value(data, instructions, paths['height'])
-        weight = Part.get_value(data, instructions, paths['weight'])
+        length = make_float(Part.get_value(data, instructions, paths['length']))
+        width = make_float(Part.get_value(data, instructions, paths['width']))
+        height = make_float(Part.get_value(data, instructions, paths['height']))
+        weight = make_float(Part.get_value(data, instructions, paths['weight']))
 
         return Specifications(length=length, width=width, height=height, weight=weight)
 
@@ -352,6 +370,8 @@ class Part:
                 part = Part.go_to_element(part, object_dir, value)
 
         return part
+
+
 
 
 def target(xml_root, obj):

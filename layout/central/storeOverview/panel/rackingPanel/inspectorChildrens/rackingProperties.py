@@ -38,6 +38,17 @@ class RackingProperties(QWidget):
         name_hbox.addWidget(self.name_le)
         self.main_vbox.addLayout(name_hbox)
 
+        # ID
+        id_hbox = QHBoxLayout()
+        id_label = QLabel('ID: ')
+        self.id_label = QLabel('id')
+        id_font = QFont('Arial')
+        id_font.setWeight(500)
+        self.id_label.setFont(id_font)
+        id_hbox.addWidget(id_label)
+        id_hbox.addWidget(self.id_label)
+        self.main_vbox.addLayout(id_hbox)
+
         # TYPE
         type_hbox = QHBoxLayout()
         self.type_cb = QComboBox()
@@ -146,7 +157,7 @@ class RackingProperties(QWidget):
             self.new_element_signal.emit(constructor)
             # new element, create constructor
         else:
-            self.modify_store_object(self.element)
+            self.modify_store_object()
 
             self.submit_signal.emit('repaint submit')
 
@@ -157,13 +168,14 @@ class RackingProperties(QWidget):
         :return: void
         """
         print('modify store')
-        self.element.name = self.name_le.text()
-        self.element.set_x_position(self.x_pos_sb.value())
-        self.element.set_y_position(self.y_pos_sb.value())
-        self.element.set_length(self.len_sb.value())
-        self.element.set_width(self.wid_sb.value())
-        self.element.set_angle(self.ang_sb.value())
-        self.element.set_height(self.hei_sb.value())
+        if self.element:
+            self.element.name = self.name_le.text()
+            self.element.set_x_position(self.x_pos_sb.value())
+            self.element.set_y_position(self.y_pos_sb.value())
+            self.element.set_length(self.len_sb.value())
+            self.element.set_width(self.wid_sb.value())
+            self.element.set_angle(self.ang_sb.value())
+            self.element.set_height(self.hei_sb.value())
 
 
 
@@ -189,6 +201,7 @@ class RackingProperties(QWidget):
         :return: void
         """
         self.name_le.setText(constructor.name)
+        self.id_label.setText('Non attribué')
         self.len_sb.setValue(constructor.length)
         self.wid_sb.setValue(constructor.width)
         self.x_pos_sb.setValue(constructor.x_position)
@@ -202,6 +215,7 @@ class RackingProperties(QWidget):
         :return:
         """
         self.name_le.setText(store_object.name)
+        self.id_label.setText('#' + str(store_object.id))
         self.len_sb.setValue(store_object.length())
         self.wid_sb.setValue(store_object.width())
         self.x_pos_sb.setValue(store_object.x_position())
@@ -216,6 +230,7 @@ class RackingProperties(QWidget):
         :return: void
         """
         self.name_le.setText('')
+        self.id_label.setText('#######')
         self.len_sb.setValue(0)
         self.wid_sb.setValue(0)
         self.x_pos_sb.setValue(0)

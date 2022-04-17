@@ -7,6 +7,7 @@ from layout.central.storeOverview.shelfViewerWidget.shelfViewer import *
 from layout.central.storeOverview.panel.shelfPanel.shelfPanel import *
 from layout.central.storeOverview.panel.containerPanel.containerPanel import *
 from elements.shelf.shelf import *
+import copy
 
 class StoreOverview(QWidget):
     """
@@ -19,6 +20,7 @@ class StoreOverview(QWidget):
         super().__init__()
         self.setAutoFillBackground(True)
         self.setContentsMargins(5, 5, 5, 5)
+        self.setMaximumHeight(500)
         hbox = QHBoxLayout()
         hbox.setContentsMargins(0, 0, 0, 0)
 
@@ -29,7 +31,7 @@ class StoreOverview(QWidget):
         self.shelf_visual = ShelfViewer()           # shelf viewer
 
         # signals for store viewer (new, select, unselect)
-        self.store_visual.new_rect_signal.connect(self.handle_racking_selection)
+        self.store_visual.new_rect_signal.connect(self.handle_racking_creation)
         self.store_visual.selection_signal.connect(self.handle_racking_selection)
         self.store_visual.unselect_signal.connect(self.unselect_all)
 
@@ -49,9 +51,13 @@ class StoreOverview(QWidget):
         self.racking_panel.racking_inspector.racking_content.new_shelf_button.clicked.connect(self.handle_shelf_creation)
 
         # interfaces shelf panel
-        self.shelf_panel.shelf_inspector.shelf_list_update_signal.connect(self.racking_panel.racking_inspector.racking_content.
-                                                                          draw_list)
+        self.shelf_panel.shelf_inspector.shelf_list_update_signal.connect(self.racking_panel.racking_inspector
+                                                                          .racking_content.draw_list)
+        self.shelf_panel.shelf_inspector.new_container_signal.connect(self.handle_container_creation)
 
+        # container interface (shelf)
+        self.container_panel.container_inspector.container_list_update_signal.connect(self.shelf_panel.shelf_inspector
+                                                                                      .update_content_list)
         self.splitter.addWidget(self.racking_panel)
         self.splitter.addWidget(self.shelf_panel)
         self.splitter.addWidget(self.container_panel)
@@ -70,6 +76,18 @@ class StoreOverview(QWidget):
 
     def test(self):
         print('test')
+
+    def handle_container_creation(self, storage_object):
+        if issubclass(type(storage_object), StorageObject):
+            self.container_panel.container_inspector.update_information(storage_object)
+            self.container_panel.show_panel(300)
+
+    def handle_container_selection(self, storage_object: StorageObject):
+        self.container_panel.container_inspector.update_information(storage_object)
+        self.container_panel.show_panel(300)
+
+
+
 
     def handle_shelf_creation(self, constructor: ElementConstructorData):
         """
@@ -93,6 +111,7 @@ class StoreOverview(QWidget):
         :param constructor: elementConstructorData
         :return: void
         """
+        print('handle racking creation')
         self.racking_panel.racking_inspector.update_child_informations(constructor)
 
     def handle_racking_selection(self, element: StoreObject):
@@ -101,6 +120,10 @@ class StoreOverview(QWidget):
             self.shelf_panel.shelf_inspector.set_parent_racking(element)
 
     def unselect_all(self):
+        """
+        unselect all elements
+        :return:
+        """
         print('unselect all')
         self.racking_panel.racking_inspector.update_child_informations(None)
         self.store_visual.selected_element = None

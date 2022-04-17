@@ -4,6 +4,7 @@ from PyQt6.QtGui import QPainterPath
 from PyQt6.QtCore import QPointF
 from layout.settings.settings import Settings
 from elements.ElementLogic.dataClasses import *
+from backend.storeFloor import *
 
 
 class StoreObject(Geometry):

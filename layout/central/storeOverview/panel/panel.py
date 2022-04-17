@@ -21,8 +21,8 @@ class Panel(QWidget):
         self.tool_bar = QToolBar()
         self.main_vbox.addWidget(self.tool_bar)
 
-        self.inspector = QWidget()
-        self.main_vbox.addWidget(self.inspector)
+        self.container_inspector = QWidget()
+        self.main_vbox.addWidget(self.container_inspector)
 
         # buttons setup
         button_hbox = QHBoxLayout()
@@ -53,8 +53,8 @@ class Panel(QWidget):
         :param inspector:
         :return:
         """
-        self.inspector = inspector
-        self.main_vbox.insertWidget(1, self.inspector)
+        self.container_inspector = inspector
+        self.main_vbox.insertWidget(1, self.container_inspector)
 
 
     def show_panel(self, width=250):

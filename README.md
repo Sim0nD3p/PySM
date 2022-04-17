@@ -19,11 +19,15 @@
     - *integration of shapely in geometry for shape (postponed)
     - **add way to find place for container in shelf
       - shelfPanel
-        - way to save shelf to racking
         - check shelf properties
         - add way to add container (container selector for part, select part and container)
     - ***add way to find best shelf according to place available (later)
     - bug when drawing new racking when racking already selected
+
+- streamline how container are stored in shelf (in the ui) and written in xml file
+- display containers in ShelfViewer
+- drag to place containers in shelfviewer (on shelf)
+
 
 ## Mid term
 - StoreFloor writer loader will be broken by the addition of geometry as a parent class

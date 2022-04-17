@@ -43,10 +43,12 @@ class StoreFloorWriter:
                     geo = np.array2string(shelf.geometry.flatten())
                     print(shelf.geometry)
                     print('geo', geo)
+                    print('shelf', vars(shelf))
                     et.SubElement(xml_element,
                                   'shelf',
                                   attrib={
                                       'name': shelf.name,
+                                      'id': str(shelf.id),
                                       'type': shelf.type,
                                       'geometry': geo
                                   }

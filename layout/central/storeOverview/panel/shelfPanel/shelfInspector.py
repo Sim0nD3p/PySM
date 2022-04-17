@@ -4,10 +4,17 @@ from PyQt6.QtGui import *
 from layout.components.contextInterface.shelfProperties import *
 from elements.racking.racking import *
 from layout.components.contextInterface.shelfContent import *
+from elements.shelf.shelf import *
+from elements.store.dataClasses import *
+from elements.shelf.flatShelf import *
+from elements.ElementLogic.StorageObject import *
+from backend.storeFloor import *
 
 
 class ShelfInspector(QTabWidget):
     shelf_list_update_signal = pyqtSignal(name='shelf_list_update')
+    # start_container_creation = pyqtSignal(Shelf, name='start_creation')
+    new_container_signal = pyqtSignal(StorageObject, name='new_container')
 
     def __init__(self):
         super().__init__()
@@ -20,6 +27,8 @@ class ShelfInspector(QTabWidget):
 
         self.shelf_content = ShelfContent()
         self.addTab(self.shelf_content, 'Contenu')
+
+        self.shelf_content.add_button.clicked.connect(self.start_container_path)
 
     def handle_submit(self):
         if not self.element:
@@ -49,6 +58,7 @@ class ShelfInspector(QTabWidget):
             print('shelf created and sent to racking')
             shelf = FlatShelf(
                 name=self.shelf_properties.name_le.text(),
+                id=StoreFloor.generate_id(),
                 length=self.shelf_properties.length_sb.value(),
                 width=self.shelf_properties.width_sb.value(),
                 height=self.shelf_properties.height_sb.value()
@@ -56,8 +66,33 @@ class ShelfInspector(QTabWidget):
             print('self')
             print(shelf)
             print(self.parent_racking)
+            shelf.set_parent_racking(self.parent_racking)
             self.parent_racking.add_shelf(shelf)
             self.shelf_list_update_signal.emit()
+
+    def start_container_path(self):
+        """
+        Initiate the creation of a StorageObject which group containers for a given part on a shelf
+        :return:
+        """
+        storage_object = StorageObject(parent_shelf_id=self.element.id)
+        print('shelfInspector: Emitting signal for new StorageObject ', self.element.id)
+        self.new_container_signal.emit(storage_object)
+
+    def update_content_list(self):
+        """
+        Updates the child list of content with data from the current element in inspector
+        :return: void
+        """
+        print('updating shelf content list')
+        print('type self.element', type(self.element))
+        self.shelf_content.list.clear()
+        if issubclass(type(self.element), Shelf):
+            print('bon')
+            for element in self.element.storage_objects:
+                self.shelf_content.list.addItem(element.part_code)
+
+
 
 
     def update_child_information(self, element):
@@ -84,4 +119,6 @@ class ShelfInspector(QTabWidget):
             self.element = element
             self.shelf_properties.element = element
             self.shelf_properties.update_information(element)
+            self.shelf_content.update_information(element)
+
 

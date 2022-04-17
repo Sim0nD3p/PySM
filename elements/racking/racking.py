@@ -25,7 +25,33 @@ class Racking(StoreObject):
         shelves should be represented by matrices in racking
         """
     def add_shelf(self, shelf):
+        """
+        TODO Need to be better
+        :param shelf:
+        :return:
+        """
         self.shelves.append(shelf)
+
+    def set_length(self, length):
+        """
+        override geometry method to also change the length of shelves
+        :param length:
+        :return:
+        """
+        for shelf in self.shelves:
+            if shelf.length() == self.length():
+                shelf.set_length(length)
+
+        super(Racking, self).set_length(length)     # calls the parent method to change length
+
+    def set_width(self, width):
+        for shelf in self.shelves:
+            if shelf.width() == self.width():
+                shelf.set_width(width)
+
+        super(Racking, self).set_width(width)   # calls the parent method to change width
+
+
 
     @classmethod
     def init_from_xml(cls, xml_data):

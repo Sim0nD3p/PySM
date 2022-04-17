@@ -19,7 +19,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.context_window1 = QMainWindow()
         self.setWindowTitle('Sample window')
-        self.setGeometry(50, 50, 1200, 650)
+        self.setGeometry(50, 50, 1000, 600)
         self.part_catalog = PartCatalog()
         self.importer_window = ImporterWindow(self)
         self.importer_window.importer.confirmation_widget.confirm_button.clicked.connect(self.part_catalog_update)
