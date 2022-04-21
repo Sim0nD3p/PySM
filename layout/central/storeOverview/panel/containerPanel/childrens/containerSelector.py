@@ -61,15 +61,15 @@ class ContainerSelector(QWidget):
         :param element: Shelf
         :return:
         """
-        print(help(self.type_cb))
-        print(self.type_cb)
+
         self.type_cb.clear()    # problem seems to be here, makes app crash, triggers valueChange
-        print('test')
-        # print(element.compatible_containers)
-        if element.compatible_containers:
-            for container in element.compatible_containers:
-                # print(container.display_type)
-                self.type_cb.addItem(container.display_type, container)
+        if issubclass(type(element), Shelf):
+            if element.compatible_containers:
+                for container in element.compatible_containers:
+                    self.type_cb.addItem(container.display_type, container)
+
+    def draw_subtype_cb(self):
+        print('containerSelector - draw subtype_cb according to type selected by default for selected group')
 
     def handle_type_change(self, type_cb_index):
         """
@@ -95,23 +95,24 @@ class ContainerSelector(QWidget):
 
 
     def handle_subtype_change(self, subtype_cb_index):
-        subtype = self.subtype_cb.itemData(subtype_cb_index)
-        if not subtype:
+        if subtype_cb_index != -1:
+            subtype = self.subtype_cb.itemData(subtype_cb_index)
+            if issubclass(type(subtype), Container):
+                self.dimensions_selector.setDisabled(True)
+                # print(subtype)
+                # print(subtype.length(), subtype.width(), subtype.height())
+
+                self.dimensions_selector.set_dimensions(length=subtype.length(),
+                                                        width=subtype.width(),
+                                                        height=subtype.height()
+                                                        )
+
+        elif self.type_cb.currentIndex() != -1:
             self.dimensions_selector.set_dimensions(length=0,
                                                     width=0,
                                                     height=0
                                                     )
             self.dimensions_selector.setDisabled(False)
-
-        elif issubclass(type(subtype), Container):
-            self.dimensions_selector.setDisabled(True)
-            # print(subtype)
-            # print(subtype.length(), subtype.width(), subtype.height())
-
-            self.dimensions_selector.set_dimensions(length=subtype.length(),
-                                                    width=subtype.width(),
-                                                    height=subtype.height()
-                                                    )
             # self.container_change.emit(subtype, 12, 12, 12)
 
     def handle_dimensions_change(self):
@@ -122,8 +123,9 @@ class ContainerSelector(QWidget):
         length = self.dimensions_selector.length()
         width = self.dimensions_selector.width()
         height = self.dimensions_selector.height()
-        container = self.type_cb.itemData(self.type_cb.currentIndex())
-        self.container_change.emit(container, length, width, height)
+        if self.type_cb.currentIndex() != -1:
+            container = self.type_cb.itemData(self.type_cb.currentIndex())
+            self.container_change.emit(container, length, width, height)
 
 
 
@@ -132,8 +134,25 @@ class ContainerSelector(QWidget):
         Gets the selected container and its dimensions
         :return:
         """
-        e = self.type_cb.itemData(self.type_cb.currentIndex())
-        # print(e)
+        container = None
+        if self.type_cb.currentIndex() != -1:
+            container_type = self.type_cb.itemData(self.type_cb.currentIndex())
+            if len(ContainerCatalog.get_containers(container_type=container_type)) == 0:
+                container = container_type
+            else:
+                container = self.subtype_cb.itemData(self.subtype_cb.currentIndex())
+        return container
+
+
+
+    def display_blank(self):
+        """
+        Display blank values for all input elements
+        :return:
+        """
+        self.type_cb.clear()
+        self.subtype_cb.clear()
+        self.dimensions_selector.set_dimensions(0, 0, 0)
 
 
 
@@ -150,12 +169,13 @@ class ContainerSelector(QWidget):
         :param element:
         :return:
         """
-        shelf_target = StoreFloor.get_shelf_by_id(element.parent_shelf_id)
-        if shelf_target:
+        if hasattr(element, 'parent_shelf_id'):
+            shelf_target = StoreFloor.get_shelf_by_id(element.parent_shelf_id)
             self.draw_type_cb(shelf_target)
+            self.draw_subtype_cb()
             print('test3')
         else:
-            self.draw_type_cb(None)
-        # print('info updated on containerSelector')
+            self.display_blank()
+
 
 

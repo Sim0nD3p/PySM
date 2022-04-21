@@ -1,7 +1,10 @@
+import math
+
 from elements.ElementLogic.dataClasses import *
 from elements.container.container import *
 import numpy as np
 import copy
+from backend.ContainerCatalog import *
 from PyQt6.QtGui import *
 
 
@@ -20,18 +23,44 @@ class StorageObject(Geometry):
         # we'll need to setup geometry later when posiotionning in shelf
         self.part_code = None
         self.parent_shelf_id = parent_shelf_id
-        self.containers = [None]
-        self.nb_containers = 1
-        self.part_cont = 0      # number of parts per container
+        self.containers = [None]    # at least 1 container
+
+        self.number_part = 0    # total number of parts in group
         self.disposition = None
 
     def set_part_code(self, part_code: str):
         """
-        Sets the part code of the group
+        Sets the part code of the group for which part is stored
         :param part_code:
         :return: void
         """
         self.part_code = part_code
+
+    def container_number(self):
+        """
+        Returns the number of containers in the group
+        :return: int
+        """
+        return len(self.containers)
+
+    def storage_capacity(self):
+        capacity = 0
+        print('storage capacity', self.containers)
+        for container in self.containers:
+            if issubclass(type(container), Container):
+                print('getting container', container.name, container.get_content())
+                if issubclass(type(container), Container):
+                    capacity += int(container.get_content()[0])
+                    print('capacity increase', container.get_content())
+            print('storage capacity', capacity)
+        return capacity
+
+    def nb_part_cont_old(self):
+        """
+        Returns the number of parts per container
+        :return: int
+        """
+        return self.storage_capacity() / self.container_number()
 
     def container_type(self):
         """
@@ -40,8 +69,22 @@ class StorageObject(Geometry):
         """
         return type(self.containers[0])
 
+    def update_containers(self, number: int, container_type: type, container_options: dict, part_number: int):
+        containers = ContainerCatalog.create_containers(class_type=container_type, number=number,
+                                                        options=container_options
+                                                        )
+        # get disposition before assigning it in next loop
+        nb_part_cont = math.ceil(part_number/number)
+        print('nb_part_cont', nb_part_cont)
 
-    def set_nb_containers(self, nb_containers: int):
+        for container in containers:
+            container.set_content(nb_part_cont, self.part_code)
+            print('updating container', container.name, container.get_content())
+
+        self.containers = containers
+
+
+    def set_nb_containers_old(self, nb_containers: int):
         """
         Sets the container quantity of the storage object
         :param nb_container:
@@ -50,7 +93,7 @@ class StorageObject(Geometry):
         self.nb_containers = nb_containers
         # TODO will need to run some updates to the group
 
-    def change_containers(self, target_container: Container):
+    def change_container_type(self, target_container: Container):
         """
         Handles the change in container type, should be checked
         :param target_container:
@@ -64,38 +107,6 @@ class StorageObject(Geometry):
             new_containers.append(new_container)
 
         self.containers = new_containers
-
-
-
-
-    def set_disposition(self, disposition):
-        """
-        Sets the disposition of the containers
-        :param disposition:
-        :return:
-        """
-        pass
-
-    def update_width(self):
-        """
-        Not necessarly useful since object might have weird shape
-        :return:
-        """
-        pass
-
-
-
-
-
-
-    def set_geometry(self):
-        pass
-
-    def get_length(self):
-        """
-        length taken by container on shelf length (check orientation, angle)
-        :return:
-        """
 
 
     def is_admissible(self):

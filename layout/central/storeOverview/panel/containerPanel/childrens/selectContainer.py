@@ -65,7 +65,7 @@ class SelectContainer(QWidget):
         :param element:
         :return: void
         """
-        if StoreFloor.get_shelf_by_id(element.parent_shelf_id):
+        if hasattr(element, 'parent_shelf_id'):
             shelf_type = StoreFloor.get_shelf_by_id(element.parent_shelf_id).type
             self.shelf_type_label.setText(shelf_type)
         else:
@@ -85,13 +85,16 @@ class SelectContainer(QWidget):
             self.update_ui(element)
             self.container_selector.update_information(element)
             self.container_options.update_information(element)
-            self.part_selector.update_completer()
+            self.part_selector.update_information(element)
             # print('all infos updated on selectContainer')
         elif not element:
+            print('updating element None')
             self.storage_object = None
             self.update_ui(None)
-            self.container_selector.update_information(None)
-            self.container_options.update_information(None)
+            self.part_selector.display_blank()
+            print('test')
+            self.container_selector.display_blank()
+            self.container_options.display_blank()
 
 
 

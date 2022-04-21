@@ -148,7 +148,7 @@ class PartCatalog:
         print(cls.catalog)
 
     @classmethod
-    def add_part(cls, part):
+    def add_part(cls, part: Part):
         """
         Add part to catalog (absolute)
         **error if part is already in catalog?

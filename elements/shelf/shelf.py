@@ -23,6 +23,9 @@ class Shelf(Geometry):
 
     about position: shelf have x and y positions (usually 0, 0), about where they are placed on racking\
     with origin in bottom left corner
+    Dimension:
+    - length is the dimensions in the length/width axis of the shelf
+    - width is the dimensinos in the depth axis of the shelf
 
     """
     compatible_containers = []

@@ -53,7 +53,7 @@ class StoreOverview(QWidget):
         # interfaces shelf panel
         self.shelf_panel.shelf_inspector.shelf_list_update_signal.connect(self.racking_panel.racking_inspector
                                                                           .racking_content.draw_list)
-        self.shelf_panel.shelf_inspector.new_container_signal.connect(self.handle_container_creation)
+        self.shelf_panel.shelf_inspector.container_select_signal.connect(self.handle_container_creation)
 
         # container interface (shelf)
         self.container_panel.container_inspector.container_list_update_signal.connect(self.shelf_panel.shelf_inspector

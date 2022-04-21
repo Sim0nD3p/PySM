@@ -66,12 +66,14 @@ class ContainerOptions(QWidget):
         self.nb_part_cont_bt = QPushButton('Maximiser masse')
         self.nb_part_cont_bt.setCheckable(True)
         self.nb_part_cont_status = QLabel('Nombre de pièces limité par masse')
+        self.cont_weight_label = QLabel('Masse du contenant: indéterminé')
         self.nb_part_cont_status.setFont(small_font)
         self.nb_part_cont_status.setAlignment(Qt.AlignmentFlag.AlignRight)
         nb_part_grid.addWidget(nb_part_cont_label, 3, 1, 1, 1)
         nb_part_grid.addWidget(self.nb_part_cont_sb, 3, 2, 1, 1)
         nb_part_grid.addWidget(self.nb_part_cont_bt, 3, 3, 1, 1)
         nb_part_grid.addWidget(self.nb_part_cont_status, 4, 1, 1, 3)
+        nb_part_grid.addWidget(self.cont_weight_label, 5, 1, 1, 3)
 
         # nb contenants
         nb_cont_label = QLabel('Nombre contenants')
@@ -82,10 +84,15 @@ class ContainerOptions(QWidget):
         self.nb_cont_status = QLabel('Nombre de contenants')
         self.nb_cont_status.setFont(small_font)
         self.nb_cont_status.setAlignment(Qt.AlignmentFlag.AlignRight)
-        nb_part_grid.addWidget(nb_cont_label, 5, 1, 1, 1)
-        nb_part_grid.addWidget(self.nb_cont_sb, 5, 2, 1, 1)
-        nb_part_grid.addWidget(self.nb_cont_bt, 5, 3, 1, 1)
-        nb_part_grid.addWidget(self.nb_cont_status, 6, 1, 1, 3)
+        nb_part_grid.addWidget(nb_cont_label, 6, 1, 1, 1)
+        nb_part_grid.addWidget(self.nb_cont_sb, 6, 2, 1, 1)
+        nb_part_grid.addWidget(self.nb_cont_bt, 6, 3, 1, 1)
+        nb_part_grid.addWidget(self.nb_cont_status, 7, 1, 1, 3)
+
+        # DISPOSITION OF CONTAINERS
+        self.container_dispo = QComboBox()
+        nb_part_grid.addWidget(self.container_dispo, 8, 1, 1, 1)
+
 
 
         self.main_vbox.addLayout(nb_part_grid)
@@ -101,9 +108,11 @@ class ContainerOptions(QWidget):
 
         self.nb_part_sb.valueChanged.connect(self.handle_nb_part_change)
         self.nb_part_cont_sb.valueChanged.connect(self.handle_nb_part_cont_change)
+        self.nb_cont_sb.valueChanged.connect(self.handle_nb_cont_change)
 
         self.nb_part_bt.clicked.connect(self.handle_nb_part_bt)
         self.nb_part_cont_bt.clicked.connect(self.handle_nb_part_cont_bt)
+        self.nb_cont_bt.clicked.connect(self.handle_nb_cont_bt)
 
     def test(self):
         print('editing finished')
@@ -125,6 +134,7 @@ class ContainerOptions(QWidget):
 
     def handle_nb_part_change(self, value):
         self.nb_part = value
+        print(value)
         if self.nb_part_cont != 0:
             print('calc nb_cont')
             self.nb_cont = math.ceil(self.nb_part / self.nb_part_cont)
@@ -153,10 +163,10 @@ class ContainerOptions(QWidget):
 
         :return:
         """
-        if type(self.storage_object) == StorageObject:
+        if issubclass(type(self.storage_object), StorageObject):
             if self.storage_object.part_code:
                 part = PartCatalog.get_part(self.storage_object.part_code)
-                if part.specifications.weight:
+                if part and part.weight():
                     part_capacity = self.storage_object.container_type().weight_capacity / part.specifications.weight
                     self.nb_part_cont = part_capacity
                     self.update_ui()
@@ -174,6 +184,11 @@ class ContainerOptions(QWidget):
         self.nb_part_cont = value
         if self.nb_part_cont != 0:
             print('calc nb_cont')
+            if issubclass(type(self.storage_object), StorageObject):
+                if PartCatalog.get_part(self.storage_object.part_code) and\
+                        PartCatalog.get_part(self.storage_object.part_code).weight():
+                    self.cont_weight_label.setText('Masse de contenant: ' + str(PartCatalog.get_part(
+                        self.storage_object.part_code).weight() * self.nb_part_cont))
             self.nb_cont = math.ceil(self.nb_part / self.nb_part_cont)
 
         self.update_ui()
@@ -192,18 +207,37 @@ class ContainerOptions(QWidget):
 
         self.update_ui()
 
-    def handle_nb_cont_changed(self, value):
+    def handle_nb_cont_bt(self):
+        """
+        Handles button nb_cont
+        :return:
+        """
+        pass
+
+    def handle_nb_cont_change(self, value):
         self.nb_cont = value
-        # TODO update other values
-        self.container_number_changed.emit(self.nb_cont)
+        # Other values updated on exitEditing because it would cause loop
+
+        self.update_ui()
 
 
     def handle_nb_cont_exit(self):
         """
-        Handles changes in nb_cont spinBox
+        Handles changes in nb_cont spinBox,
+        calculate the number of part per containers according to the number of container set
+        if the number of part in container is too high (according to weight), we change the number of part
+        TODO will need to change behavior so that its more logic, when nb_part = 0 and we change nb_cont, bug
         :return:
         """
         self.nb_cont = self.nb_cont_sb.value()
+        if self.nb_part_cont != 0 and self.nb_cont != math.ceil(self.nb_part / self.nb_part_cont):
+            print('calc elements')
+            self.nb_part_cont = math.ceil(self.nb_part / self.nb_cont)
+            part = PartCatalog.get_part(self.storage_object.part_code)
+            if part and part.weight() and \
+                    self.nb_part_cont * part.weight() > self.storage_object.container_type().weight_capacity:
+                self.nb_part_cont = math.floor(self.storage_object.container_type().weight_capacity / part.weight())
+                self.nb_part = math.floor(self.nb_part_cont * self.nb_cont)
 
         self.nb_part_status.setText(self.nb_part_auto_message)
         self.nb_part_cont_status.setText(self.nb_part_cont_auto_message)
@@ -228,10 +262,35 @@ class ContainerOptions(QWidget):
     def handle_auto_nb_part(self):
         pass
 
+    def get_options_data(self):
+        """
+        Gets data from options selected for the storage_group
+        :return:
+        """
+        options = {
+            'nb_part': self.nb_part,
+            'nb_cont': self.nb_cont,
+            'nb_part_cont': self.nb_part_cont,
+        }
+        return options
+
+    def display_blank(self):
+        """
+        Display blank values for all input elements
+        :return:
+        """
+        self.nb_part = 0
+        self.nb_cont = 0
+        self.nb_part_cont = 0
+        self.update_ui()
+
     def update_information(self, element):
         print('ContainerOptions: received element to update widget')
-        if type(element) == StorageObject:
+        if issubclass(type(element), StorageObject):
             self.storage_object = element
+            self.nb_cont = self.storage_object.container_number()
+            self.nb_part_cont = self.storage_object.storage_capacity()
+            self.update_ui()
         else:
             self.storage_object = None
         # print('info updated on containerOption')

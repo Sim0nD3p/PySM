@@ -25,16 +25,15 @@ class ContainerInspector(QTabWidget):
 
 
 
-    def handle_part_selection(self, part: Part):
+    def handle_part_selection(self, part_code: str):
         """
-        Runs when user selects a part in the inspector part selector, sets the part code in StorageGroup (storageObject)
+        Runs on user input change in partSelector
         :param part:
         :return: void
         """
-        # print('handling part selection in containerInspector')
-        # print(part)
+
         if self.storage_group:
-            self.storage_group.set_part_code(part.code)
+            self.storage_group.set_part_code(part_code)
 
     def handle_container_change(self, container_type, length, width, height):
         """
@@ -54,7 +53,8 @@ class ContainerInspector(QTabWidget):
             pass
 
         if type(self.storage_group) == StorageObject:
-            self.storage_group.change_containers(container)
+            pass
+            # self.storage_group.change_container_type(container)
 
         # change container method directly in storageObject
         # update positions of container (module)
@@ -75,11 +75,37 @@ class ContainerInspector(QTabWidget):
 
     def handle_container_number_change(self, value):
         if type(self.storage_group) == StorageObject:
-            self.storage_group.set_nb_containers(value)
+            pass
+            # self.storage_group.set_nb_containers(value)     # depreciated
 
     def handle_submit(self):
-        # print('StorageObject')
+        """
+        Called when user press submit
+        adds the storage_group in shelf if not already in it, updates the storage_group list
+        TODO should go get all info relative to elements being modified in Storage_Object
+        :return:
+        """
         if issubclass(type(self.storage_group), StorageObject):         # if the current object is StorageObject
+            # Getting informations on storageGroup form inspector sub-widgets
+            options = self.container_selector.container_options.get_options_data()
+            container_options = {
+                'name': 'name test',
+                'length': self.container_selector.container_selector.dimensions_selector.length(),
+                'width': self.container_selector.container_selector.dimensions_selector.width(),
+                'height': self.container_selector.container_selector.dimensions_selector.height()
+            }
+            cont_nb = 2
+            print('we have options')
+            container = self.storage_group.update_containers(number=options['nb_cont'],
+                                                             container_type=self.container_selector.container_selector
+                                                             .get_container(),
+                                                             container_options=container_options,
+                                                             part_number=options['nb_part']
+                                                             )
+            print(container)
+            #  number: int, container_type: type, container_options: dict
+
+
             shelf = StoreFloor.get_shelf_by_id(self.storage_group.parent_shelf_id)  # we get the shelf by its id
             if self.storage_group not in shelf.storage_objects:
                 shelf.add_storage(self.storage_group)

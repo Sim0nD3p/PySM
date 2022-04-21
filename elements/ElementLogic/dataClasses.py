@@ -28,6 +28,7 @@ class Geometry:
         ])
         self.painter_path = self.update_painter_path()
 
+
     def x_position(self):
         """
         x_position: horizontal position of the bottom-left corner would the rectangle be horizontal

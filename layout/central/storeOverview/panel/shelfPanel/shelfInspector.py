@@ -14,7 +14,7 @@ from backend.storeFloor import *
 class ShelfInspector(QTabWidget):
     shelf_list_update_signal = pyqtSignal(name='shelf_list_update')
     # start_container_creation = pyqtSignal(Shelf, name='start_creation')
-    new_container_signal = pyqtSignal(StorageObject, name='new_container')
+    container_select_signal = pyqtSignal(StorageObject, name='new_container')
 
     def __init__(self):
         super().__init__()
@@ -29,6 +29,7 @@ class ShelfInspector(QTabWidget):
         self.addTab(self.shelf_content, 'Contenu')
 
         self.shelf_content.add_button.clicked.connect(self.start_container_path)
+        self.shelf_content.list.itemClicked.connect(self.handle_shelf_content_click)
 
     def handle_submit(self):
         if not self.element:
@@ -77,7 +78,19 @@ class ShelfInspector(QTabWidget):
         """
         storage_object = StorageObject(parent_shelf_id=self.element.id)
         print('shelfInspector: Emitting signal for new StorageObject ', self.element.id)
-        self.new_container_signal.emit(storage_object)
+        self.container_select_signal.emit(storage_object)
+
+    def handle_shelf_content_click(self, item: QListWidgetItem):
+        """
+        Handles element click on the shelf content container list
+        :param item: QListWidgetItem
+        :return: void
+        """
+        data = item.data(1)
+        if issubclass(type(item.data(1)), StorageObject):
+            self.container_select_signal.emit(item.data(1))
+
+
 
     def update_content_list(self):
         """
@@ -90,7 +103,9 @@ class ShelfInspector(QTabWidget):
         if issubclass(type(self.element), Shelf):
             print('bon')
             for element in self.element.storage_objects:
-                self.shelf_content.list.addItem(element.part_code)
+                item = QListWidgetItem(element.part_code)
+                item.setData(1, element)
+                self.shelf_content.list.addItem(item)
 
 
 

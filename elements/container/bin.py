@@ -8,6 +8,7 @@ class Bin(Container):
     weight_capacity = Settings.bin_weight_capacity
     display_type = 'Bac'
     type = BIN
+    net_weight = 0.1     # net weight for all bin (approximation)
 
     def __init__(self, name: str, length: float, width: float, height: float):
         super().__init__(
@@ -16,8 +17,8 @@ class Bin(Container):
             length=length,
             width=width,
             height=height,
-            weight_capacity=33,     # setting weight capacity
-            net_weight=323,        # from saved preset
+            weight_capacity=self.weight_capacity,     # setting weight capacity
+            net_weight=self.net_weight
         )
 
 

@@ -25,7 +25,7 @@ class ShelfContent(QWidget):
         self.list.clear()
         self.add_button.setDisabled(True)
 
-    def update_list(self, storage_list):
+    def update_list_old(self, storage_list):
         """
         DEPRECIATED method in ShelfInspector
         :param storage_list:
@@ -33,16 +33,23 @@ class ShelfContent(QWidget):
         """
         self.list.clear()
         for element in storage_list:
-            self.list.addItem(element.part_code, element)
+            item = QListWidgetItem(element.part_code, element)
+            item.setData(0, element)
+            print(item.data(0))
+            print('element', element)
+            self.list.addItem(item)
 
 
-    def handle_list_item_change(self, item):
+
+    def handle_list_item_change(self, item: QListWidgetItem):
         """
         Handle list item change for shelfContent
         :param item:
         :return:
         """
-        print(item)
+        print(item.text())
+        print(item.data(1))
+
 
 
     def update_information(self, element):
