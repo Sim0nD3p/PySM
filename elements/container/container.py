@@ -25,6 +25,10 @@ class Container(Geometry):
                  weight_capacity: float, net_weight: float):
         """
         Init for parent of container
+
+        Things to be setup:
+            - contennt
+            - stored_part
         :param name:
         :param container_type:
         :param length:
@@ -36,8 +40,8 @@ class Container(Geometry):
                          angle=angle, height=height
                          )
         self.name = name
-        self.stored_part = None
-        self.content = np.array([0, None])
+        self.stored_part = None     # DEPRECIATED, use content instead
+        self.content = np.array([0, None])  # number of parts, part str
         self.type = container_type
         self.weight_capacity = weight_capacity  # weight capacity of the container
         self.net_weight = net_weight    # weight when empty
@@ -57,18 +61,6 @@ class Container(Geometry):
         :return: void
         """
         self.content = np.array([int(number), content])
-
-
-
-    def get_stored_part(self):
-        """
-        Returns the stored part
-        :return:
-        """
-        if issubclass(type(self.stored_part), Part):
-            return self.stored_part
-        else:
-            return None
 
 
     def set_position(self, x_position, y_position):

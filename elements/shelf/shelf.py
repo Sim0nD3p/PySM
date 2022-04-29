@@ -41,7 +41,8 @@ class Shelf(Geometry):
         self.parent_racking = None
 
         self.storage_objects = []   # storage object regrouping all containers
-        self.containers = []        # list of all containers from storage_objects
+        self.containers = []        # list of all containers from storage_objects DEPRECIATED
+                                    # should be replaced by self.containers()
 
 
     def set_parent_racking(self, racking):

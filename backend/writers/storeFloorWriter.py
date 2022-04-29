@@ -41,18 +41,40 @@ class StoreFloorWriter:
             if type(element) == Racking:
                 for shelf in element.shelves:
                     geo = np.array2string(shelf.geometry.flatten())
-                    print(shelf.geometry)
-                    print('geo', geo)
-                    print('shelf', vars(shelf))
-                    et.SubElement(xml_element,
-                                  'shelf',
-                                  attrib={
-                                      'name': shelf.name,
-                                      'id': str(shelf.id),
-                                      'type': shelf.type,
-                                      'geometry': geo
-                                  }
-                                  )
+                    # print(shelf.geometry)
+                    # print('geo', geo)
+                    # print('shelf', vars(shelf))
+                    xml_shelf = et.SubElement(xml_element,
+                                              'shelf',
+                                              attrib={
+                                                  'name': shelf.name,
+                                                  'id': str(shelf.id),
+                                                  'type': shelf.type,
+                                                  'geometry': geo
+                                              })
+                    for so in shelf.storage_objects:
+                        print('storage object')
+                        geo = np.array2string(so.geometry.flatten())
+                        xml_so = et.SubElement(xml_shelf,
+                                               'storage_object',
+                                               attrib={
+                                                   'part_code': str(so.part_code),
+                                                   'geo': geo,
+                                                   'parent_shelf_id': str(so.parent_shelf_id),
+                                               })
+                        for cont in so.containers:
+                            geo = np.array2string(cont.geometry.flatten())
+                            attrib = {
+                                'name': cont.name,
+                                'geo': geo,
+                                'stored_part': str(cont.stored_part),
+                                'content': np.array2string(cont.content.flatten()),
+                            }
+                            xml_cont = et.SubElement(xml_so,
+                                                     cont.type,
+                                                     attrib=attrib
+                                                     )
+
 
 
             xml_element.text = 'test'

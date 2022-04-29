@@ -28,7 +28,44 @@ class ContainerCatalog:
         pass
 
     @classmethod
-    def create_containers(cls, class_type: type, number: int, options: dict):
+    def create_containers_from_type(cls, container_type: Container, number: int):
+        """
+        Creates new containers from type in container class properties, return them in array
+        :param container_type: the type of the container class ex.: SpaceContainer, Bin (not initialized)
+        :param number: number of container to create
+        :return:
+        """
+        containers = []
+        for i in range(0, number):
+            if container_type.type == SPACE_CONTAINER:
+                containers.append(SpaceContainer('name' + str(i), 0, 0, 0))
+            elif container_type.type == BIN:
+                pass
+
+        return containers
+
+
+    @classmethod
+    def create_containers(cls, container_instance: Container, number: int):
+        print(container_instance)
+        containers = []
+        for i in range(0, number):
+            if container_instance.type == BIN:
+                e = Bin('name' + str(i), container_instance.length(), container_instance.width(),
+                        container_instance.height())
+                containers.append(e)
+            elif container_instance.type == SPACE_CONTAINER:
+                e = SpaceContainer('name' + str(i), container_instance.length(), container_instance.width(),
+                                   container_instance.height())
+                containers.append(e)
+            else:
+                containers.append(None)
+        return containers
+
+
+
+    @classmethod
+    def create_containers_old(cls, class_type: type, number: int, options: dict):
         """
         Might be replaced with method that initialize container with special constructor
         returns empty containers

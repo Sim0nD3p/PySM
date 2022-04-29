@@ -4,6 +4,7 @@ from PyQt6.QtCore import *
 from layout.central.storeOverview.panel.containerPanel.childrens.selectContainer import *
 from elements.shelf.shelf import Shelf
 from elements.ElementLogic.StorageObject import *
+from elements.store.dataClasses import *
 import copy
 
 
@@ -31,33 +32,17 @@ class ContainerInspector(QTabWidget):
         :param part:
         :return: void
         """
+        self.container_selector.container_options.part_code = part_code
+        if self.storage_group:
+            self.storage_group.part_code = part_code
+
+    def handle_container_change(self, container: Container):
+        self.container_selector.container_options.container_type = container
 
         if self.storage_group:
-            self.storage_group.set_part_code(part_code)
-
-    def handle_container_change(self, container_type, length, width, height):
-        """
-        Handles change in container
-        :param container_type:
-        :param length:
-        :param width:
-        :param height:
-        :return:
-        """
-        if container_type == Bin:
-            container = Bin(name='test', length=length, width=width, height=height)
-        elif container_type == SpaceContainer:
-            container = SpaceContainer(name='test', length=length, width=width, height=height)
-        else:
-            # print('error @containerInspector, handle_container_change')
-            pass
-
-        if type(self.storage_group) == StorageObject:
             pass
             # self.storage_group.change_container_type(container)
 
-        # change container method directly in storageObject
-        # update positions of container (module)
 
     def get_container_old(self):
         """
@@ -78,13 +63,42 @@ class ContainerInspector(QTabWidget):
             pass
             # self.storage_group.set_nb_containers(value)     # depreciated
 
+
     def handle_submit(self):
+        if self.storage_group:
+
+            print('handle submit in containerInspector')
+            part = self.container_selector.part_selector.get_part()
+            container_instance = self.container_selector.container_selector.get_container_instance()
+            container_options = self.container_selector.container_options.get_options_data()
+
+            self.storage_group.update_containers(part, container_instance, container_options)
+
+            # Put the storage_object back in shelf content list
+            if self.storage_group.parent_shelf_id:
+                shelf = StoreFloor.get_shelf_by_id(self.storage_group.parent_shelf_id)
+                print('hello')
+                if self.storage_group not in shelf.storage_objects:
+                    shelf.storage_objects.append(self.storage_group)
+
+            self.container_list_update_signal.emit()
+
+            self.display_blank()
+            self.storage_group = None
+
+
+
+
+
+
+    def handle_submit_old(self):
         """
         Called when user press submit
         adds the storage_group in shelf if not already in it, updates the storage_group list
         TODO should go get all info relative to elements being modified in Storage_Object
         :return:
         """
+        pass
         if issubclass(type(self.storage_group), StorageObject):         # if the current object is StorageObject
             # Getting informations on storageGroup form inspector sub-widgets
             options = self.container_selector.container_options.get_options_data()
@@ -98,7 +112,7 @@ class ContainerInspector(QTabWidget):
             print('we have options')
             container = self.storage_group.update_containers(number=options['nb_cont'],
                                                              container_type=self.container_selector.container_selector
-                                                             .get_container(),
+                                                             .get_container_instance(),
                                                              container_options=container_options,
                                                              part_number=options['nb_part']
                                                              )
@@ -117,10 +131,25 @@ class ContainerInspector(QTabWidget):
 
     # method to create StorageObject
 
+    def display_blank(self):
+        print('containerInspector calls to display blank')
+        self.container_selector.part_selector.display_blank()
+        self.container_selector.container_selector.display_blank()
+        self.container_selector.container_options.display_blank()
 
 
+    def update_information(self, element: StorageObject):
+        """
+        Takes storage object and handle the container inspector
+        :param element:
+        :return:
+        """
+        if element:
+            print(vars(element))
+            self.storage_group = element
+            self.container_selector.update_child_widgets(self.storage_group)
 
-    def update_information(self, element):
+    def update_information_old(self, element):
         """
         Dispatch update calls for different widget element
         could be way better

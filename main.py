@@ -26,6 +26,7 @@ class MainWindow(QMainWindow):
 
         # self.tool_bar = self.addToolBar()
 
+
         self.main_widget = CentralWidget()
         self.setCentralWidget(self.main_widget)
 
@@ -33,6 +34,7 @@ class MainWindow(QMainWindow):
         self.create_tool_bar()
         self.create_status_bar()
         self.backend_startup()
+
 
     def create_menus(self):
         menu_bar = self.menuBar()

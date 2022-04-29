@@ -99,7 +99,8 @@ class ShelfInspector(QTabWidget):
         """
         print('updating shelf content list')
         print('type self.element', type(self.element))
-        self.shelf_content.list.clear()
+        # print(help(self.shelf_content.list))
+        # self.shelf_content.list.clear()         # TODO FIX BUG SHOULD CLEAR LIST BUT THE COMMANDS BUG
         if issubclass(type(self.element), Shelf):
             print('bon')
             for element in self.element.storage_objects:
@@ -121,7 +122,7 @@ class ShelfInspector(QTabWidget):
         if element is None:
             print('element None')
             self.shelf_properties.display_blank()
-            self.shelf_content.display_blank()
+            # self.shelf_content.display_blank()
             self.shelf_properties.element = None
             self.shelf_properties.disable_all()
         elif type(element) is ElementConstructorData:
@@ -134,6 +135,7 @@ class ShelfInspector(QTabWidget):
             self.element = element
             self.shelf_properties.element = element
             self.shelf_properties.update_information(element)
-            self.shelf_content.update_information(element)
+            self.shelf_content.update_information(element)  # kinda useless? (list updated from shelfInspector)
+            self.update_content_list()
 
 

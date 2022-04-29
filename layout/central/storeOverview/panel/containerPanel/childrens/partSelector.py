@@ -38,12 +38,18 @@ class PartSelector(QWidget):
 
         self.setLayout(grid)
 
+    def get_part(self):
+        """
+        Returns the part string
+        :return:
+        """
+        return self.input.text()
+
     def handle_part_search(self, text_input):
         """
         Emits new part selection signal that is received by the inspector
         :return:
         """
-        print(text_input)
         if len(text_input) == 0:
             self.part_status.setText(self.invalid_code)
         elif not PartCatalog.get_part(text_input):
@@ -66,7 +72,21 @@ class PartSelector(QWidget):
         """
         self.input.setText('')
 
+    def display_content(self, content: StorageObject):
+        """
+        Changes the text in lineEdit
+        TODO when is completer being updated???
+        :param content:
+        :return:
+        """
+        self.input.setText(content.part_code)
+
     def update_information(self, element):
+        """
+        OLD
+        :param element:
+        :return:
+        """
         if issubclass(type(element), StorageObject):
             print('good update')
             self.input.setText(element.part_code)

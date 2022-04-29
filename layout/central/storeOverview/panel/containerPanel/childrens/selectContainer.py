@@ -3,13 +3,14 @@ from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 from layout.central.storeOverview.panel.containerPanel.childrens.partSelector import *
 from layout.central.storeOverview.panel.containerPanel.childrens.containerSelector import *
-from layout.central.storeOverview.panel.containerPanel.childrens.containerOptions import *
+from layout.central.storeOverview.panel.containerPanel.childrens.containerOptionsWidget import *
 from elements.shelf.shelf import *
 from elements.ElementLogic.StorageObject import *
 
 
 class SelectContainer(QWidget):
     """
+    First tab in containerInspector
     interface to edit container part, location, number
     """
 
@@ -41,7 +42,7 @@ class SelectContainer(QWidget):
         self.main_vbox.addWidget(self.container_selector)
 
         # container options
-        self.container_options = ContainerOptions()
+        self.container_options = ContainerOptionsWidget()
         self.container_options_sa = QScrollArea()
         self.container_options_sa.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         # self.container_options_sa.setHorizontalScrollBarPolicy()
@@ -54,10 +55,10 @@ class SelectContainer(QWidget):
 
         self.main_vbox.addSpacing(10)
 
-
-
-
         self.setLayout(self.main_vbox)
+
+
+
 
     def update_ui(self, element: StorageObject):
         """
@@ -65,16 +66,27 @@ class SelectContainer(QWidget):
         :param element:
         :return: void
         """
-        if hasattr(element, 'parent_shelf_id'):
-            shelf_type = StoreFloor.get_shelf_by_id(element.parent_shelf_id).type
-            self.shelf_type_label.setText(shelf_type)
+
+
+        if hasattr(element, 'parent_shelf_id') and StoreFloor.get_shelf_by_id(element.parent_shelf_id):
+            self.shelf_type_label.setText(StoreFloor.get_shelf_by_id(element.parent_shelf_id).type)
         else:
             self.shelf_type_label.setText('SHELF TYPE')
+
+    def update_child_widgets(self, element: StorageObject):
+        if element:
+            self.update_ui(element)
+            self.part_selector.display_content(element)
+            print('updating child widgets in selectContainer')
+            self.container_selector.display_content(element)
+            # print(vars(element))
+            self.container_options.display_content(element)
 
 
 
     def update_informations(self, element):
         """
+        OLD
         Updates child elements with info
         :param element:
         :return:

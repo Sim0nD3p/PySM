@@ -3,6 +3,7 @@ import math
 from elements.ElementLogic.dataClasses import *
 from elements.container.container import *
 import numpy as np
+from elements.store.dataClasses import *
 import copy
 from backend.ContainerCatalog import *
 from PyQt6.QtGui import *
@@ -25,7 +26,7 @@ class StorageObject(Geometry):
         self.parent_shelf_id = parent_shelf_id
         self.containers = [None]    # at least 1 container
 
-        self.number_part = 0    # total number of parts in group
+        # self.number_part = 0    # total number of parts in group DEPRECIATED
         self.disposition = None
 
     def set_part_code(self, part_code: str):
@@ -45,14 +46,14 @@ class StorageObject(Geometry):
 
     def storage_capacity(self):
         capacity = 0
-        print('storage capacity', self.containers)
+        # print('storage capacity', self.containers)
         for container in self.containers:
             if issubclass(type(container), Container):
-                print('getting container', container.name, container.get_content())
+                # print('getting container', container.name, container.get_content())
                 if issubclass(type(container), Container):
                     capacity += int(container.get_content()[0])
-                    print('capacity increase', container.get_content())
-            print('storage capacity', capacity)
+                    # print('capacity increase', container.get_content())
+            # print('storage capacity', capacity)
         return capacity
 
     def nb_part_cont_old(self):
@@ -67,21 +68,31 @@ class StorageObject(Geometry):
         Returns the type of container in group
         :return: type
         """
-        return type(self.containers[0])
+        if self.containers[0]:
+            return type(self.containers[0])
+        else:
+            return None
 
-    def update_containers(self, number: int, container_type: type, container_options: dict, part_number: int):
-        containers = ContainerCatalog.create_containers(class_type=container_type, number=number,
-                                                        options=container_options
-                                                        )
-        # get disposition before assigning it in next loop
-        nb_part_cont = math.ceil(part_number/number)
-        print('nb_part_cont', nb_part_cont)
+    def container_instance(self):
+        """
+        Returns an instance of the first container **USE TO READ ONLY
+        :return: Container
+        """
+        return self.containers[0]
 
-        for container in containers:
-            container.set_content(nb_part_cont, self.part_code)
-            print('updating container', container.name, container.get_content())
+    def update_containers(self, part: str, container_instance: Container, container_options: ContainerOptions):
+        # TODO create array of container with all properties
+        containers = []
+        nb_part_cont = math.ceil(container_options.nb_part / container_options.nb_cont)
+        for i in range(0, container_options.nb_cont):
+            cont_i = ContainerCatalog.create_containers(container_instance, 1)[0]
+            cont_i.set_content(nb_part_cont, part)
+            containers.append(cont_i)
 
         self.containers = containers
+
+
+
 
 
     def set_nb_containers_old(self, nb_containers: int):
@@ -93,20 +104,26 @@ class StorageObject(Geometry):
         self.nb_containers = nb_containers
         # TODO will need to run some updates to the group
 
-    def change_container_type(self, target_container: Container):
+    def change_container_type(self, container_instance: Container):
         """
-        Handles the change in container type, should be checked
-        :param target_container:
+        Changes the container type to the given container, creates containers based on the type
+        Number of containers is unchanged
+        :param container_instance:
         :return:
         """
         new_containers = []
-        for container in self.containers:
-            # is substitute function in container object?
-            # init new_container with class method init_from_container?
-            new_container = target_container
-            new_containers.append(new_container)
+        for cont in self.containers:
+            n_cont = ContainerCatalog.create_containers(container_instance=container_instance, number=1)[0]
+            if issubclass(type(cont), Container):
+                # transferring data from old container to new container
+                n_cont.set_content(cont.get_content()[0], cont.get_content()[1])
+                # TODO will be more data to add into transfer
+
+            new_containers.append(n_cont)
 
         self.containers = new_containers
+
+
 
 
     def is_admissible(self):
@@ -118,6 +135,40 @@ class StorageObject(Geometry):
             return True
         else:
             return False
+
+    @classmethod
+    def init_from_xml(cls, xml_data):
+        """
+        Initiates the storage_object and containers
+        :param xml_data:
+        :return:
+        """
+        properties = xml_data.attrib
+        if 'parent_shelf_id' in properties:
+            instance = cls(int(properties['parent_shelf_id']))
+            instance.set_part_code(properties['part_code'])
+            # TODO SET GEOMETRY
+
+            # creating containers
+            containers = []
+            for xml_cont in xml_data:
+                if xml_cont.tag == BIN:
+                    container = Bin.init_from_xml(xml_cont)
+                    containers.append(container)
+
+                elif xml_cont.tag == SPACE_CONTAINER:
+                    container = SpaceContainer.init_from_xml(xml_cont)
+                    containers.append(container)
+                else:
+                    pass
+            instance.containers = containers
+
+            return instance
+
+
+
+
+
 
 
 

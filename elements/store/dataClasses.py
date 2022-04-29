@@ -12,6 +12,12 @@ class ElementConstructorData:
     angle: float
 
 @dataclass
+class ContainerOptions:
+    nb_cont: int
+    nb_part: int
+    stacked: int
+
+@dataclass
 # useless
 class RackingID:
     name: str

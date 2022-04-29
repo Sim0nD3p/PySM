@@ -52,7 +52,13 @@ class ShelfContent(QWidget):
 
 
 
-    def update_information(self, element):
+    def update_information(self, element: Shelf):
+        """
+        Updates data in shelfContent widget
+        list of storage_objects in shelf
+        :param element:
+        :return:
+        """
         print('update shelf information, @shelfContent')
         if not element:
             pass

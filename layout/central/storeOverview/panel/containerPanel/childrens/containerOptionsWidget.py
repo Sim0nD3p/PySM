@@ -6,10 +6,12 @@ from PyQt6.QtGui import *
 from layout.central.storeOverview.panel.containerPanel.childrens.customSpinBox import *
 from elements.part.Part import *
 from elements.ElementLogic.StorageObject import *
+from elements.store.dataClasses import *
 from backend.PartCatalog import *
 from elements.part.Part import *
+from dataclasses import dataclass
 
-class ContainerOptions(QWidget):
+class ContainerOptionsWidget(QWidget):
     """
     We want to know how many container we need
         if we have place, checkbox to stack containers
@@ -23,11 +25,14 @@ class ContainerOptions(QWidget):
     nb_part_cont_auto_message = 'Nombre de pièces par contenant calculé'
 
 
-    container_number_changed = pyqtSignal(int, name='number_container')
+    container_number_changed = pyqtSignal(int, name='number_container')     # DEPRECIATED
 
     def __init__(self):
         super().__init__()
-        self.storage_object = None
+        self.storage_object = None      # DEPRECIATED
+        self.container_type = None
+        self.part_code = None
+
 
         self.setMaximumWidth(300)
         self.main_vbox = QVBoxLayout()
@@ -117,6 +122,8 @@ class ContainerOptions(QWidget):
     def test(self):
         print('editing finished')
 
+
+
     def handle_nb_part_bt(self):
         """
         Handles when the button nb_part_bt is clicked, sets the maximum number for part inventory to a certain formula tbd
@@ -159,22 +166,20 @@ class ContainerOptions(QWidget):
 
     def handle_nb_part_cont_bt(self):
         """
-        When the nb_part_cont_bt button is clicked, the number of part per container is set in regards to maximum weigth
-
+        Handles click on nb_part_cont_bt
+        Calculates the maximum number of parts in a container according to the weight of the part and the weight
+        capacity of the container
         :return:
         """
-        if issubclass(type(self.storage_object), StorageObject):
-            if self.storage_object.part_code:
-                part = PartCatalog.get_part(self.storage_object.part_code)
-                if part and part.weight():
-                    part_capacity = self.storage_object.container_type().weight_capacity / part.specifications.weight
-                    self.nb_part_cont = part_capacity
-                    self.update_ui()
+        if self.part_code and PartCatalog.get_part(self.part_code):
+            part = PartCatalog.get_part(self.part_code)
+            print(self.container_type.weight_capacity)
+            if part.weight() and self.container_type.weight_capacity:
+                qte = math.floor(self.container_type.weight_capacity / part.weight())
+                self.nb_part_cont = qte
+                self.update_ui()
 
-                else:
-                    print('part has no weight')
-            else:
-                print('no part selected')
+
 
     def handle_nb_part_cont_change(self, value):
         """
@@ -184,11 +189,11 @@ class ContainerOptions(QWidget):
         self.nb_part_cont = value
         if self.nb_part_cont != 0:
             print('calc nb_cont')
-            if issubclass(type(self.storage_object), StorageObject):
-                if PartCatalog.get_part(self.storage_object.part_code) and\
-                        PartCatalog.get_part(self.storage_object.part_code).weight():
+            if self.part_code and self.container_type:
+                if PartCatalog.get_part(self.part_code) and\
+                        PartCatalog.get_part(self.part_code).weight():
                     self.cont_weight_label.setText('Masse de contenant: ' + str(PartCatalog.get_part(
-                        self.storage_object.part_code).weight() * self.nb_part_cont))
+                        self.part_code).weight() * self.nb_part_cont))
             self.nb_cont = math.ceil(self.nb_part / self.nb_part_cont)
 
         self.update_ui()
@@ -233,10 +238,10 @@ class ContainerOptions(QWidget):
         if self.nb_part_cont != 0 and self.nb_cont != math.ceil(self.nb_part / self.nb_part_cont):
             print('calc elements')
             self.nb_part_cont = math.ceil(self.nb_part / self.nb_cont)
-            part = PartCatalog.get_part(self.storage_object.part_code)
+            part = PartCatalog.get_part(self.part_code)
             if part and part.weight() and \
-                    self.nb_part_cont * part.weight() > self.storage_object.container_type().weight_capacity:
-                self.nb_part_cont = math.floor(self.storage_object.container_type().weight_capacity / part.weight())
+                    self.nb_part_cont * part.weight() > self.container_type.weight_capacity:
+                self.nb_part_cont = math.floor(self.container_type.weight_capacity / part.weight())
                 self.nb_part = math.floor(self.nb_part_cont * self.nb_cont)
 
         self.nb_part_status.setText(self.nb_part_auto_message)
@@ -263,28 +268,38 @@ class ContainerOptions(QWidget):
         pass
 
     def get_options_data(self):
-        """
-        Gets data from options selected for the storage_group
-        :return:
-        """
-        options = {
-            'nb_part': self.nb_part,
-            'nb_cont': self.nb_cont,
-            'nb_part_cont': self.nb_part_cont,
-        }
-        return options
+        return ContainerOptions(
+            nb_cont=self.nb_cont,
+            nb_part=self.nb_part,
+            stacked=0       # TODO ADD STACK FIELD IN WIDGET OPTIONS
+        )
+
 
     def display_blank(self):
         """
         Display blank values for all input elements
         :return:
         """
+        self.storage_object = None
+        self.container_type = None
+        self.part_code = None
         self.nb_part = 0
         self.nb_cont = 0
         self.nb_part_cont = 0
         self.update_ui()
 
-    def update_information(self, element):
+    def display_content(self, content: StorageObject):
+        self.storage_object = content   # DEPRECIATED
+        self.container_type = content.container_type()
+        self.part_code = content.part_code
+        self.nb_cont = content.container_number()
+        self.nb_part = content.storage_capacity()
+        if self.nb_cont != 0:
+            self.nb_part_cont = math.ceil(self.nb_part / self.nb_cont)
+        self.update_ui()
+
+
+    def update_information_old(self, element: StorageObject):
         print('ContainerOptions: received element to update widget')
         if issubclass(type(element), StorageObject):
             self.storage_object = element
