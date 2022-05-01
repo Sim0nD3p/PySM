@@ -22,8 +22,9 @@ class ShelfViewer(QtOpenGLWidgets.QOpenGLWidget):
         super().__init__()
         self.device_transform = None
 
+
         self.current_shelf = dummy_shelf
-        self.current_shelf.add_container(container, Position(0, 0))
+        # self.current_shelf.add_container(container, Position(0, 0))
 
         self.coord_scale_x = 100
         self.x_offset = 0
@@ -36,13 +37,17 @@ class ShelfViewer(QtOpenGLWidgets.QOpenGLWidget):
             # print(x, y)
             drag = QDrag(self)
 
+    def paint_shelf(self, shelf: Shelf):
+        self.current_shelf = shelf
+        self.paintGL()
 
     def paint_shelf_old(self):
         painter = QPainter()
         if issubclass(type(self.current_shelf), Shelf):
             for container in self.current_shelf.containers():
                 print(container)
-                painter.drawPath(container.painter_path)
+                painter.setBrush()
+                painter.drawPath(container.painter_path())
 
 
 
@@ -94,8 +99,17 @@ class ShelfViewer(QtOpenGLWidgets.QOpenGLWidget):
                 self.coord_scale_x,
                 coord_scale_y
             )
-            painter.drawPath(self.current_shelf.painter_path)
+            painter.drawPath(self.current_shelf.painter_path())
             painter.setBrush(QColor(102, 80, 50))
+
+            for container in self.current_shelf.containers():
+                pen.setColor(QColor(0, 100, 0))
+                pen.setWidth(10)
+                painter.setPen(pen)
+                painter.drawPath(container.painter_path())
+
+
+
 
             # self.paint_shelf()
 

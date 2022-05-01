@@ -7,6 +7,7 @@ from elements.store.dataClasses import *
 import copy
 from backend.ContainerCatalog import *
 from PyQt6.QtGui import *
+from elements.ElementLogic.containerPlacement import ContainerPlacement
 
 
 class StorageObject(Geometry):
@@ -14,6 +15,7 @@ class StorageObject(Geometry):
     Properties of group of containers
     maybe not inherit geometry
     should inherit geometry, for position at least
+    TODO have method to check for overall width and length, shapely, vectors
     """
     def __init__(self, parent_shelf_id):
         super().__init__(
@@ -84,10 +86,20 @@ class StorageObject(Geometry):
         # TODO create array of container with all properties
         containers = []
         nb_part_cont = math.ceil(container_options.nb_part / container_options.nb_cont)
+        placement = ContainerPlacement.get_placement(container_instance=container_instance,
+                                                     number=container_options.nb_cont)[0]  # TODO [0] should be option
         for i in range(0, container_options.nb_cont):
             cont_i = ContainerCatalog.create_containers(container_instance, 1)[0]
             cont_i.set_content(nb_part_cont, part)
+            so_origin = [self.x_position(), self.y_position()]
+            print(placement[i])
+            print('so_origin', so_origin)
+            cont_i.place_on_shelf(placement=placement[i], so_origin=so_origin)
             containers.append(cont_i)
+
+
+
+
 
         self.containers = containers
 
@@ -148,6 +160,10 @@ class StorageObject(Geometry):
             instance = cls(int(properties['parent_shelf_id']))
             instance.set_part_code(properties['part_code'])
             # TODO SET GEOMETRY
+            geo = properties['geo'].removeprefix('[').removesuffix(']')
+            geo = np.fromstring(geo, dtype=float, sep=' ')
+            geometry = geo.reshape(3, 2)
+            instance.set_geometry(geometry)
 
             # creating containers
             containers = []

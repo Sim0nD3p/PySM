@@ -103,6 +103,7 @@ class StoreOverview(QWidget):
         print('handle shelf selection')
         self.shelf_panel.shelf_inspector.update_child_information(shelf)
         self.shelf_panel.show_panel(300)
+        self.shelf_visual.paint_shelf(shelf)
 
 
     def handle_racking_creation(self, constructor: ElementConstructorData):

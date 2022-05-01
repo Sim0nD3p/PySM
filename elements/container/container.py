@@ -64,12 +64,24 @@ class Container(Geometry):
 
 
     def set_position(self, x_position, y_position):
-        """
-        Method to set the position of the container, sets the geometry
-        :param x_position:
-        :param y_position:
-        :return:
-        """
+        pass
+
+    def place_on_shelf(self, placement, so_origin):
+        print('placing on shelf')
+        if placement.length() > placement.width():
+            self.set_length(placement.length())
+            self.set_width(placement.width())
+            self.set_x_position(placement.x_position() + so_origin[0])
+            self.set_y_position(placement.y_position() + so_origin[1])
+            self.set_angle(0)
+        elif placement.length() <= placement.width():
+            self.set_length(placement.width())
+            self.set_width(placement.length())
+            self.set_x_position(placement.x_position() - placement.length() + so_origin[0])
+            self.set_y_position(placement.y_position() + so_origin[1])
+
+        print(self.geometry)
+
 
 
 

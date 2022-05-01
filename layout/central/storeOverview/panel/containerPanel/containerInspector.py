@@ -67,7 +67,7 @@ class ContainerInspector(QTabWidget):
     def handle_submit(self):
         if self.storage_group:
 
-            print('handle submit in containerInspector')
+            # print('handle submit in containerInspector')
             part = self.container_selector.part_selector.get_part()
             container_instance = self.container_selector.container_selector.get_container_instance()
             container_options = self.container_selector.container_options.get_options_data()
@@ -77,7 +77,7 @@ class ContainerInspector(QTabWidget):
             # Put the storage_object back in shelf content list
             if self.storage_group.parent_shelf_id:
                 shelf = StoreFloor.get_shelf_by_id(self.storage_group.parent_shelf_id)
-                print('hello')
+                # print('hello')
                 if self.storage_group not in shelf.storage_objects:
                     shelf.storage_objects.append(self.storage_group)
 
@@ -109,14 +109,14 @@ class ContainerInspector(QTabWidget):
                 'height': self.container_selector.container_selector.dimensions_selector.height()
             }
             cont_nb = 2
-            print('we have options')
+            # print('we have options')
             container = self.storage_group.update_containers(number=options['nb_cont'],
                                                              container_type=self.container_selector.container_selector
                                                              .get_container_instance(),
                                                              container_options=container_options,
                                                              part_number=options['nb_part']
                                                              )
-            print(container)
+            # print(container)
             #  number: int, container_type: type, container_options: dict
 
 
@@ -132,7 +132,7 @@ class ContainerInspector(QTabWidget):
     # method to create StorageObject
 
     def display_blank(self):
-        print('containerInspector calls to display blank')
+        # print('containerInspector calls to display blank')
         self.container_selector.part_selector.display_blank()
         self.container_selector.container_selector.display_blank()
         self.container_selector.container_options.display_blank()
@@ -145,7 +145,7 @@ class ContainerInspector(QTabWidget):
         :return:
         """
         if element:
-            print(vars(element))
+            # print(vars(element))
             self.storage_group = element
             self.container_selector.update_child_widgets(self.storage_group)
 
@@ -156,12 +156,12 @@ class ContainerInspector(QTabWidget):
         :param element:
         :return:
         """
-        print('ContainerInspector: receiving info on update method')
+        # print('ContainerInspector: receiving info on update method')
         if issubclass(type(element), StorageObject):
             self.storage_group = element
             self.container_selector.update_informations(element)
         elif not element:
-            print('element absent')
+            # print('element absent')
             self.storage_group = None
             self.container_selector.update_informations(None)
 

@@ -32,7 +32,7 @@ class SpaceContainer(Container):
             width=geometry[0, 1],
             height=geometry[2, 1],
         )
-        # TODO set content
+        sc.set_geometry(geometry)
 
         content = properties['content'].removeprefix('[').removesuffix(']')
         content = content.split("' '")

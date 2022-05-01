@@ -133,7 +133,7 @@ class ContainerOptionsWidget(QWidget):
         print(self.buttons_states[0])
         calculated_value = 50
         if not self.buttons_states[0]:
-            print('should change')
+            # print('should change')
             self.nb_part = calculated_value
         else:
             self.nb_part = 0
@@ -188,7 +188,7 @@ class ContainerOptionsWidget(QWidget):
         """
         self.nb_part_cont = value
         if self.nb_part_cont != 0:
-            print('calc nb_cont')
+            # print('calc nb_cont')
             if self.part_code and self.container_type:
                 if PartCatalog.get_part(self.part_code) and\
                         PartCatalog.get_part(self.part_code).weight():
@@ -236,7 +236,7 @@ class ContainerOptionsWidget(QWidget):
         """
         self.nb_cont = self.nb_cont_sb.value()
         if self.nb_part_cont != 0 and self.nb_cont != math.ceil(self.nb_part / self.nb_part_cont):
-            print('calc elements')
+            # print('calc elements')
             self.nb_part_cont = math.ceil(self.nb_part / self.nb_cont)
             part = PartCatalog.get_part(self.part_code)
             if part and part.weight() and \
@@ -300,7 +300,7 @@ class ContainerOptionsWidget(QWidget):
 
 
     def update_information_old(self, element: StorageObject):
-        print('ContainerOptions: received element to update widget')
+        # print('ContainerOptions: received element to update widget')
         if issubclass(type(element), StorageObject):
             self.storage_object = element
             self.nb_cont = self.storage_object.container_number()

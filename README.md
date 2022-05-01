@@ -10,22 +10,17 @@
     - reload partModel in treePropertiesEditor not only on program starup
 
 ## where I am:
+- add origin placement for container in containerInspector
+  - Add origin ui to modify storage_object origin
+- add drag and drop for container group
+
 - Store element:
     - add wall to storeObject element
       - *integration of geometry as parent class is good should continue on that, maybe add integration of shapely
     - **transformations matrices for coordinates between store, racking and shelves
-- Shelf and container
-  - Actions and toolbar for shelf, act on containers
-    - *integration of shapely in geometry for shape (postponed)
-    - **add way to find place for container in shelf
-      - shelfPanel
-        - check shelf properties
-        - add way to add container (container selector for part, select part and container)
-    - ***add way to find best shelf according to place available (later)
-    - bug when drawing new racking when racking already selected
+- 
+    
 
-- streamline how container are stored in shelf (in the ui) and written in xml file
-- display containers in ShelfViewer
 - drag to place containers in shelfviewer (on shelf)
 
 

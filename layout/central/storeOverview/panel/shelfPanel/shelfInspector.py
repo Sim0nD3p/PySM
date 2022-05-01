@@ -35,7 +35,7 @@ class ShelfInspector(QTabWidget):
         if not self.element:
             self.create_shelf()
         elif issubclass(type(self.element), Shelf):
-            print(vars(self.element))
+            # print(vars(self.element))
             self.shelf_properties.modify_shelf_properties()
         self.element = None
 
@@ -53,10 +53,10 @@ class ShelfInspector(QTabWidget):
         :return:
         """
         target_type = self.shelf_properties.type_cb.itemData(self.shelf_properties.type_cb.currentIndex())
-        print('type')
-        print(target_type)
+        # print('type')
+        # print(target_type)
         if target_type == FLAT_SHELF:
-            print('shelf created and sent to racking')
+            # print('shelf created and sent to racking')
             shelf = FlatShelf(
                 name=self.shelf_properties.name_le.text(),
                 id=StoreFloor.generate_id(),
@@ -64,9 +64,9 @@ class ShelfInspector(QTabWidget):
                 width=self.shelf_properties.width_sb.value(),
                 height=self.shelf_properties.height_sb.value()
             )
-            print('self')
-            print(shelf)
-            print(self.parent_racking)
+            # print('self')
+            # print(shelf)
+            # print(self.parent_racking)
             shelf.set_parent_racking(self.parent_racking)
             self.parent_racking.add_shelf(shelf)
             self.shelf_list_update_signal.emit()
@@ -77,7 +77,7 @@ class ShelfInspector(QTabWidget):
         :return:
         """
         storage_object = StorageObject(parent_shelf_id=self.element.id)
-        print('shelfInspector: Emitting signal for new StorageObject ', self.element.id)
+        # print('shelfInspector: Emitting signal for new StorageObject ', self.element.id)
         self.container_select_signal.emit(storage_object)
 
     def handle_shelf_content_click(self, item: QListWidgetItem):
@@ -97,12 +97,13 @@ class ShelfInspector(QTabWidget):
         Updates the child list of content with data from the current element in inspector
         :return: void
         """
-        print('updating shelf content list')
-        print('type self.element', type(self.element))
+        # print('updating shelf content list')
+        # print('type self.element', type(self.element))
         # print(help(self.shelf_content.list))
+        print('fix bug')
         # self.shelf_content.list.clear()         # TODO FIX BUG SHOULD CLEAR LIST BUT THE COMMANDS BUG
         if issubclass(type(self.element), Shelf):
-            print('bon')
+            # print('bon')
             for element in self.element.storage_objects:
                 item = QListWidgetItem(element.part_code)
                 item.setData(1, element)
@@ -118,20 +119,20 @@ class ShelfInspector(QTabWidget):
         :return:
         """
         self.shelf_properties.enable_all()
-        print('update child infos shelf')
+        # print('update child infos shelf')
         if element is None:
-            print('element None')
+            # print('element None')
             self.shelf_properties.display_blank()
             # self.shelf_content.display_blank()
             self.shelf_properties.element = None
             self.shelf_properties.disable_all()
         elif type(element) is ElementConstructorData:
-            print('ElementConstructorData')
+            # print('ElementConstructorData')
             self.element = None
             self.shelf_properties.element = element
             self.shelf_properties.update_information(element)
         elif issubclass(type(element), Shelf):
-            print('type shelf')
+            # print('type shelf')
             self.element = element
             self.shelf_properties.element = element
             self.shelf_properties.update_information(element)

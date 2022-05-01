@@ -41,7 +41,7 @@ class Shelf(Geometry):
         self.parent_racking = None
 
         self.storage_objects = []   # storage object regrouping all containers
-        self.containers = []        # list of all containers from storage_objects DEPRECIATED
+
                                     # should be replaced by self.containers()
 
 
@@ -101,6 +101,7 @@ class Shelf(Geometry):
 
     def add_container(self, container: Container, position: Position):
         """
+        DEPRECIATED
         Check if container have position and add it to content
         # TODO check if all vertices are inside shelf
         :param container:

@@ -35,8 +35,8 @@ class ShelfContent(QWidget):
         for element in storage_list:
             item = QListWidgetItem(element.part_code, element)
             item.setData(0, element)
-            print(item.data(0))
-            print('element', element)
+            # print(item.data(0))
+            # print('element', element)
             self.list.addItem(item)
 
 
@@ -47,8 +47,8 @@ class ShelfContent(QWidget):
         :param item:
         :return:
         """
-        print(item.text())
-        print(item.data(1))
+        # print(item.text())
+        # print(item.data(1))
 
 
 
@@ -59,7 +59,7 @@ class ShelfContent(QWidget):
         :param element:
         :return:
         """
-        print('update shelf information, @shelfContent')
+        # print('update shelf information, @shelfContent')
         if not element:
             pass
         elif issubclass(type(element), Shelf):

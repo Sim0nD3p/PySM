@@ -26,7 +26,6 @@ class Geometry:
             [x_position, y_position],
             [angle, height]
         ])
-        self.painter_path = self.update_painter_path()
 
 
     def x_position(self):
@@ -38,12 +37,11 @@ class Geometry:
 
     def set_x_position(self, x_position: float):
         """
-        See x_position, sets the value for x_position in geometry_matrix and updates painterPath
+        See x_position, sets the value for x_position in geometry_matrix
         :param x_position: x_position
         :return: void
         """
         self.geometry[1, 0] = x_position
-        self.update_painter_path()
 
     def y_position(self):
         """
@@ -54,12 +52,12 @@ class Geometry:
 
     def set_y_position(self, y_position: float):
         """
-        See y_position, sets the value for y_position in geometry_matrix and updates painterPath
+        See y_position, sets the value for y_position in geometry_matrix
         :param y_position: y_position
         :return: void
         """
         self.geometry[1, 1] = y_position
-        self.update_painter_path()
+
 
     def length(self):
         """
@@ -70,13 +68,12 @@ class Geometry:
 
     def set_length(self, length: float):
         """
-        See length, sets the value for length in geometry_matrix and updates painterPath
+        See length, sets the value for length in geometry_matrix
         :param length: length
         :return: void
         """
         if length > 0:
             self.geometry[0, 0] = length
-            self.update_painter_path()
         else:
             print('error length should be > 0')
 
@@ -89,13 +86,12 @@ class Geometry:
 
     def set_width(self, width: float):
         """
-        See width, sets the value for width and updates painterPath
+        See width, sets the value for width
         :param width: width
         :return: void
         """
         if width > 0:
             self.geometry[0, 1] = width
-            self.update_painter_path()
         else:
             print('error width should be > 0')
 
@@ -109,12 +105,11 @@ class Geometry:
 
     def set_angle(self, angle: float):
         """
-        See angle, sets the value for angle and updates painterPath
+        See angle, sets the value for angle
         :param angle: angle (degrees)
         :return: void
         """
         self.geometry[2, 0] = angle
-        self.update_painter_path()
 
     def height(self):
         """
@@ -125,19 +120,18 @@ class Geometry:
 
     def set_height(self, height: float):
         """
-        See height, sets the value for height and updates painterPath
+        See height, sets the value for height
         :param height:
         :return:
         """
         if height <= Settings.store_object_max_height:
             self.geometry[2, 1] = height
-            self.update_painter_path()
         else:
             print('error, height given is over the limit')
 
-    def update_painter_path(self):
+    def painter_path(self):
         """
-        Updates the painterPath of the storeObject
+        Returns painterPath for the geometry
         :return:
         """
         path = QPainterPath()
@@ -151,10 +145,17 @@ class Geometry:
 
         path.lineTo(QPointF(vertices[0, 0], vertices[0, 1]))
         path.addEllipse(QPointF(vertices[0, 0], vertices[0, 1]), 0.5, 0.5)
-        # path.addRect(10, -10, 25, -25)
-        # print('path', path)
-        self.painter_path = path
+
         return path
+
+    def set_geometry(self, geometry: np.array):
+        """
+        Sets the main geometry matrix to the given one
+        :param geometry:
+        :return:
+        """
+        self.geometry = geometry
+
 
     def vertices(self):
         """

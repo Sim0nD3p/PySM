@@ -34,6 +34,8 @@ class Bin(Container):
             width=geometry[0, 1],
             height=geometry[2, 1],
         )
+        bin.set_geometry(geometry)
+
         content = properties['content'].removeprefix('[').removesuffix(']')
         content = content.split("' '")
         if content[0].removeprefix("'").isdigit():
