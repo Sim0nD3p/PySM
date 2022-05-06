@@ -3,6 +3,7 @@ from backend.storeFloor import StoreFloor, StoreObject
 from elements.elementsTypes import *
 from elements.racking.racking import Racking
 import numpy as np
+from elements.ElementLogic.containerPlacement import *
 
 
 class StoreFloorWriter:
@@ -27,6 +28,7 @@ class StoreFloorWriter:
         for element in store_floor.objects:
             geometry_buffer = element.geometry.tobytes()
             geo = np.array2string(element.geometry.flatten())
+
 
             xml_element = et.SubElement(xml_root,
                                         'object',
@@ -55,11 +57,20 @@ class StoreFloorWriter:
                     for so in shelf.storage_objects:
                         print('storage object')
                         geo = np.array2string(so.geometry.flatten())
+
+                        # get placement name
+                        placement_name = ''
+                        if so.placement_cb:
+                            print('should get placement name')
+                            placement_name = ContainerPlacement.get_placement_name(placement=so.placement_cb)
+
+
                         xml_so = et.SubElement(xml_shelf,
                                                'storage_object',
                                                attrib={
                                                    'part_code': str(so.part_code),
                                                    'geo': geo,
+                                                   'placement': placement_name,
                                                    'parent_shelf_id': str(so.parent_shelf_id),
                                                })
                         for cont in so.containers:

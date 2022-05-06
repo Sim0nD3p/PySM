@@ -83,7 +83,7 @@ class ShelfInspector(QTabWidget):
     def handle_shelf_content_click(self, item: QListWidgetItem):
         """
         Handles element click on the shelf content container list
-        :param item: QListWidgetItem
+        :param item: QListWidgetItemstore
         :return: void
         """
         data = item.data(1)
@@ -102,6 +102,7 @@ class ShelfInspector(QTabWidget):
         # print(help(self.shelf_content.list))
         print('fix bug')
         # self.shelf_content.list.clear()         # TODO FIX BUG SHOULD CLEAR LIST BUT THE COMMANDS BUG
+        self.shelf_content.list.clear()
         if issubclass(type(self.element), Shelf):
             # print('bon')
             for element in self.element.storage_objects:

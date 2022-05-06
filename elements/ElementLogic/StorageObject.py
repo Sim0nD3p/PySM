@@ -29,7 +29,7 @@ class StorageObject(Geometry):
         self.containers = [None]    # at least 1 container
 
         # self.number_part = 0    # total number of parts in group DEPRECIATED
-        self.disposition = None
+        self.placement = None
 
     def set_part_code(self, part_code: str):
         """
@@ -84,17 +84,25 @@ class StorageObject(Geometry):
 
     def update_containers(self, part: str, container_instance: Container, container_options: ContainerOptions):
         # TODO create array of container with all properties
+        """
+        Called on handle submit
+        :param part:
+        :param container_instance:
+        :param container_options:
+        :return:
+        """
         containers = []
         nb_part_cont = math.ceil(container_options.nb_part / container_options.nb_cont)
-        placement = ContainerPlacement.get_placement(container_instance=container_instance,
-                                                     number=container_options.nb_cont)[0]  # TODO [0] should be option
+        if not self.placement:
+            print('drawing default placement')
+
+            self.placement = ContainerPlacement.get_placement(container_instance=container_instance,
+                                                              number=container_options.nb_cont)[0]  # TODO [0] should be option
+
+
         for i in range(0, container_options.nb_cont):
             cont_i = ContainerCatalog.create_containers(container_instance, 1)[0]
             cont_i.set_content(nb_part_cont, part)
-            so_origin = [self.x_position(), self.y_position()]
-            print(placement[i])
-            print('so_origin', so_origin)
-            cont_i.place_on_shelf(placement=placement[i], so_origin=so_origin)
             containers.append(cont_i)
 
 
@@ -102,7 +110,19 @@ class StorageObject(Geometry):
 
 
         self.containers = containers
+        self.move_containers()
 
+
+
+    def move_containers(self):
+        """
+        Calculates the position of the containers on shelf according to the placement and the origin of storage_object
+        :return: void
+        """
+        if self.container_type() and self.placement and len(self.containers) == len(self.placement):
+            for i in range(0, len(self.placement)):
+                self.containers[i].place_on_shelf(placement=self.placement[i],
+                                                  so_origin=[self.x_position(), self.y_position()])
 
 
 
@@ -138,7 +158,7 @@ class StorageObject(Geometry):
 
 
 
-    def is_admissible(self):
+    def is_admissible_old(self):
         """
         Checks if the StorageObject is admissible to shelf
         :return:
@@ -165,6 +185,9 @@ class StorageObject(Geometry):
             geometry = geo.reshape(3, 2)
             instance.set_geometry(geometry)
 
+
+
+
             # creating containers
             containers = []
             for xml_cont in xml_data:
@@ -177,7 +200,21 @@ class StorageObject(Geometry):
                     containers.append(container)
                 else:
                     pass
-            instance.containers = containers
+
+            if len(containers) >= 1:
+                instance.containers = containers
+
+                placement = None
+                if 'placement' in properties and issubclass(type(instance.container_instance()), Container) and \
+                        len(properties['placement']) > 1:
+                    index = properties['placement'].split('_')[len(properties['placement'].split('_')) - 1]
+                    # print('index', index)
+                    placement = ContainerPlacement.get_placement(container_instance=instance.container_instance(),
+                                                                 number=instance.container_number())
+                    instance.placement = placement[int(index) - 1]
+                    instance.move_containers()
+
+
 
             return instance
 

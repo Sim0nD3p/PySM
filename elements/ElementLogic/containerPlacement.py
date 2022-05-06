@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 
 from elements.container.container import Container
@@ -42,6 +44,9 @@ class ContainerPlacement:
         - y_position: position in the y axis (short side of the shelf)
         - length: position in the x axis
         - width: position on the y axis
+
+    Name of placement:
+        cont + [nb of container] + _ + [index of the configuration]
     """
     def __init__(self):
         pass
@@ -57,7 +62,10 @@ class ContainerPlacement:
                             )
         cont2 = Geo2dMatrix(length=container.width(), width=container.length(),
                             x_position=0, y_position=0)
-        return [[cont1, cont2]]
+        return [
+            [cont1],    # cont1_1
+            [cont2]     # cont1_2
+        ]
 
     @classmethod
     def cont2_options(cls, container):
@@ -72,12 +80,22 @@ class ContainerPlacement:
                               x_position=cont2_1.length(), y_position=0)
 
         return [
-            [cont1_1, cont1_2],
-            [cont2_1, cont2_2]
+            [cont1_1, cont1_2],     # cont2_1
+            [cont2_1, cont2_2]      # cont2_2
         ]
 
     @classmethod
+    def cont3_options(cls, container):
+        pass
+
+    @classmethod
     def get_placement(cls, container_instance: Container, number: int):
+        """
+        Get placement, list of Geo2dMatrix for the relative position of the containers
+        :param container_instance:
+        :param number:
+        :return:
+        """
         if number == 1:
             return cls.cont1_options(container_instance)
         elif number == 2:
@@ -85,22 +103,44 @@ class ContainerPlacement:
         else:
             return None
 
-
     @classmethod
-    def assign_placement(cls, placement, containers):
-        if not placement:
-            if len(containers) == 1:
-                placement = cls.cont1_options(containers[0])[0]
-            elif len(containers) == 2:
-                placement = cls.cont2_options(containers[0])[0]
+    def get_placement_name(cls, placement):
+        """
+        Gets the name of the placement to store in xml file
+        Creates placement as we would do for a container from placement infos
+        Compare placement data to list from the creation of placements to get index and name
+        :param placement:
+        :return:
+        """
+        g2m_sample = placement[0]
 
-        print('placement length', len(placement), placement)
-        if len(placement) == len(containers):
-            for i in range(0, len(placement)):
-                print(placement[i].geometry)
-                containers[i].place_on_shelf(placement[i])
+        length = max(g2m_sample.length(), g2m_sample.width())
+        width = min(g2m_sample.length(), g2m_sample.width())
+        cont = Container('', '', length=length, width=width, height=0, net_weight=0, weight_capacity=0)
 
-        return containers
+        options = []
+        if len(placement) == 1:
+            options = cls.cont1_options(cont)
 
+        elif len(placement) == 2:
+            options = cls.cont2_options(cont)
 
+        elif len(placement) == 3:
+            # options = cls.cont3_options(cont)
+            # TODO ADD CONT3
+            pass
+
+        place_calc = []
+        for place in placement:
+            place_calc.append(np.array2string(place.geometry.flatten()))
+
+        name = None
+        for i in range(0, len(options)):
+            current_option = []
+            for opt_cont in options[i]:
+                current_option.append(np.array2string(opt_cont.geometry.flatten()))
+            if current_option == place_calc:
+                name = 'cont' + str(len(placement)) + '_' + str(i + 1)
+
+        return name
 

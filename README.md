@@ -10,8 +10,7 @@
     - reload partModel in treePropertiesEditor not only on program starup
 
 ## where I am:
-- add origin placement for container in containerInspector
-  - Add origin ui to modify storage_object origin
+- add way to store and restore placement in xml_store file
 - add drag and drop for container group
 
 - Store element:

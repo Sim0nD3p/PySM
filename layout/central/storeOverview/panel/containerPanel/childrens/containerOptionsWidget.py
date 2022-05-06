@@ -10,6 +10,7 @@ from elements.store.dataClasses import *
 from backend.PartCatalog import *
 from elements.part.Part import *
 from dataclasses import dataclass
+from elements.ElementLogic.containerPlacement import ContainerPlacement
 
 class ContainerOptionsWidget(QWidget):
     """
@@ -24,19 +25,21 @@ class ContainerOptionsWidget(QWidget):
     nb_part_auto_message = 'Nombre de pièces calculé'
     nb_part_cont_auto_message = 'Nombre de pièces par contenant calculé'
 
+    container_number_changed = pyqtSignal(int, name='number_container')
+    placement_changed = pyqtSignal(int)
 
-    container_number_changed = pyqtSignal(int, name='number_container')     # DEPRECIATED
 
     def __init__(self):
         super().__init__()
         self.storage_object = None      # DEPRECIATED
         self.container_type = None
         self.part_code = None
+        self.placement_index = 0
 
 
-        self.setMaximumWidth(300)
+        self.setMaximumWidth(250)
         self.main_vbox = QVBoxLayout()
-        self.main_vbox.setContentsMargins(0, 0, 0, 0)
+        self.main_vbox.setContentsMargins(5, 5, 5, 5)
         title = QLabel('Options de contenant')
         self.main_vbox.addWidget(title)
 
@@ -94,9 +97,10 @@ class ContainerOptionsWidget(QWidget):
         nb_part_grid.addWidget(self.nb_cont_bt, 6, 3, 1, 1)
         nb_part_grid.addWidget(self.nb_cont_status, 7, 1, 1, 3)
 
-        # DISPOSITION OF CONTAINERS
-        self.container_dispo = QComboBox()
-        nb_part_grid.addWidget(self.container_dispo, 8, 1, 1, 1)
+        # CONTAINER PLACEMENT SELECTOR
+        self.placement_cb = QComboBox()
+        nb_part_grid.addWidget(self.placement_cb, 8, 1, 1, 3)
+
 
 
 
@@ -119,6 +123,8 @@ class ContainerOptionsWidget(QWidget):
         self.nb_part_cont_bt.clicked.connect(self.handle_nb_part_cont_bt)
         self.nb_cont_bt.clicked.connect(self.handle_nb_cont_bt)
 
+        self.placement_cb.currentIndexChanged.connect(self.handle_placement_change)
+
     def test(self):
         print('editing finished')
 
@@ -130,7 +136,6 @@ class ContainerOptionsWidget(QWidget):
         # TODO FORMULA SAFETY STOCK
         :return:
         """
-        print(self.buttons_states[0])
         calculated_value = 50
         if not self.buttons_states[0]:
             # print('should change')
@@ -141,9 +146,7 @@ class ContainerOptionsWidget(QWidget):
 
     def handle_nb_part_change(self, value):
         self.nb_part = value
-        print(value)
         if self.nb_part_cont != 0:
-            print('calc nb_cont')
             self.nb_cont = math.ceil(self.nb_part / self.nb_part_cont)
 
 
@@ -173,7 +176,7 @@ class ContainerOptionsWidget(QWidget):
         """
         if self.part_code and PartCatalog.get_part(self.part_code):
             part = PartCatalog.get_part(self.part_code)
-            print(self.container_type.weight_capacity)
+
             if part.weight() and self.container_type.weight_capacity:
                 qte = math.floor(self.container_type.weight_capacity / part.weight())
                 self.nb_part_cont = qte
@@ -222,6 +225,7 @@ class ContainerOptionsWidget(QWidget):
     def handle_nb_cont_change(self, value):
         self.nb_cont = value
         # Other values updated on exitEditing because it would cause loop
+        # self.draw_placement_cb()
 
         self.update_ui()
 
@@ -274,6 +278,37 @@ class ContainerOptionsWidget(QWidget):
             stacked=0       # TODO ADD STACK FIELD IN WIDGET OPTIONS
         )
 
+    def draw_placement_cb(self):
+        """
+        Draws placement selection cb and
+        :return:
+        """
+        # TODO define arrays to be displayed in combo box
+        self.placement_cb.clear()
+        for i in range(0, self.nb_cont):
+            self.placement_cb.addItem(str(i))
+
+        if int(self.placement_index) - 1 < self.nb_cont:
+            self.placement_cb.setCurrentIndex(int(self.placement_index) - 1)
+
+
+
+
+
+    def handle_placement_change(self, current_index):
+        """
+        Triggered when placementComboBox index is changed
+        Emits signal that is received and handled with storage_object to be able to move containers
+        :param current_index:
+        :return:
+        """
+        if current_index >= 0:
+            self.placement_changed.emit(current_index)
+
+
+
+
+
 
     def display_blank(self):
         """
@@ -289,13 +324,27 @@ class ContainerOptionsWidget(QWidget):
         self.update_ui()
 
     def display_content(self, content: StorageObject):
+        """
+        Display_content, display content to widget elements, sets self.container_type and self.part_code so that the
+        information is available to recalculate capacity according to weight or others options related to part
+        :param content:
+        :return:
+        """
         self.storage_object = content   # DEPRECIATED
         self.container_type = content.container_type()
         self.part_code = content.part_code
         self.nb_cont = content.container_number()
         self.nb_part = content.storage_capacity()
+
         if self.nb_cont != 0:
             self.nb_part_cont = math.ceil(self.nb_part / self.nb_cont)
+
+
+        if content.placement:
+            placement_name = ContainerPlacement.get_placement_name(content.placement)
+            self.placement_index = int(placement_name.split('_')[len(placement_name.split('_')) - 1])
+
+        self.draw_placement_cb()
         self.update_ui()
 
 

@@ -18,7 +18,7 @@ class ContainerSelector(QWidget):
     def __init__(self):
         super().__init__()
         self.main_vbox = QVBoxLayout()
-        self.main_vbox.setContentsMargins(0, 0, 0, 0)
+        # self.main_vbox.setContentsMargins(5, 5, 5, 5)
         self.container_instance = None
 
         # label container selector

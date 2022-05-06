@@ -20,7 +20,7 @@ class StoreOverview(QWidget):
         super().__init__()
         self.setAutoFillBackground(True)
         self.setContentsMargins(5, 5, 5, 5)
-        self.setMaximumHeight(500)
+        # self.setMaximumHeight(500)
         hbox = QHBoxLayout()
         hbox.setContentsMargins(0, 0, 0, 0)
 
@@ -58,6 +58,7 @@ class StoreOverview(QWidget):
         # container interface (shelf)
         self.container_panel.container_inspector.container_list_update_signal.connect(self.shelf_panel.shelf_inspector
                                                                                       .update_content_list)
+        self.container_panel.container_inspector.shelf_draw_signal.connect(self.draw_shelf)
         self.splitter.addWidget(self.racking_panel)
         self.splitter.addWidget(self.shelf_panel)
         self.splitter.addWidget(self.container_panel)
@@ -78,11 +79,20 @@ class StoreOverview(QWidget):
         print('test')
 
     def handle_container_creation(self, storage_object):
+        """
+        Called when container creation/selection signal is emitted from shelfInspector
+        :param storage_object:
+        :return:
+        """
         if issubclass(type(storage_object), StorageObject):
+            # TODO deep copy for cancel operation, operations will directly affect current object
             self.container_panel.container_inspector.update_information(storage_object)
             self.container_panel.show_panel(300)
 
     def handle_container_selection(self, storage_object: StorageObject):
+
+        # s = copy.deepcopy(storage_object)
+        # print('deep copy', s)
         self.container_panel.container_inspector.update_information(storage_object)
         self.container_panel.show_panel(300)
 
@@ -129,6 +139,10 @@ class StoreOverview(QWidget):
         self.racking_panel.racking_inspector.update_child_informations(None)
         self.store_visual.selected_element = None
         self.shelf_panel.shelf_inspector.update_child_information(None)
+
+    def draw_shelf(self):
+        print('drawing shelf')
+        self.shelf_visual.paintGL()
 
 
 

@@ -7,6 +7,8 @@ from layout.central.storeOverview.panel.containerPanel.childrens.containerOption
 from elements.shelf.shelf import *
 from elements.ElementLogic.StorageObject import *
 
+from layout.central.storeOverview.panel.containerPanel.childrens.originSelector import *
+
 
 class SelectContainer(QWidget):
     """
@@ -21,6 +23,11 @@ class SelectContainer(QWidget):
         self.storage_object = None
 
         self.main_vbox = QVBoxLayout()
+
+        # find perfect settings
+        # self.setContentsMargins(0, 0, 0, 0)
+        # self.main_vbox.setContentsMargins(5, 5, 5, 5)
+        self.main_vbox.setContentsMargins(0, 0, 0, 0)
 
         # shelf type
         hbox = QHBoxLayout()
@@ -41,10 +48,16 @@ class SelectContainer(QWidget):
         self.container_selector = ContainerSelector()
         self.main_vbox.addWidget(self.container_selector)
 
+        self.origin_selector = OriginSelector()
+        self.main_vbox.addWidget(self.origin_selector)
+
         # container options
         self.container_options = ContainerOptionsWidget()
         self.container_options_sa = QScrollArea()
+        self.container_options_sa.setMinimumWidth(200)
         self.container_options_sa.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.container_options_sa.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        # self.container_options_sa.setContentsMargins(5, 5, 5, 5)
         # self.container_options_sa.setHorizontalScrollBarPolicy()
         self.container_options_sa.setWidget(self.container_options)
         self.main_vbox.addWidget(self.container_options_sa)
@@ -53,9 +66,10 @@ class SelectContainer(QWidget):
 
 
 
-        self.main_vbox.addSpacing(10)
+        # self.main_vbox.addSpacing(10)
 
         self.setLayout(self.main_vbox)
+
 
 
 
@@ -74,17 +88,21 @@ class SelectContainer(QWidget):
             self.shelf_type_label.setText('SHELF TYPE')
 
     def update_child_widgets(self, element: StorageObject):
+        """
+        Updates subwidgets with information, call display_content with storage_object as argument
+        :param element:
+        :return:
+        """
         if element:
             self.update_ui(element)
             self.part_selector.display_content(element)
-            print('updating child widgets in selectContainer')
             self.container_selector.display_content(element)
-            # print(vars(element))
+            self.origin_selector.display_content(element)
             self.container_options.display_content(element)
 
 
 
-    def update_informations(self, element):
+    def update_informations_old(self, element):
         """
         OLD
         Updates child elements with info

@@ -11,17 +11,22 @@ import copy
 class ContainerInspector(QTabWidget):
 
     container_list_update_signal = pyqtSignal(name='update_container_list')
+    shelf_draw_signal = pyqtSignal(name='shelf_redraw')
 
     def __init__(self):
         super().__init__()
         self.storage_group = None
 
         self.container_selector = SelectContainer()
+        self.container_selector.setContentsMargins(0, 0, 0, 0)
+        self.setContentsMargins(0, 0, 0, 0)
         self.addTab(self.container_selector, 'Sélection')
 
         self.container_selector.part_selector.part_selection_signal.connect(self.handle_part_selection)
         self.container_selector.container_selector.container_change.connect(self.handle_container_change)
         self.container_selector.container_options.container_number_changed.connect(self.handle_container_number_change)
+        self.container_selector.origin_selector.origin_change_signal.connect(self.handle_origin_change)
+        self.container_selector.container_options.placement_changed.connect(self.handle_placement_change)
 
 
 
@@ -43,6 +48,27 @@ class ContainerInspector(QTabWidget):
             pass
             # self.storage_group.change_container_type(container)
 
+    def handle_placement_change(self, index: int):
+        """
+
+        :param index: configuration index in the placement array returned by ContainerPlacement
+        :return:
+        """
+        container_instance = self.container_selector.container_selector.get_container_instance()
+        placement_options = ContainerPlacement.get_placement(container_instance=container_instance,
+                                                             number=self.storage_group.container_number()
+                                                             )
+        print('handling placement change, index is ', index)
+        if index < len(placement_options):
+            self.storage_group.placement = placement_options[index]
+
+        self.storage_group.move_containers()
+        self.shelf_draw_signal.emit()
+        print('containers shouldve moved')
+
+
+
+
 
     def get_container_old(self):
         """
@@ -60,19 +86,26 @@ class ContainerInspector(QTabWidget):
 
     def handle_container_number_change(self, value):
         if type(self.storage_group) == StorageObject:
-            pass
-            # self.storage_group.set_nb_containers(value)     # depreciated
+            print('change in container number')
 
 
     def handle_submit(self):
         if self.storage_group:
+            print('storage_group geometry', self.storage_group.geometry)
 
-            # print('handle submit in containerInspector')
+            # GET DATA FROM SUB WIDGETS
             part = self.container_selector.part_selector.get_part()
             container_instance = self.container_selector.container_selector.get_container_instance()
             container_options = self.container_selector.container_options.get_options_data()
+            group_origin = self.container_selector.origin_selector.get_origin()
 
+            # Setting storage_object origin
+            self.storage_group.set_x_position(group_origin[0])
+            self.storage_group.set_y_position(group_origin[1])
+
+            # updating containers
             self.storage_group.update_containers(part, container_instance, container_options)
+            self.storage_group.move_containers()
 
             # Put the storage_object back in shelf content list
             if self.storage_group.parent_shelf_id:
@@ -83,59 +116,25 @@ class ContainerInspector(QTabWidget):
 
             self.container_list_update_signal.emit()
 
-            self.display_blank()
             self.storage_group = None
+            self.display_blank()
+            self.shelf_draw_signal.emit()
 
+    def handle_origin_change(self, x, y):
+        if issubclass(type(self.storage_group), StorageObject):
+            self.storage_group.set_x_position(x)
+            self.storage_group.set_y_position(y)
+            self.storage_group.move_containers()
 
+            self.shelf_draw_signal.emit()
 
-
-
-
-    def handle_submit_old(self):
-        """
-        Called when user press submit
-        adds the storage_group in shelf if not already in it, updates the storage_group list
-        TODO should go get all info relative to elements being modified in Storage_Object
-        :return:
-        """
-        pass
-        if issubclass(type(self.storage_group), StorageObject):         # if the current object is StorageObject
-            # Getting informations on storageGroup form inspector sub-widgets
-            options = self.container_selector.container_options.get_options_data()
-            container_options = {
-                'name': 'name test',
-                'length': self.container_selector.container_selector.dimensions_selector.length(),
-                'width': self.container_selector.container_selector.dimensions_selector.width(),
-                'height': self.container_selector.container_selector.dimensions_selector.height()
-            }
-            cont_nb = 2
-            # print('we have options')
-            container = self.storage_group.update_containers(number=options['nb_cont'],
-                                                             container_type=self.container_selector.container_selector
-                                                             .get_container_instance(),
-                                                             container_options=container_options,
-                                                             part_number=options['nb_part']
-                                                             )
-            # print(container)
-            #  number: int, container_type: type, container_options: dict
-
-
-            shelf = StoreFloor.get_shelf_by_id(self.storage_group.parent_shelf_id)  # we get the shelf by its id
-            if self.storage_group not in shelf.storage_objects:
-                shelf.add_storage(self.storage_group)
-                self.container_list_update_signal.emit()
-                self.update_information(None)
-
-
-
-
-    # method to create StorageObject
 
     def display_blank(self):
         # print('containerInspector calls to display blank')
         self.container_selector.part_selector.display_blank()
         self.container_selector.container_selector.display_blank()
         self.container_selector.container_options.display_blank()
+        self.container_selector.origin_selector.display_blank()
 
 
     def update_information(self, element: StorageObject):
@@ -145,26 +144,8 @@ class ContainerInspector(QTabWidget):
         :return:
         """
         if element:
-            # print(vars(element))
             self.storage_group = element
             self.container_selector.update_child_widgets(self.storage_group)
-
-    def update_information_old(self, element):
-        """
-        Dispatch update calls for different widget element
-        could be way better
-        :param element:
-        :return:
-        """
-        # print('ContainerInspector: receiving info on update method')
-        if issubclass(type(element), StorageObject):
-            self.storage_group = element
-            self.container_selector.update_informations(element)
-        elif not element:
-            # print('element absent')
-            self.storage_group = None
-            self.container_selector.update_informations(None)
-
 
 
 

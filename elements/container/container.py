@@ -67,7 +67,6 @@ class Container(Geometry):
         pass
 
     def place_on_shelf(self, placement, so_origin):
-        print('placing on shelf')
         if placement.length() > placement.width():
             self.set_length(placement.length())
             self.set_width(placement.width())
@@ -79,8 +78,6 @@ class Container(Geometry):
             self.set_width(placement.length())
             self.set_x_position(placement.x_position() - placement.length() + so_origin[0])
             self.set_y_position(placement.y_position() + so_origin[1])
-
-        print(self.geometry)
 
 
 
