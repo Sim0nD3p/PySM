@@ -102,32 +102,6 @@ class SelectContainer(QWidget):
 
 
 
-    def update_informations_old(self, element):
-        """
-        OLD
-        Updates child elements with info
-        :param element:
-        :return:
-        """
-        print('SelectContainer: receiving info on StoreObject')
-        if issubclass(type(element), StorageObject):
-            self.storage_object = element   # calling update on all child
-            self.update_ui(element)
-            self.container_selector.update_information(element)
-            self.container_options.update_information(element)
-            self.part_selector.update_information(element)
-            # print('all infos updated on selectContainer')
-        elif not element:
-            print('updating element None')
-            self.storage_object = None
-            self.update_ui(None)
-            self.part_selector.display_blank()
-            print('test')
-            self.container_selector.display_blank()
-            self.container_options.display_blank()
-
-
-
     def get_container_types(self):
         """
         Get the containers types compatible with the shelf type

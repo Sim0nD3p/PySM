@@ -6,6 +6,7 @@ from elements.shelf.flatShelf import *
 from backend.ContainerCatalog import *
 from layout.components.dimensionsSelector import *
 from elements.ElementLogic.StorageObject import *
+from elements.ElementLogic.dataClasses import *
 from backend.storeFloor import *
 
 
@@ -14,6 +15,7 @@ class ContainerSelector(QWidget):
     Selects the container
     """
     container_change = pyqtSignal(Container, name='container_change')       # takes container Instance in argument
+    dimensions_change = pyqtSignal(Dimensions, name='dimensions_change')
 
     def __init__(self):
         super().__init__()
@@ -48,7 +50,7 @@ class ContainerSelector(QWidget):
         self.subtype_cb.currentIndexChanged.connect(self.handle_subtype_change)
 
         self.dimensions_selector = DimensionSelector()
-        # self.dimensions_selector.dimensions_change.connect(self.handle_dimensions_change)
+        self.dimensions_selector.dimensions_change.connect(self.handle_dimensions_change)
         self.main_vbox.addWidget(self.dimensions_selector)
 
 
@@ -122,6 +124,18 @@ class ContainerSelector(QWidget):
                                                     )
             self.dimensions_selector.setDisabled(False)
 
+    def handle_dimensions_change(self):
+        """
+        Emits dimensions when dimensions change is triggered from dimensionsSelector
+        :return:
+        """
+        length = self.dimensions_selector.length()
+        width = self.dimensions_selector.width()
+        height = self.dimensions_selector.height()
+        dimensions = Dimensions(length=length, width=width, height=height)
+        self.dimensions_change.emit(dimensions)
+
+
 
     def handle_dimensions_change_old(self):
         """
@@ -135,13 +149,12 @@ class ContainerSelector(QWidget):
             container = self.type_cb.itemData(self.type_cb.currentIndex())
             self.container_change.emit(container, length, width, height)
 
-
-
     def get_container_instance(self):
         """
         Returns an instance of the selected container with dimensions
         :return:
         """
+        # TODO CHECK METHOD SO THAT IT RETURNS THE GOOD INSTANCE (SpaceContainer)
         instance = None
         if self.type_cb.currentIndex() != -1:
             type_data = self.type_cb.itemData(self.type_cb.currentIndex())
@@ -153,6 +166,8 @@ class ContainerSelector(QWidget):
                 instance.set_height(self.dimensions_selector.height())
             elif self.subtype_cb.currentIndex() != -1:
                 instance = self.subtype_cb.itemData(self.subtype_cb.currentIndex())     # subtypes stored as instances
+
+        print('returning instance @get_container_instance', instance)       # TODO error, returning Bin when spaceContainer
 
         return instance
 

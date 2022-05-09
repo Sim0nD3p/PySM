@@ -19,6 +19,13 @@ class Position:
         return int(self.y_position)
 
 
+@dataclass
+class Dimensions:
+    length: int
+    width: int
+    height: int
+
+
 class Geometry:
     def __init__(self, length: float, width: float, x_position: float, y_position: float, angle: float, height: float):
         self.geometry = np.array([

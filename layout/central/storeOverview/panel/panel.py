@@ -6,6 +6,7 @@ class Panel(QWidget):
     # signals useless we should directly connect to button signal
     submit_signal = pyqtSignal(name='submit_signal')
     cancel_signal = pyqtSignal(name='cancel_signal')
+    delete_signal = pyqtSignal(name='delete_signal')
 
     def __init__(self):
         super().__init__()
@@ -28,7 +29,10 @@ class Panel(QWidget):
         button_hbox = QHBoxLayout()
         self.submit_button = QPushButton('Ok')
         self.cancel_button = QPushButton('Cancel')
+        self.delete_button = QPushButton('Supprimer')
+        self.delete_button.setDisabled(True)    # delete disabled by default (should enable)
         button_hbox.addSpacing(100)
+        button_hbox.addWidget(self.delete_button)
         button_hbox.addWidget(self.cancel_button)
         button_hbox.addWidget(self.submit_button)
         self.main_vbox.addLayout(button_hbox)

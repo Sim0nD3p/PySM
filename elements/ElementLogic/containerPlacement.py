@@ -69,6 +69,7 @@ class ContainerPlacement:
 
     @classmethod
     def cont2_options(cls, container):
+        # TODO check container place on shelf how width and length are handled switched?
         cont1_1 = Geo2dMatrix(length=container.length(), width=container.width(),
                               x_position=0, y_position=0)
         cont1_2 = Geo2dMatrix(length=container.length(), width=container.width(),
@@ -79,9 +80,15 @@ class ContainerPlacement:
         cont2_2 = Geo2dMatrix(length=container.width(), width=container.length(),
                               x_position=cont2_1.length(), y_position=0)
 
+        cont3_1 = Geo2dMatrix(length=container.width(), width=container.length(),
+                              x_position=0, y_position=0)
+        cont3_2 = Geo2dMatrix(length=container.width(), width=container.length(),
+                              x_position=0, y_position=cont3_1.width())
+
         return [
             [cont1_1, cont1_2],     # cont2_1
-            [cont2_1, cont2_2]      # cont2_2
+            [cont2_1, cont2_2],     # cont2_2
+            [cont3_1, cont3_2],     # cont2_3
         ]
 
     @classmethod
@@ -101,6 +108,8 @@ class ContainerPlacement:
         elif number == 2:
             return cls.cont2_options(container_instance)
         else:
+
+            print('error in get_placement (containerPlacement)')
             return None
 
     @classmethod

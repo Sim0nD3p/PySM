@@ -40,14 +40,16 @@ class ContainerCatalog:
             if container_type.type == SPACE_CONTAINER:
                 containers.append(SpaceContainer('name' + str(i), 0, 0, 0))
             elif container_type.type == BIN:
-                pass
+                containers.append(Bin('name' + str(i), 0, 0, 0))
+            else:
+                print('create_container_from_type in ContainerCatalog - type not supported yet')
 
         return containers
 
 
     @classmethod
     def create_containers(cls, container_instance: Container, number: int):
-        print(container_instance)
+        # print(container_instance)
         containers = []
         for i in range(0, number):
             if container_instance.type == BIN:

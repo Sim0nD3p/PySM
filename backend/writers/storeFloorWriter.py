@@ -57,12 +57,12 @@ class StoreFloorWriter:
                     for so in shelf.storage_objects:
                         print('storage object')
                         geo = np.array2string(so.geometry.flatten())
-
                         # get placement name
+                        print('so.placement_cb', so.placement)
                         placement_name = ''
-                        if so.placement_cb:
+                        if so.placement:
                             print('should get placement name')
-                            placement_name = ContainerPlacement.get_placement_name(placement=so.placement_cb)
+                            placement_name = ContainerPlacement.get_placement_name(placement=so.placement)
 
 
                         xml_so = et.SubElement(xml_shelf,

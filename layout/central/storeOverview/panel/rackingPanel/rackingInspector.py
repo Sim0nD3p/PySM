@@ -111,8 +111,8 @@ class RackingInspector(QTabWidget):
         :param element: StoreObject
         :return:
         """
-        print('update child infos')
-        print(type(element))
+        # print('update child infos')
+        # print(type(element))
         self.racking_properties.enable_all()
         self.element = None
         if element is None:

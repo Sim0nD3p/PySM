@@ -41,13 +41,6 @@ class ShelfViewer(QtOpenGLWidgets.QOpenGLWidget):
         self.current_shelf = shelf
         self.paintGL()
 
-    def paint_shelf_old(self):
-        painter = QPainter()
-        if issubclass(type(self.current_shelf), Shelf):
-            for container in self.current_shelf.containers():
-                print(container)
-                painter.setBrush()
-                painter.drawPath(container.painter_path())
 
 
 
@@ -103,6 +96,7 @@ class ShelfViewer(QtOpenGLWidgets.QOpenGLWidget):
             painter.setBrush(QColor(102, 80, 50))
 
             for container in self.current_shelf.containers():
+                # print('drawing container', container)
                 pen.setColor(QColor(0, 100, 0))
                 pen.setWidth(10)
                 painter.setPen(pen)

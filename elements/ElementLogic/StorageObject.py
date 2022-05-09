@@ -26,7 +26,7 @@ class StorageObject(Geometry):
         # we'll need to setup geometry later when posiotionning in shelf
         self.part_code = None
         self.parent_shelf_id = parent_shelf_id
-        self.containers = [None]    # at least 1 container
+        self.containers = [Bin('sample_bin', length=0, width=0, height=0)]    # at least 1 container
 
         # self.number_part = 0    # total number of parts in group DEPRECIATED
         self.placement = None
@@ -48,14 +48,10 @@ class StorageObject(Geometry):
 
     def storage_capacity(self):
         capacity = 0
-        # print('storage capacity', self.containers)
         for container in self.containers:
             if issubclass(type(container), Container):
-                # print('getting container', container.name, container.get_content())
                 if issubclass(type(container), Container):
                     capacity += int(container.get_content()[0])
-                    # print('capacity increase', container.get_content())
-            # print('storage capacity', capacity)
         return capacity
 
     def nb_part_cont_old(self):
@@ -92,25 +88,27 @@ class StorageObject(Geometry):
         :return:
         """
         containers = []
-        nb_part_cont = math.ceil(container_options.nb_part / container_options.nb_cont)
-        if not self.placement:
-            print('drawing default placement')
+        if container_options.nb_cont != 0:
+            nb_part_cont = math.ceil(container_options.nb_part / container_options.nb_cont)
 
-            self.placement = ContainerPlacement.get_placement(container_instance=container_instance,
-                                                              number=container_options.nb_cont)[0]  # TODO [0] should be option
+            if not self.placement:
+                # print('drawing default placement')
 
+                placement = ContainerPlacement.get_placement(container_instance=container_instance,
+                                                             number=container_options.nb_cont)
+                if placement:
+                    self.placement = placement[0]
 
-        for i in range(0, container_options.nb_cont):
-            cont_i = ContainerCatalog.create_containers(container_instance, 1)[0]
-            cont_i.set_content(nb_part_cont, part)
-            containers.append(cont_i)
+            if self.placement:
+                # print('placement', self.placement)
 
+                for i in range(0, container_options.nb_cont):
+                    cont_i = ContainerCatalog.create_containers(container_instance, 1)[0]
+                    cont_i.set_content(nb_part_cont, part)
+                    containers.append(cont_i)
 
-
-
-
-        self.containers = containers
-        self.move_containers()
+                self.containers = containers
+                self.move_containers()
 
 
 
@@ -129,7 +127,7 @@ class StorageObject(Geometry):
 
     def set_nb_containers_old(self, nb_containers: int):
         """
-        Sets the container quantity of the storage object
+        There is no set_container_number because changing the number of container require a change in placement
         :param nb_container:
         :return: void
         """
@@ -211,8 +209,9 @@ class StorageObject(Geometry):
                     # print('index', index)
                     placement = ContainerPlacement.get_placement(container_instance=instance.container_instance(),
                                                                  number=instance.container_number())
-                    instance.placement = placement[int(index) - 1]
-                    instance.move_containers()
+                    if placement:
+                        instance.placement = placement[int(index) - 1]
+                        instance.move_containers()
 
 
 

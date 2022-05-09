@@ -86,6 +86,11 @@ class StoreOverview(QWidget):
         """
         if issubclass(type(storage_object), StorageObject):
             # TODO deep copy for cancel operation, operations will directly affect current object
+            # TODO cancel restore the deep copy
+            # TODO modifications in real time for new storage_objects
+            # TODO hide or display blank containerInspector on submit
+            # TODO add support for 3, 5, 5, 6 containers
+            # TODO add containerStack support
             self.container_panel.container_inspector.update_information(storage_object)
             self.container_panel.show_panel(300)
 
@@ -110,7 +115,7 @@ class StoreOverview(QWidget):
         self.shelf_panel.show_panel(300)
 
     def handle_shelf_selection(self, shelf: Shelf):
-        print('handle shelf selection')
+        # print('handle shelf selection')
         self.shelf_panel.shelf_inspector.update_child_information(shelf)
         self.shelf_panel.show_panel(300)
         self.shelf_visual.paint_shelf(shelf)

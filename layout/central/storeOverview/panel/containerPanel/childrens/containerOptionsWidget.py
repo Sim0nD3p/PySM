@@ -184,6 +184,14 @@ class ContainerOptionsWidget(QWidget):
 
 
 
+    def handle_nb_cont_bt(self):
+        """
+        Handles button nb_cont
+        :return:
+        """
+        pass
+
+
     def handle_nb_part_cont_change(self, value):
         """
         Handle changes nb_part_cont_change
@@ -201,7 +209,6 @@ class ContainerOptionsWidget(QWidget):
 
         self.update_ui()
 
-
     def handle_nb_part_cont_exit(self):
         """
         Handles changes in nb_part_cont spinBox
@@ -215,17 +222,14 @@ class ContainerOptionsWidget(QWidget):
 
         self.update_ui()
 
-    def handle_nb_cont_bt(self):
+    def handle_nb_cont_change(self, value):
         """
-        Handles button nb_cont
+        Handles the change in container number, sets the self value and emit signal to containerInspector to receive
+        :param value:
         :return:
         """
-        pass
-
-    def handle_nb_cont_change(self, value):
         self.nb_cont = value
-        # Other values updated on exitEditing because it would cause loop
-        # self.draw_placement_cb()
+        self.container_number_changed.emit(value)   # should call updateContainers (storage_object) from containerInspector
 
         self.update_ui()
 
@@ -260,12 +264,9 @@ class ContainerOptionsWidget(QWidget):
         Updates the UI values
         :return:
         """
-        # print('part', self.nb_part, 'part_cont', self.nb_part_cont, 'cont', self.nb_cont)
         self.nb_part_sb.setValue(self.nb_part)
         self.nb_part_cont_sb.setValue(self.nb_part_cont)
         self.nb_cont_sb.setValue(self.nb_cont)
-
-        # print(self.buttons_states[0])
 
 
     def handle_auto_nb_part(self):
@@ -284,9 +285,18 @@ class ContainerOptionsWidget(QWidget):
         :return:
         """
         # TODO define arrays to be displayed in combo box
-        self.placement_cb.clear()
-        for i in range(0, self.nb_cont):
-            self.placement_cb.addItem(str(i))
+        sample_container = Bin(name='sample_bin', length=0, width=0, height=0)  # sample container is used only to get the number of possibilities
+        instance = ContainerCatalog.create_containers_from_type(sample_container, 1)
+        print('drawing placement cb')
+        print('instance', instance)
+        if instance and instance[0]:
+            options_nb = ContainerPlacement.get_placement(instance[0], self.nb_cont)
+
+            self.placement_cb.clear()
+
+            for i in range(0, len(options_nb)):
+                self.placement_cb.addItem(str(i))
+
 
         if int(self.placement_index) - 1 < self.nb_cont:
             self.placement_cb.setCurrentIndex(int(self.placement_index) - 1)
@@ -344,19 +354,11 @@ class ContainerOptionsWidget(QWidget):
             placement_name = ContainerPlacement.get_placement_name(content.placement)
             self.placement_index = int(placement_name.split('_')[len(placement_name.split('_')) - 1])
 
+
+
         self.draw_placement_cb()
         self.update_ui()
 
 
-    def update_information_old(self, element: StorageObject):
-        # print('ContainerOptions: received element to update widget')
-        if issubclass(type(element), StorageObject):
-            self.storage_object = element
-            self.nb_cont = self.storage_object.container_number()
-            self.nb_part_cont = self.storage_object.storage_capacity()
-            self.update_ui()
-        else:
-            self.storage_object = None
-        # print('info updated on containerOption')
 
 

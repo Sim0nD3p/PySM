@@ -73,7 +73,8 @@ class Shelf(Geometry):
         container_list = []
         for group in self.storage_objects:
             for container in group.containers:
-                container_list.append(container)
+                if container:
+                    container_list.append(container)
 
         return container_list
 

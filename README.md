@@ -10,14 +10,22 @@
     - reload partModel in treePropertiesEditor not only on program starup
 
 ## where I am:
-- add way to store and restore placement in xml_store file
-- add drag and drop for container group
+# TODO bugs in containerInspector
+  - placement_cb not updating
+  - placement not good
+  - shelfContent not updating on delete
+  - dimensions not updating on change
+  - 
 
-- Store element:
-    - add wall to storeObject element
-      - *integration of geometry as parent class is good should continue on that, maybe add integration of shapely
-    - **transformations matrices for coordinates between store, racking and shelves
-- 
+
+  - add way to store and restore placement in xml_store file
+  - add drag and drop for container group
+
+  - Store element:
+      - add wall to storeObject element
+        - *integration of geometry as parent class is good should continue on that, maybe add integration of shapely
+      - **transformations matrices for coordinates between store, racking and shelves
+  - 
     
 
 - drag to place containers in shelfviewer (on shelf)

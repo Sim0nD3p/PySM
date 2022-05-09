@@ -15,8 +15,12 @@ class ContainerPanel(Panel):
         self.container_inspector = ContainerInspector()
         self.set_inspector(self.container_inspector)
         self.submit_button.clicked.connect(self.handle_submit)
+        self.delete_button.setDisabled(False)
+        self.delete_button.clicked.connect(self.handle_delete)
 
 
     def handle_submit(self):
         self.container_inspector.handle_submit()
 
+    def handle_delete(self):
+        self.container_inspector.handle_delete()

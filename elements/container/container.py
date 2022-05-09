@@ -76,8 +76,9 @@ class Container(Geometry):
         elif placement.length() <= placement.width():
             self.set_length(placement.width())
             self.set_width(placement.length())
-            self.set_x_position(placement.x_position() - placement.length() + so_origin[0])
+            self.set_x_position(placement.x_position() + placement.length() + so_origin[0])
             self.set_y_position(placement.y_position() + so_origin[1])
+            self.set_angle(90)
 
 
 
