@@ -11,11 +11,9 @@
 
 ## where I am:
 # TODO bugs in containerInspector
-  - placement_cb not updating
-  - placement not good
   - shelfContent not updating on delete
-  - dimensions not updating on change
-  - 
+  - display different color for each storage object
+  - display part code on container
 
 
   - add way to store and restore placement in xml_store file

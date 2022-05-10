@@ -33,6 +33,8 @@ class Geometry:
             [x_position, y_position],
             [angle, height]
         ])
+        self.displayLabel = False
+        
 
 
     def x_position(self):

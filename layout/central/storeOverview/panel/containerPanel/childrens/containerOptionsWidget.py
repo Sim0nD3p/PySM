@@ -290,7 +290,7 @@ class ContainerOptionsWidget(QWidget):
         print('drawing placement cb')
         print('instance', instance)
         if instance and instance[0]:
-            options_nb = ContainerPlacement.get_placement(instance[0], self.nb_cont)
+            options_nb = ContainerPlacement.get_placement_options(instance[0], self.nb_cont)
 
             self.placement_cb.clear()
 

@@ -4,6 +4,7 @@ from elements.container.containerStack import *
 
 bin1 = Bin(name='test1', length=200, width=100, height=50)
 bin2 = Bin(name='Big bin', length=500, width=200, height=75)
+# TODO add palettes
 
 
 class ContainerCatalog:

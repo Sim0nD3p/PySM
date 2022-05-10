@@ -156,15 +156,18 @@ class ContainerSelector(QWidget):
         """
         # TODO CHECK METHOD SO THAT IT RETURNS THE GOOD INSTANCE (SpaceContainer)
         instance = None
-        if self.type_cb.currentIndex() != -1:
-            type_data = self.type_cb.itemData(self.type_cb.currentIndex())
-            if len(ContainerCatalog.get_containers(type_data)) == 0:
-                instance = ContainerCatalog.create_containers_from_type(type_data, 1)[0]    # main types stored as type
-                # not instances
-                instance.set_length(self.dimensions_selector.length())      # setting diemnsions
+        if self.type_cb.currentIndex() != -1:       # if there is a container type selected (should be everytime)
+            type_data = self.type_cb.itemData(self.type_cb.currentIndex())  # the type of container (class)
+            if len(ContainerCatalog.get_containers(type_data)) == 0:    # if we have container of that type "in stock"
+                print('creating instance no subtype containerSelector')
+                print(type_data)
+                instance = ContainerCatalog.create_containers_from_type(type_data, 1)[0]  # create instance of container
+                instance.set_length(self.dimensions_selector.length())      # setting dimensions
                 instance.set_width(self.dimensions_selector.width())
                 instance.set_height(self.dimensions_selector.height())
+                print('dimensions of container instance', instance.geometry)
             elif self.subtype_cb.currentIndex() != -1:
+                print('creating instance from subtype containerSelector')
                 instance = self.subtype_cb.itemData(self.subtype_cb.currentIndex())     # subtypes stored as instances
 
         print('returning instance @get_container_instance', instance)       # TODO error, returning Bin when spaceContainer

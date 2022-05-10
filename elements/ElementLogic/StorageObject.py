@@ -88,19 +88,21 @@ class StorageObject(Geometry):
         :return:
         """
         containers = []
+        print('updating containers updateContainers', container_instance.geometry)
         if container_options.nb_cont != 0:
             nb_part_cont = math.ceil(container_options.nb_part / container_options.nb_cont)
 
             if not self.placement:
                 # print('drawing default placement')
 
-                placement = ContainerPlacement.get_placement(container_instance=container_instance,
-                                                             number=container_options.nb_cont)
+                placement = ContainerPlacement.get_placement_options(container_instance=container_instance,
+                                                                     number=container_options.nb_cont)
                 if placement:
                     self.placement = placement[0]
 
             if self.placement:
-                # print('placement', self.placement)
+                print('resetting placement', container_instance.geometry)
+
 
                 for i in range(0, container_options.nb_cont):
                     cont_i = ContainerCatalog.create_containers(container_instance, 1)[0]
@@ -207,8 +209,8 @@ class StorageObject(Geometry):
                         len(properties['placement']) > 1:
                     index = properties['placement'].split('_')[len(properties['placement'].split('_')) - 1]
                     # print('index', index)
-                    placement = ContainerPlacement.get_placement(container_instance=instance.container_instance(),
-                                                                 number=instance.container_number())
+                    placement = ContainerPlacement.get_placement_options(container_instance=instance.container_instance(),
+                                                                         number=instance.container_number())
                     if placement:
                         instance.placement = placement[int(index) - 1]
                         instance.move_containers()

@@ -57,9 +57,9 @@ class ContainerInspector(QTabWidget):
         :return:
         """
         container_instance = self.container_selector.container_selector.get_container_instance()
-        placement_options = ContainerPlacement.get_placement(container_instance=container_instance,
-                                                             number=self.storage_group.container_number()
-                                                             )
+        placement_options = ContainerPlacement.get_placement_options(container_instance=container_instance,
+                                                                     number=self.storage_group.container_number()
+                                                                     )
         # print('handling placement change, index is ', index)
         if index < len(placement_options):
             self.storage_group.placement = placement_options[index]
@@ -98,21 +98,29 @@ class ContainerInspector(QTabWidget):
         :param dimensions:
         :return:
         """
-        # TODO dimensions not setup correctly for custom dimensions, changes as soon as selected
         if issubclass(type(self.storage_group), StorageObject):
             if self.storage_group.container_instance():
                 instance = self.storage_group.container_instance()
                 if instance:
-                    print('resetting dimensions of instance (handle_dimensions_change, containerInspector)')
-                    print(dimensions)
-                    part = self.container_selector.part_selector.get_part()
-                    storage_options = self.container_selector.container_options.get_options_data()
-                    instance.set_length(dimensions.length)
+                    part = self.container_selector.part_selector.get_part()     # getting part name
+                    storage_options = self.container_selector.container_options.get_options_data()  # getting options
+                    instance.set_length(dimensions.length)      # setting dimensions
                     instance.set_width(dimensions.width)
                     instance.set_height(dimensions.height)
+                    if self.storage_group.placement:
+                        placement_index = ContainerPlacement.get_placement_index(self.storage_group.placement)
+                        new_placements = ContainerPlacement.get_placement_options(container_instance=instance,
+                                                                                  number=storage_options.nb_cont)
+
+                        if new_placements and type(placement_index) == int:
+                            new_placement = new_placements[placement_index-1]
+                            self.storage_group.placement = new_placement
 
                     self.storage_group.update_containers(part=part, container_instance=instance,
                                                          container_options=storage_options)
+
+                    self.storage_group.move_containers()
+                    self.shelf_draw_signal.emit()
 
 
 
@@ -120,7 +128,6 @@ class ContainerInspector(QTabWidget):
 
     def handle_submit(self):
         if self.storage_group:
-            print('storage_group geometry', self.storage_group.geometry)
 
             # GET DATA FROM SUB WIDGETS
             part = self.container_selector.part_selector.get_part()

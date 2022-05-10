@@ -96,7 +96,7 @@ class ContainerPlacement:
         pass
 
     @classmethod
-    def get_placement(cls, container_instance: Container, number: int):
+    def get_placement_options(cls, container_instance: Container, number: int):
         """
         Get placement, list of Geo2dMatrix for the relative position of the containers
         :param container_instance:
@@ -111,6 +111,24 @@ class ContainerPlacement:
 
             print('error in get_placement (containerPlacement)')
             return None
+
+    @classmethod
+    def get_placement_index(cls, placement):
+        """
+        Splits the placement name to get the index at the end
+        :param placement_name:
+        :return: int (index)
+        """
+        placement_name = cls.get_placement_name(placement)
+        if placement_name:
+            try:
+                i = int(placement_name.split('_')[1])
+                return i
+            except ValueError:
+                return placement_name
+        else:
+            return 'Error'
+
 
     @classmethod
     def get_placement_name(cls, placement):
