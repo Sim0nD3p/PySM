@@ -35,7 +35,7 @@ class Container(Geometry):
         :param width:
         :param height:
         """
-        super().__init__(length=length, width=width,
+        super().__init__(name=name, length=length, width=width,
                          x_position=x_position, y_position=y_position,
                          angle=angle, height=height
                          )

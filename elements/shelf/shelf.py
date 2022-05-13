@@ -31,7 +31,7 @@ class Shelf(Geometry):
     compatible_containers = []
 
     def __init__(self, name, id, shelf_length, shelf_width, shelf_height, x_position, y_position, type):
-        super().__init__(length=shelf_length, width=shelf_width,
+        super().__init__(name=name, length=shelf_length, width=shelf_width,
                          x_position=x_position, y_position=y_position,
                          angle=angle, height=shelf_height
                          )

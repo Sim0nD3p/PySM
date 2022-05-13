@@ -98,12 +98,41 @@ class ShelfViewer(QtOpenGLWidgets.QOpenGLWidget):
             for container in self.current_shelf.containers():
                 # print('drawing container', container)
                 pen.setColor(QColor(0, 100, 0))
+
+
+
+                pen.setColor(QColor(255, 0, 0))
                 pen.setWidth(10)
                 painter.setPen(pen)
                 painter.drawPath(container.painter_path())
 
+                vert = container.vertices()
+                rect = QRectF(vert[0][0], vert[0][1], vert[2][0]-vert[0][0], vert[2][1]-vert[1][1])
+                # rect = QRectF(0, 0, 200, -200)
+                # painter.drawRect(rect)
 
 
+
+                font = QFont('Arial', math.floor((vert[2][0]-vert[0][0])/len(container.name)))
+                font.setLetterSpacing(QFont.SpacingType.AbsoluteSpacing, 0)
+                painter.setFont(font)
+
+                painter.setBrush(QColor(87, 66, 0))
+                opt = QTextOption()
+                opt.setAlignment(Qt.AlignmentFlag.AlignCenter)
+                if container.angle() == 90:
+                    painter.rotate(-90)
+                    font.setPointSize(math.floor((vert[0][1]-vert[1][1]) / len(container.name)))
+                    painter.setFont(font)
+                    rect = QRectF(-vert[2][1], vert[2][0], vert[1][1]-vert[0][1], vert[1][0]-vert[2][0])
+                    painter.drawRect(rect)
+                    painter.drawText(rect, container.name, option=opt)
+                    painter.rotate(90)
+
+
+
+                elif container.angle() == 0:
+                    painter.drawText(rect, container.name, option=opt)
 
             # self.paint_shelf()
 

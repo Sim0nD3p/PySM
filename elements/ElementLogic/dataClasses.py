@@ -27,14 +27,19 @@ class Dimensions:
 
 
 class Geometry:
-    def __init__(self, length: float, width: float, x_position: float, y_position: float, angle: float, height: float):
+    def __init__(self, name: str, length: float, width: float,
+                 x_position: float, y_position: float,
+                 angle: float, height: float):
         self.geometry = np.array([
             [length, width],
             [x_position, y_position],
             [angle, height]
         ])
-        self.displayLabel = False
-        
+        self.displayLabel = True
+        # geometry should have name (passed as argument)
+        self.name = 'Test'
+
+
 
 
     def x_position(self):
@@ -153,7 +158,13 @@ class Geometry:
                 path.lineTo(QPointF(vertices[i, 0], vertices[i, 1]))
 
         path.lineTo(QPointF(vertices[0, 0], vertices[0, 1]))
-        path.addEllipse(QPointF(vertices[0, 0], vertices[0, 1]), 0.5, 0.5)
+        path.addEllipse(QPointF(vertices[0, 0], vertices[0, 1]), 0.5, 0.5)  # what is this?
+
+        if self.displayLabel:
+            font = QFont('Arial', self.width()*0.7)
+            # path.addText(QPointF(self.x_position(), -self.y_position()), font, self.name)
+
+
 
         return path
 

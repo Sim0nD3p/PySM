@@ -13,7 +13,8 @@
 # TODO bugs in containerInspector
   - shelfContent not updating on delete
   - display different color for each storage object
-  - display part code on container
+  - update geometry name on submit for container name/part
+  - app crashes when changing placmentIndex with no container selected
 
 
   - add way to store and restore placement in xml_store file

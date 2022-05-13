@@ -9,7 +9,7 @@ from backend.storeFloor import *
 
 class StoreObject(Geometry):
     def __init__(self, name, id, x_position, y_position, length, width, height, angle, element_type):
-        super().__init__(length=length, width=width,
+        super().__init__(name=name, length=length, width=width,
                          x_position=x_position, y_position=y_position,
                          angle=angle, height=height
                          )

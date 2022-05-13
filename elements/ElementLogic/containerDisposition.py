@@ -2,7 +2,7 @@ import numpy as np
 from elements.ElementLogic.dataClasses import Geometry
 from shapely import geometry
 
-geo = Geometry(length=200, width=500, x_position=0, y_position=0, angle=0, height=0)
+geo = Geometry(name='', length=200, width=500, x_position=0, y_position=0, angle=0, height=0)
 
 
 class ContainerDispositions:
@@ -39,6 +39,7 @@ class ContainerDispositions:
     def create_geometry(self, geometry: Geometry):
         # geometry, length is dim
         geometry = Geometry(
+            name='name',
             length=23, width=23,
             x_position=0, y_position=0,
             angle=0, height=0

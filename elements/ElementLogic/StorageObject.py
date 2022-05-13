@@ -19,7 +19,7 @@ class StorageObject(Geometry):
     """
     def __init__(self, parent_shelf_id):
         super().__init__(
-            length=0, width=0,
+            name='', length=0, width=0,
             x_position=0, y_position=0,
             angle=0, height=0
         )
@@ -38,6 +38,8 @@ class StorageObject(Geometry):
         :return: void
         """
         self.part_code = part_code
+        self.name = part_code
+        # update drawing of name label?
 
     def container_number(self):
         """
