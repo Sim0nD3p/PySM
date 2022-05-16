@@ -26,19 +26,45 @@ class Panel(QWidget):
         self.main_vbox.addWidget(self.container_inspector)
 
         # buttons setup
-        button_hbox = QHBoxLayout()
+        self.buttonsVisible = True
+
+        self.button_hbox = QHBoxLayout()
         self.submit_button = QPushButton('Ok')
+        self.submit_button.setMaximumWidth(75)
         self.cancel_button = QPushButton('Cancel')
+        self.cancel_button.setMaximumWidth(75)
         self.delete_button = QPushButton('Supprimer')
-        self.delete_button.setDisabled(True)    # delete disabled by default (should enable)
-        button_hbox.addSpacing(100)
-        button_hbox.addWidget(self.delete_button)
-        button_hbox.addWidget(self.cancel_button)
-        button_hbox.addWidget(self.submit_button)
-        self.main_vbox.addLayout(button_hbox)
+        self.delete_button.setMaximumWidth(85)
+        self.delete_button.setDisabled(True)  # delete disabled by default (should enable)
+        self.button_hbox.addSpacing(50)
+        self.button_hbox.addWidget(self.delete_button)
+        self.button_hbox.addWidget(self.cancel_button)
+        self.button_hbox.addWidget(self.submit_button)
+        self.main_vbox.addLayout(self.button_hbox)
+
 
 
         self.setLayout(self.main_vbox)
+
+    def enable_buttons(self):
+        """
+        Enables all bottom buttons
+        :return:
+        """
+        self.delete_button.setDisabled(False)
+        self.cancel_button.setDisabled(False)
+        self.submit_button.setDisabled(False)
+
+    def disable_buttons(self):
+        """
+        Enables all bottom buttons
+        :return:
+        """
+        self.delete_button.setDisabled(True)
+        self.cancel_button.setDisabled(True)
+        self.submit_button.setDisabled(True)
+
+
 
 
     def set_tool_bar(self, tool_bar: QToolBar):

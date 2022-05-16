@@ -70,7 +70,8 @@ class StoreOverview(QWidget):
         self.right_splitter.addWidget(self.shelf_visual)
         self.right_splitter.setOrientation(Qt.Orientation.Vertical)
         self.splitter.addWidget(self.right_splitter)
-        self.splitter.setSizes([10, 100, 100, 1000])
+        # self.splitter.setSizes([10, 100, 100, 1000])
+        self.right_splitter.setSizes([100, 50])
 
         self.setLayout(hbox)
 
@@ -115,9 +116,13 @@ class StoreOverview(QWidget):
         self.shelf_panel.show_panel(300)
 
     def handle_shelf_selection(self, shelf: Shelf):
-        # print('handle shelf selection')
+        """
+        Handling shelf selection calling methods in
+        :param shelf:
+        :return:
+        """
         self.shelf_panel.shelf_inspector.update_child_information(shelf)
-        self.shelf_panel.show_panel(300)
+        self.shelf_panel.show_panel(200)
         self.shelf_visual.paint_shelf(shelf)
 
 
@@ -128,10 +133,17 @@ class StoreOverview(QWidget):
         :return: void
         """
         print('handle racking creation')
+        self.racking_panel.enable_buttons()
         self.racking_panel.racking_inspector.update_child_informations(constructor)
 
     def handle_racking_selection(self, element: StoreObject):
+        """
+        Handles racking selection, could be in rackingPanel with common method for new and existing racking
+        :param element:
+        :return:
+        """
         if element is not None:
+            self.racking_panel.enable_buttons()
             self.racking_panel.racking_inspector.update_child_informations(element)
             self.shelf_panel.shelf_inspector.set_parent_racking(element)
 
@@ -140,10 +152,14 @@ class StoreOverview(QWidget):
         unselect all elements
         :return:
         """
+        # TODO shelfInspector unselect and shelfViewer unselect
         print('unselect all')
+        self.racking_panel.disable_buttons()        # should change to better method in rackingPanel
         self.racking_panel.racking_inspector.update_child_informations(None)
         self.store_visual.selected_element = None
         self.shelf_panel.shelf_inspector.update_child_information(None)
+        self.store_visual.unselect_all()
+        self.store_visual.paintGL()
 
     def draw_shelf(self):
         print('drawing shelf')

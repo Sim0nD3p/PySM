@@ -26,7 +26,7 @@ class RackingInspector(QTabWidget):
         self.store_viewer = store_viewer
         self.racking_properties = RackingProperties(submit_signal=self.submit_signal,
                                                     new_element_signal=self.new_element_signal)
-        self.addTab(self.racking_properties, 'Informations générales')
+        self.addTab(self.racking_properties, 'Propriétés')
 
         self.racking_content = RackingContent()
         self.racking_content.new_shelf_button.clicked.connect(self.new_shelf_creation)
@@ -49,8 +49,8 @@ class RackingInspector(QTabWidget):
         else:
             print('modify racking')
             self.racking_properties.modify_store_object()
-        # self.unselect_signal.emit()
-        self.store_viewer.paintGL()
+
+        self.unselect_signal.emit()
 
 
     def new_shelf_creation(self):
@@ -71,6 +71,19 @@ class RackingInspector(QTabWidget):
                     y_position=0
                 )
         self.new_shelf_signal.emit(constructor)
+
+    def display_blank(self):
+        """
+        Handles the display blank
+        :return:
+        """
+        self.racking_properties.display_blank()
+        self.racking_content.display_blank()
+        self.racking_properties.disable_all()
+        self.racking_content.disable_all()
+        self.element = None
+        self.racking_properties.element = None
+        self.racking_content.element = None
 
 
 
@@ -106,7 +119,8 @@ class RackingInspector(QTabWidget):
 
     def update_child_informations(self, element):
         """
-        Update content of properties, content and other child elements of ElementInspector
+        Update content of properties, content and other child elements of ElementInspector depending oni the type of
+        element
         Calls update method on all children sets element
         :param element: StoreObject
         :return:
@@ -116,12 +130,8 @@ class RackingInspector(QTabWidget):
         self.racking_properties.enable_all()
         self.element = None
         if element is None:
-            self.racking_properties.display_blank()
-            self.racking_content.display_blank()
-            self.racking_properties.disable_all()
-            self.racking_content.disable_all()
-            self.racking_properties.element = None
-            self.racking_content.element = None
+            # should change for display blank
+            self.display_blank()
         elif type(element) is ElementConstructorData:
             print('elementConstructor')
             self.racking_properties.element = None

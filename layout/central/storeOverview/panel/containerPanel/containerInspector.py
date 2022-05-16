@@ -40,8 +40,10 @@ class ContainerInspector(QTabWidget):
         :return: void
         """
         self.container_selector.container_options.part_code = part_code
-        if self.storage_group:
-            self.storage_group.part_code = part_code
+        if issubclass(type(self.storage_group), StorageObject):
+            print('updating containers names')
+            self.storage_group.set_part_code(part_code)
+
 
     def handle_container_change(self, container: Container):
         self.container_selector.container_options.container_type = container

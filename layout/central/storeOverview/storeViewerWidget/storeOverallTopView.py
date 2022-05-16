@@ -36,7 +36,7 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
     def __init__(self):
         super().__init__()
 
-        self.elements = []
+        self.elements = []  # DEPRECIATED
         self.selected_element = None
         self.coord_scale_x = 8000
         self.x_offset = 0
@@ -44,7 +44,7 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
 
         self.setGeometry(0, 0, 100, 100)
         self.current_drawing = None
-        self.mouse_pressed_position = None
+        self.mouse_pressed_position = QPointF(0, 0)
         self.mouse_action_type = ACTION_MOVE
         self.default_mouse_action_type = ACTION_MOVE
 
@@ -135,26 +135,20 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
 
     def mousePressEvent(self, a0: PyQt6.QtGui.QMouseEvent):
         x, y = self.get_logical_coordinates(a0)
-        if self.mouse_action_type is ACTION_SELECT:
-            self.selected_element = None
-            self.current_drawing = None
-            for e in StoreFloor().objects:
-                if issubclass(type(e), StoreObject):
-
-                    if e.painter_path().contains(QPointF(x, y)):
-                        self.selected_element = e
-                        self.selection_signal.emit(self.selected_element)
-            if self.selected_element is None:
-                self.unselect_signal.emit()
-
-
-
-        elif self.mouse_action_type is ACTION_DRAW:
+        self.mouse_pressed_position = QPointF(x, y)
+        if self.mouse_action_type is ACTION_DRAW:
             self.selected_element = None
             self.mouse_pressed_position = QPointF(x, y)
 
     def mouseMoveEvent(self, a0: PyQt6.QtGui.QMouseEvent):
+        """
+        Triggered on mouseMove
+        :param a0:
+        :return:
+        """
         x, y = self.get_logical_coordinates(a0)
+        current_position = QPointF(x, y)
+
         if self.mouse_action_type is ACTION_DRAW:
             if type(self.mouse_pressed_position) is PyQt6.QtCore.QPointF:
                 pp = QPainterPath()
@@ -162,15 +156,36 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
                 pp.addRect(rect)
                 self.current_drawing = pp
                 self.repaint()
+        elif self.mouse_pressed_position != current_position:
+            dx = -int(current_position.x() - self.mouse_pressed_position.x())
+            dy = -int(current_position.y() - self.mouse_pressed_position.y())
+            self.move_offset(x=dx, y=dy)
+
+
+
 
     def mouseReleaseEvent(self, a0: PyQt6.QtGui.QMouseEvent):
         x, y = self.get_logical_coordinates(a0)
         mouse_released_position = QPointF(x, y)
+
+
         if self.mouse_action_type is ACTION_DRAW:
             print('MouseRelease on ACTION_DRAW')
             constructor = self.get_drawing_geometry(self.mouse_pressed_position, mouse_released_position)
             self.new_rect_signal.emit(constructor)
             self.mouse_pressed_position = None
+
+        elif self.mouse_action_type is ACTION_SELECT:
+            self.selected_element = None
+            self.current_drawing = None
+            for e in StoreFloor().objects:
+                if issubclass(type(e), StoreObject):
+                    if e.painter_path().contains(QPointF(x, y)):
+                        self.selected_element = e
+                        self.selection_signal.emit(self.selected_element)
+            if self.selected_element is None:
+                self.unselect_signal.emit()
+
             # set up logic for how to handle the switch to active drawing to null
         # elif self.mouse_action_type is ACTION_SELECT:
           #   print('repainte')
@@ -182,6 +197,11 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
     def draw_object(self, store_object: StoreObject):
         path = QPainterPath()
         vertices = store_object.vertices()
+
+    def unselect_all(self):
+        self.selected_element = None
+        self.paintGL()
+        self.repaint()
 
 
 
@@ -221,10 +241,10 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
         """
 
 
-
-        for element in self.elements:
-            if type(element) is PyQt6.QtGui.QPainterPath:
-                painter.drawPath(element)
+        # self.elements is DEPRECIATED
+        # for element in self.elements:
+            # if type(element) is PyQt6.QtGui.QPainterPath:
+                # painter.drawPath(element)
 
         for element in StoreFloor.objects:
             painter.drawPath(element.painter_path())

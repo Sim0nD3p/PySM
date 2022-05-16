@@ -1,5 +1,5 @@
 from PyQt6.QtGui import QFont
-from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QHBoxLayout, QVBoxLayout, QPushButton, QComboBox, QSpinBox
+from PyQt6.QtWidgets import *
 from PyQt6.QtGui import QPalette
 from PyQt6.QtCore import Qt
 from elements.store.dataClasses import *
@@ -60,8 +60,9 @@ class RackingProperties(QWidget):
         type_hbox.addWidget(self.type_cb)
         self.main_vbox.addLayout(type_hbox)
 
-        # POSITION
-        pos_hbox = QHBoxLayout()
+        # GEOMETRY
+        geo_grid = QGridLayout()
+
         self.x_pos_sb = QSpinBox()
         self.input_elements.append(self.x_pos_sb)
         self.x_pos_sb.setMaximum(9999)
@@ -72,30 +73,30 @@ class RackingProperties(QWidget):
         self.y_pos_sb.setMaximum(9999)
         self.y_pos_sb.setMinimum(-9999)
         y_pos_label = QLabel('Position y')
-        pos_hbox.addWidget(x_pos_label)
-        pos_hbox.addWidget(self.x_pos_sb)
-        pos_hbox.addWidget(y_pos_label)
-        pos_hbox.addWidget(self.y_pos_sb)
-        self.main_vbox.addLayout(pos_hbox)
+
+        geo_grid.addWidget(x_pos_label, 0, 0, 1, 1)
+        geo_grid.addWidget(self.x_pos_sb, 0, 1, 1, 1)
+        geo_grid.addWidget(y_pos_label, 1, 0, 1, 1)
+        geo_grid.addWidget(self.y_pos_sb, 1, 1, 1, 1)
 
         # DIMENSIONS
-        dim_hbox = QHBoxLayout()
         len_label = QLabel('Longueur')
         self.len_sb = QSpinBox()
+        self.len_sb.setMaximumWidth(50)
         self.input_elements.append(self.len_sb)
         self.len_sb.setMaximum(9999)
         wid_label = QLabel('Largeur')
         self.wid_sb = QSpinBox()
         self.input_elements.append(self.wid_sb)
         self.wid_sb.setMaximum(9999)
-        dim_hbox.addWidget(len_label)
-        dim_hbox.addWidget(self.len_sb)
-        dim_hbox.addWidget(wid_label)
-        dim_hbox.addWidget(self.wid_sb)
-        self.main_vbox.addLayout(dim_hbox)
+
+        geo_grid.addWidget(len_label, 2, 0, 1, 1)
+        geo_grid.addWidget(self.len_sb, 2, 1, 1, 1)
+        geo_grid.addWidget(wid_label, 3, 0, 1, 1)
+        geo_grid.addWidget(self.wid_sb, 3, 1, 1, 1)
 
         # ANGLE | HEIGHT
-        ah_hbox = QHBoxLayout()
+
         self.ang_sb = QSpinBox()
         self.input_elements.append(self.ang_sb)
         self.ang_sb.setMinimum(0)
@@ -105,11 +106,15 @@ class RackingProperties(QWidget):
         self.input_elements.append(self.hei_sb)
         self.hei_sb.setMaximum(Settings().store_object_max_height)
         hei_label = QLabel('Hauteur')
-        ah_hbox.addWidget(ang_label)
-        ah_hbox.addWidget(self.ang_sb)
-        ah_hbox.addWidget(hei_label)
-        ah_hbox.addWidget(self.hei_sb)
-        self.main_vbox.addLayout(ah_hbox)
+
+
+        geo_grid.addWidget(ang_label, 4, 0, 1, 1)
+        geo_grid.addWidget(self.ang_sb, 4, 1, 1, 1)
+        geo_grid.addWidget(hei_label, 5, 0, 1, 1)
+        geo_grid.addWidget(self.hei_sb, 5, 1, 1, 1)
+
+
+        self.main_vbox.addLayout(geo_grid)
 
         # SUBMIT BUTTON
         # self.sub_button = QPushButton('Ok')
@@ -207,6 +212,7 @@ class RackingProperties(QWidget):
         self.x_pos_sb.setValue(constructor.x_position)
         self.y_pos_sb.setValue(constructor.y_position)
         self.ang_sb.setValue(constructor.angle)
+        self.enable_all()
 
     def display_from_object(self, store_object: StoreObject):
         """
@@ -223,10 +229,11 @@ class RackingProperties(QWidget):
         self.ang_sb.setValue(store_object.angle())
         self.hei_sb.setValue(store_object.height())
         self.type_cb.setCurrentIndex(self.type_cb.findData(store_object.type))
+        self.enable_all()
 
     def display_blank(self):
         """
-        Resets all values of input widgets
+        Resets all values of input widgets and disables the input widgets
         :return: void
         """
         self.name_le.setText('')
@@ -237,6 +244,8 @@ class RackingProperties(QWidget):
         self.y_pos_sb.setValue(0)
         self.ang_sb.setValue(0)
         self.hei_sb.setValue(0)
+        self.disable_all()
+
 
     def disable_all(self):
         for element in self.input_elements:

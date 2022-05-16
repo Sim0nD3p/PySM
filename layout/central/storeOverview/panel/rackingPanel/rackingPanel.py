@@ -15,6 +15,8 @@ class RackingPanel(Panel):
     def __init__(self, store_viewer: StoreTopVisualizer, shelf_viewer: ShelfViewer):
         super().__init__()
         self.store_viewer = store_viewer
+        self.setMaximumWidth(400)
+        self.show_panel(175)
         self.racking_tool_bar = StoreViewerControls(store_viewer=store_viewer)
         self.racking_inspector = RackingInspector(store_viewer=self.store_viewer)
         self.set_tool_bar(self.racking_tool_bar)
@@ -22,10 +24,12 @@ class RackingPanel(Panel):
 
         self.submit_button.clicked.connect(self.handle_submit)
         self.cancel_button.clicked.connect(self.handle_cancel)
+        self.disable_buttons()
 
     def handle_submit(self):
         print('handle submit rackingPanel')
         self.racking_inspector.handle_submit()
+        self.disable_buttons()
         # TODO: immidiately update shelf inspector (panel) when submitting (if active shelf)
 
     def handle_cancel(self):

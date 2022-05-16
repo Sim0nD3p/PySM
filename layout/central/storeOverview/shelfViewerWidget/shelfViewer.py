@@ -13,7 +13,7 @@ from elements.shelf.shelf import Shelf
 from elements.container.container import Container
 
 container = Container(name='container_test', container_type=BIN, length=50, width=25, height=25, weight_capacity=30, net_weight=12)
-dummy_shelf = Shelf(name='test', id=1010, shelf_length=400, shelf_width=200, shelf_height=10, x_position=0, y_position=0, type='hello')
+dummy_shelf = Shelf(name='test', id=1010, shelf_length=400, shelf_width=100, shelf_height=10, x_position=0, y_position=0, type='hello')
 path = QPainterPath()
 path.addRect(0, 0, 25, 25)
 
@@ -116,6 +116,7 @@ class ShelfViewer(QtOpenGLWidgets.QOpenGLWidget):
                 font = QFont('Arial', math.floor((vert[2][0]-vert[0][0])/len(container.name)))
                 font.setLetterSpacing(QFont.SpacingType.AbsoluteSpacing, 0)
                 painter.setFont(font)
+                print('should display that name', container.name)
 
                 painter.setBrush(QColor(87, 66, 0))
                 opt = QTextOption()

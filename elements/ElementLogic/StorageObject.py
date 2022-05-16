@@ -38,7 +38,11 @@ class StorageObject(Geometry):
         :return: void
         """
         self.part_code = part_code
-        self.name = part_code
+        self.name = part_code       # inherited from geometry
+        for i in range(0, len(self.containers)):
+            if issubclass(type(self.containers[i]), Container):
+                container_name = str(self.containers[i].type) + '_' + part_code + '_' + str(i)
+                self.containers[i].name = container_name
         # update drawing of name label?
 
     def container_number(self):
@@ -84,6 +88,7 @@ class StorageObject(Geometry):
         # TODO create array of container with all properties
         """
         Called on handle submit
+        placement is array of Geo2dMatrix containing (length, width in axis directions and positions)
         :param part:
         :param container_instance:
         :param container_options:
@@ -107,7 +112,8 @@ class StorageObject(Geometry):
 
 
                 for i in range(0, container_options.nb_cont):
-                    cont_i = ContainerCatalog.create_containers(container_instance, 1)[0]
+                    cont_i = ContainerCatalog.create_containers(container_instance, 1)[0]   # creating new containers
+                    cont_i.name = str(cont_i.type) + '_' + part + '_' + str(i)
                     cont_i.set_content(nb_part_cont, part)
                     containers.append(cont_i)
 

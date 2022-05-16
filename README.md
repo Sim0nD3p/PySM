@@ -13,7 +13,8 @@
 # TODO bugs in containerInspector
   - shelfContent not updating on delete
   - display different color for each storage object
-  - update geometry name on submit for container name/part
+  - finalise movement (drag to move)
+  - check unselects bug (see unselectAll in storeOverView)
   - app crashes when changing placmentIndex with no container selected
 
 

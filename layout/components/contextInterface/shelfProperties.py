@@ -39,35 +39,30 @@ class ShelfProperties(QWidget):
         self.main_vbox.addLayout(type_hb)
 
         # dimensions
-        dim_hb = QHBoxLayout()
+        props_grid = QGridLayout()
+
         length_label = QLabel('Longueur')
         self.length_sb = QSpinBox()
         self.input_elements.append(self.length_sb)
         self.length_sb.setMinimum(0)
         self.length_sb.setMaximum(9999)
+
         width_label = QLabel('Largeur')
         self.width_sb = QSpinBox()
         self.input_elements.append(self.width_sb)
         self.width_sb.setMinimum(0)
         self.width_sb.setMaximum(9999)
-        dim_hb.addWidget(length_label)
-        dim_hb.addWidget(self.length_sb)
-        dim_hb.addWidget(width_label)
-        dim_hb.addWidget(self.width_sb)
-        self.main_vbox.addLayout(dim_hb)
 
-        height_hb = QHBoxLayout()
         height_label = QLabel('Hauteur')
         self.height_sb = QSpinBox()
         self.input_elements.append(self.height_sb)
         self.height_sb.setMinimum(0)
         self.height_sb.setMaximum(9999)
-        height_hb.addWidget(height_label)
-        height_hb.addWidget(self.height_sb)
-        self.main_vbox.addLayout(height_hb)
+
+
 
         # position
-        pos_hb = QHBoxLayout()
+
         x_pos_label = QLabel('Position x')
         self.x_pos_sb = QSpinBox()
         self.input_elements.append(self.x_pos_sb)
@@ -78,11 +73,19 @@ class ShelfProperties(QWidget):
         self.input_elements.append(self.y_pos_sb)
         self.y_pos_sb.setMaximum(9999)
         self.y_pos_sb.setMinimum(-9999)
-        pos_hb.addWidget(x_pos_label)
-        pos_hb.addWidget(self.x_pos_sb)
-        pos_hb.addWidget(y_pos_label)
-        pos_hb.addWidget(self.y_pos_sb)
-        self.main_vbox.addLayout(pos_hb)
+
+        props_grid.addWidget(length_label, 0, 0, 1, 1)
+        props_grid.addWidget(self.length_sb, 0, 1, 1, 1)
+        props_grid.addWidget(width_label, 1, 0, 1, 1)
+        props_grid.addWidget(self.width_sb, 1, 1, 1, 1)
+        props_grid.addWidget(height_label, 2, 0, 1, 1)
+        props_grid.addWidget(self.height_sb, 2, 1, 1, 1)
+        props_grid.addWidget(x_pos_label, 3, 0, 1, 1)
+        props_grid.addWidget(self.x_pos_sb, 3, 1, 1, 1)
+        props_grid.addWidget(y_pos_label, 4, 0, 1, 1)
+        props_grid.addWidget(self.y_pos_sb, 4, 1, 1, 1)
+
+        self.main_vbox.addLayout(props_grid)
 
         self.main_vbox.addSpacing(200)
 
