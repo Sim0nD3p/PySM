@@ -31,6 +31,12 @@ class ShelfInspector(QTabWidget):
         self.shelf_content.add_button.clicked.connect(self.start_container_path)
         self.shelf_content.list.itemClicked.connect(self.handle_shelf_content_click)
 
+    # TODO: hide shelfViewer when shelf unselect
+
+
+    def handle_delete(self):
+        print('handling delete from shelfInspector')
+
     def handle_submit(self):
         if not self.element:
             self.create_shelf()

@@ -1,4 +1,5 @@
 from PyQt6.QtGui import QFont
+import numpy as np
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import QPalette
 from PyQt6.QtCore import Qt
@@ -6,9 +7,12 @@ from elements.store.dataClasses import *
 from elements.elementsTypes import *
 from elements.store.storeObject import StoreObject
 from layout.settings.settings import Settings
-
+from PyQt6.QtCore import *
+from elements.ElementLogic.dataClasses import *
 
 class RackingProperties(QWidget):
+    geometry_change_signal = pyqtSignal(Geometry, name='geometry_change')
+
     def __init__(self, submit_signal, new_element_signal):
         super().__init__()
         self.element = None
@@ -64,12 +68,14 @@ class RackingProperties(QWidget):
         geo_grid = QGridLayout()
 
         self.x_pos_sb = QSpinBox()
+        self.x_pos_sb.valueChanged.connect(self.handle_geometry_change)
         self.input_elements.append(self.x_pos_sb)
         self.x_pos_sb.setMaximum(9999)
         self.x_pos_sb.setMinimum(-9999)
         x_pos_label = QLabel('Position x')
         self.y_pos_sb = QSpinBox()
         self.input_elements.append(self.y_pos_sb)
+        self.y_pos_sb.valueChanged.connect(self.handle_geometry_change)
         self.y_pos_sb.setMaximum(9999)
         self.y_pos_sb.setMinimum(-9999)
         y_pos_label = QLabel('Position y')
@@ -82,11 +88,13 @@ class RackingProperties(QWidget):
         # DIMENSIONS
         len_label = QLabel('Longueur')
         self.len_sb = QSpinBox()
+        self.len_sb.valueChanged.connect(self.handle_geometry_change)
         self.len_sb.setMaximumWidth(50)
         self.input_elements.append(self.len_sb)
         self.len_sb.setMaximum(9999)
         wid_label = QLabel('Largeur')
         self.wid_sb = QSpinBox()
+        self.wid_sb.valueChanged.connect(self.handle_geometry_change)
         self.input_elements.append(self.wid_sb)
         self.wid_sb.setMaximum(9999)
 
@@ -98,11 +106,13 @@ class RackingProperties(QWidget):
         # ANGLE | HEIGHT
 
         self.ang_sb = QSpinBox()
+        self.ang_sb.valueChanged.connect(self.handle_geometry_change)
         self.input_elements.append(self.ang_sb)
         self.ang_sb.setMinimum(0)
         self.ang_sb.setMaximum(360)
         ang_label = QLabel('Angle')
         self.hei_sb = QSpinBox()
+        self.hei_sb.valueChanged.connect(self.handle_geometry_change)
         self.input_elements.append(self.hei_sb)
         self.hei_sb.setMaximum(Settings().store_object_max_height)
         hei_label = QLabel('Hauteur')
@@ -122,6 +132,24 @@ class RackingProperties(QWidget):
         # self.main_vbox.addWidget(self.sub_button)
 
         self.create_layout()
+
+    def handle_geometry_change(self):
+        """
+        Triggered on change of any geometry and emit geometry_change_signal which is received by rackingInspector
+        :return:
+        """
+        print('handling geometry change in rackingProperties')
+        height = self.hei_sb.value()
+        width = self.wid_sb.value()
+        length = self.len_sb.value()
+        x_pos = self.x_pos_sb.value()
+        y_pos = self.y_pos_sb.value()
+        angle = self.ang_sb.value()
+        geo = Geometry(length=length, width=width, height=height, x_position=x_pos, y_position=y_pos, angle=angle,
+                       name='')
+
+        self.geometry_change_signal.emit(geo)
+
 
     def create_constructor(self):
         """

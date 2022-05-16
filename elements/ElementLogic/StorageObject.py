@@ -27,6 +27,8 @@ class StorageObject(Geometry):
         self.part_code = None
         self.parent_shelf_id = parent_shelf_id
         self.containers = [Bin('sample_bin', length=0, width=0, height=0)]    # at least 1 container
+        self.id = 000000
+        # TODO ASSING ID AUTO
 
         # self.number_part = 0    # total number of parts in group DEPRECIATED
         self.placement = None

@@ -9,10 +9,18 @@ class StoreFloor:
     def ids(cls):
         """
         :return: lsit of all ids of objects in storeFloor
+        storeObject:
+        as far as racking->shelf->storage_object
         """
         ids = []
         for obj in cls.objects:
             ids.append(obj.id)
+            if hasattr(obj, 'shelves'):
+                for shelf in obj.shelves:
+                    ids.append(shelf.id)
+                    for storage_group in shelf.storage_objects:
+                        ids.append(storage_group.id)
+
         return ids
 
     @classmethod
@@ -23,6 +31,7 @@ class StoreFloor:
         """
         id = random.randrange(100000, 1000000, 1)
         if id not in cls.ids():
+            cls.ids
             return id
         else:
             cls.generate_id()
@@ -43,7 +52,7 @@ class StoreFloor:
     @classmethod
     def get_shelf_by_id(cls, id):
         """
-        Searchs all shelves to match given id
+        Searchs for shelves in all storeObject that have shelves
         :param id:
         :return:
         """
@@ -81,5 +90,47 @@ class StoreFloor:
             print('object already in store floor')
 
         # print('object added to floor', cls.objects)
+
+    @classmethod
+    def get_id_object(cls, object_id: int):
+        for object in cls.objects:      # looping thru storeObject
+            if hasattr(object, 'shelves'):
+                if object.id == object_id:
+                    return object       # returning object
+                for shelf in object.shelves:    # looping thru shelves
+                    if shelf.id == object_id:
+                        return shelf            # returning shelf
+                    for storage_group in shelf.storage_objects:     # looping thru storage_group
+                        if storage_group.id == object_id:
+                            return storage_group                    # returning storage_group
+        return None     # Not found
+
+
+    @classmethod
+    def delete_store_object(cls, object_id: int):
+        """
+        Search and deletes the object with the given id
+        :param object_id: int
+        :return: void
+        """
+        element = cls.get_id_object(object_id=object_id)
+        if element not in cls.objects:
+            for obj in cls.objects:
+                if hasattr(obj, 'shelves'):
+                    if element not in obj.shelves:
+                        for shelf in obj.shelves:
+                            if element not in shelf.storage_objects:
+                                print('element not found, id:', element.id)
+                            else:
+                                shelf.storage_objects.remove(element)
+                    else:
+                        obj.shelves.remove(element)
+
+        else:
+            cls.objects.remove(element)
+
+
+
+
 
 

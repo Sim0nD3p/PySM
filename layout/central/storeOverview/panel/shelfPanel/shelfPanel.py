@@ -13,6 +13,8 @@ class ShelfPanel(Panel):
 
         self.shelf_inspector = ShelfInspector()
         self.set_inspector(self.shelf_inspector)
+        self.delete_button.setDisabled(False)
+        self.delete_button.clicked.connect(self.handle_delete)
 
         self.submit_button.clicked.connect(self.handle_submit)
         self.hide_panel()
@@ -28,5 +30,9 @@ class ShelfPanel(Panel):
 
     def handle_cancel(self):
         self.hide_panel()
+
+    def handle_delete(self):
+        print('handling delete from shelfPanel')
+
 
 

@@ -7,7 +7,9 @@ from layout.central.storeOverview.shelfViewerWidget.shelfViewer import *
 from layout.central.storeOverview.panel.shelfPanel.shelfPanel import *
 from layout.central.storeOverview.panel.containerPanel.containerPanel import *
 from elements.shelf.shelf import *
-import copy
+from copy import deepcopy
+
+
 
 class StoreOverview(QWidget):
     """
@@ -132,6 +134,7 @@ class StoreOverview(QWidget):
         :param constructor: elementConstructorData
         :return: void
         """
+        # TODO add cancel support with deep copy integration
         print('handle racking creation')
         self.racking_panel.enable_buttons()
         self.racking_panel.racking_inspector.update_child_informations(constructor)
@@ -142,10 +145,12 @@ class StoreOverview(QWidget):
         :param element:
         :return:
         """
+        # TODO add cancel support with deep copy
         if element is not None:
-            self.racking_panel.enable_buttons()
-            self.racking_panel.racking_inspector.update_child_informations(element)
-            self.shelf_panel.shelf_inspector.set_parent_racking(element)
+            self.racking_panel.update_informations(element)
+            # self.racking_panel.enable_buttons()
+            # self.racking_panel.racking_inspector.update_child_informations(element)
+            self.shelf_panel.shelf_inspector.set_parent_racking(element)    # why?
 
     def unselect_all(self):
         """
@@ -153,11 +158,13 @@ class StoreOverview(QWidget):
         :return:
         """
         # TODO shelfInspector unselect and shelfViewer unselect
+        # TODO hide containerPanel when container or shelf unselect
         print('unselect all')
         self.racking_panel.disable_buttons()        # should change to better method in rackingPanel
         self.racking_panel.racking_inspector.update_child_informations(None)
         self.store_visual.selected_element = None
         self.shelf_panel.shelf_inspector.update_child_information(None)
+        self.shelf_panel.hide_panel()
         self.store_visual.unselect_all()
         self.store_visual.paintGL()
 

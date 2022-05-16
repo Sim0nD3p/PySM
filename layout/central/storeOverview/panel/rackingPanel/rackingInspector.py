@@ -9,6 +9,7 @@ from elements.elementsTypes import *
 from elements.store.storeObject import StoreObject
 from elements.racking.racking import Racking
 from backend.storeFloor import StoreFloor
+from elements.ElementLogic.dataClasses import *
 
 class RackingInspector(QTabWidget):
     """
@@ -33,9 +34,28 @@ class RackingInspector(QTabWidget):
 
 
         self.addTab(self.racking_content, 'Contenu')
-        self.element = None
+        self.element = Racking(name='', length=0, width=0, height=0, angle=0, id=0, x_position=0, y_position=0)
         self.submit_signal.connect(self.handle_submit)
         self.new_element_signal.connect(self.create_racking)
+        self.racking_properties.geometry_change_signal.connect(self.handle_geometry_change)
+
+
+    def handle_geometry_change(self, geometry: Geometry):
+        """
+        Handles geometry changes, connected to geometry_change_signal from racking_properties
+        change the geometry of the currently selected racking element
+        :param geometry:
+        :return:
+        """
+        if self.element:
+            self.element.set_length(geometry.length())
+            self.element.set_width(geometry.width())
+            self.element.set_x_position(geometry.x_position())
+            self.element.set_y_position(geometry.y_position())
+            self.element.set_height(geometry.height())
+            self.element.set_angle(geometry.angle())
+            self.store_viewer.paintGL()
+
 
     def handle_submit(self):
         """
@@ -43,7 +63,8 @@ class RackingInspector(QTabWidget):
         calls whether to create racking or modify the object
         :return:
         """
-        if not self.element:
+        if not self.element or not StoreFloor.get_id_object(self.element.id):
+
             print('create racking')
             self.create_racking()
         else:
@@ -51,6 +72,15 @@ class RackingInspector(QTabWidget):
             self.racking_properties.modify_store_object()
 
         self.unselect_signal.emit()
+
+    def handle_delete(self):
+        """
+        Handle the deletion of the currently selected racking
+        :return: void
+        """
+        if self.element and hasattr(self.element, 'id'):
+            StoreFloor.delete_store_object(object_id=self.element.id)
+            self.unselect_signal.emit()
 
 
     def new_shelf_creation(self):
@@ -141,6 +171,6 @@ class RackingInspector(QTabWidget):
             self.racking_content.disable_all()
         elif issubclass(type(element), StoreObject):
             print('element is storeObject')
-            self.element = element
             self.racking_properties.update_informations(element)
             self.racking_content.update_informations(element)
+            self.element = element
