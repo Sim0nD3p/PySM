@@ -33,6 +33,10 @@ class StorageObject(Geometry):
         # self.number_part = 0    # total number of parts in group DEPRECIATED
         self.placement = None
 
+    def __repr__(self):
+        s = 'StorageObject(' + str(self.container_number()) + str(self.container_type().type) + ')'
+        return s
+
     def set_part_code(self, part_code: str):
         """
         Sets the part code of the group for which part is stored
@@ -55,6 +59,10 @@ class StorageObject(Geometry):
         return len(self.containers)
 
     def storage_capacity(self):
+        """
+        Return the total storage capacity, capacity per container times the number of containers
+        :return:
+        """
         capacity = 0
         for container in self.containers:
             if issubclass(type(container), Container):
@@ -71,7 +79,7 @@ class StorageObject(Geometry):
 
     def container_type(self):
         """
-        Returns the type of container in group
+        Returns container instance
         :return: type
         """
         if self.containers[0]:
@@ -97,7 +105,8 @@ class StorageObject(Geometry):
         :return:
         """
         containers = []
-        print('updating containers updateContainers', container_instance.geometry)
+        print('update containers in SO')
+        print('instance', container_instance)       # TODO container_instance
         if container_options.nb_cont != 0:
             nb_part_cont = math.ceil(container_options.nb_part / container_options.nb_cont)
 
@@ -133,18 +142,6 @@ class StorageObject(Geometry):
             for i in range(0, len(self.placement)):
                 self.containers[i].place_on_shelf(placement=self.placement[i],
                                                   so_origin=[self.x_position(), self.y_position()])
-
-
-
-
-    def set_nb_containers_old(self, nb_containers: int):
-        """
-        There is no set_container_number because changing the number of container require a change in placement
-        :param nb_container:
-        :return: void
-        """
-        self.nb_containers = nb_containers
-        # TODO will need to run some updates to the group
 
     def change_container_type(self, container_instance: Container):
         """

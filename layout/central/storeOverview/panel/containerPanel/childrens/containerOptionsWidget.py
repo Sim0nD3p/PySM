@@ -32,9 +32,10 @@ class ContainerOptionsWidget(QWidget):
     def __init__(self):
         super().__init__()
         self.storage_object = None      # DEPRECIATED
-        self.container_type = None
+        self.container_instance = None
         self.part_code = None
         self.placement_index = 0
+        self.input_element = []
 
 
         self.setMaximumWidth(250)
@@ -56,8 +57,10 @@ class ContainerOptionsWidget(QWidget):
         # nb pieces
         nb_part_label = QLabel('Nombre de pièces à stocker')
         self.nb_part_sb = QSpinBox()
+        self.input_element.append(self.nb_part_sb)
         self.nb_part_sb.setMaximum(9999)
         self.nb_part_bt = QPushButton('Auto')
+        self.input_element.append(self.nb_part_bt)
         self.nb_part_bt.setCheckable(True)
         self.nb_part_status = QLabel('Nombre de pièce calculé automatiquement')
         self.nb_part_status.setFont(small_font)
@@ -70,8 +73,10 @@ class ContainerOptionsWidget(QWidget):
         # nb pieces par contenants
         nb_part_cont_label = QLabel('Pièce / contenant')
         self.nb_part_cont_sb = QSpinBox()
+        self.input_element.append(self.nb_part_cont_sb)
         self.nb_part_cont_sb.setMaximum(9999)
         self.nb_part_cont_bt = QPushButton('Maximiser masse')
+        self.input_element.append(self.nb_part_cont_bt)
         self.nb_part_cont_bt.setCheckable(True)
         self.nb_part_cont_status = QLabel('Nombre de pièces limité par masse')
         self.cont_weight_label = QLabel('Masse du contenant: indéterminé')
@@ -86,8 +91,10 @@ class ContainerOptionsWidget(QWidget):
         # nb contenants
         nb_cont_label = QLabel('Nombre contenants')
         self.nb_cont_sb = QSpinBox()
+        self.input_element.append(self.nb_cont_sb)
         self.nb_cont_sb.setMaximum(9999)
         self.nb_cont_bt = QPushButton('Auto')
+        self.input_element.append(self.nb_cont_bt)
         self.nb_cont_bt.setCheckable(True)
         self.nb_cont_status = QLabel('Nombre de contenants')
         self.nb_cont_status.setFont(small_font)
@@ -99,6 +106,7 @@ class ContainerOptionsWidget(QWidget):
 
         # CONTAINER PLACEMENT SELECTOR
         self.placement_cb = QComboBox()
+        self.input_element.append(self.placement_cb)
         nb_part_grid.addWidget(self.placement_cb, 8, 1, 1, 3)
 
 
@@ -177,8 +185,9 @@ class ContainerOptionsWidget(QWidget):
         if self.part_code and PartCatalog.get_part(self.part_code):
             part = PartCatalog.get_part(self.part_code)
 
-            if part.weight() and self.container_type.weight_capacity:
-                qte = math.floor(self.container_type.weight_capacity / part.weight())
+            if part.weight() and not isnan(part.weight()) and self.container_instance.weight_capacity:
+                print('calculating part weight', part.weight(), type(part.weight()))
+                qte = math.floor(self.container_instance.weight_capacity / part.weight())
                 self.nb_part_cont = qte
                 self.update_ui()
 
@@ -200,7 +209,7 @@ class ContainerOptionsWidget(QWidget):
         self.nb_part_cont = value
         if self.nb_part_cont != 0:
             # print('calc nb_cont')
-            if self.part_code and self.container_type:
+            if self.part_code and self.container_instance:
                 if PartCatalog.get_part(self.part_code) and\
                         PartCatalog.get_part(self.part_code).weight():
                     self.cont_weight_label.setText('Masse de contenant: ' + str(PartCatalog.get_part(
@@ -248,8 +257,8 @@ class ContainerOptionsWidget(QWidget):
             self.nb_part_cont = math.ceil(self.nb_part / self.nb_cont)
             part = PartCatalog.get_part(self.part_code)
             if part and part.weight() and \
-                    self.nb_part_cont * part.weight() > self.container_type.weight_capacity:
-                self.nb_part_cont = math.floor(self.container_type.weight_capacity / part.weight())
+                    self.nb_part_cont * part.weight() > self.container_instance.weight_capacity:
+                self.nb_part_cont = math.floor(self.container_instance.weight_capacity / part.weight())
                 self.nb_part = math.floor(self.nb_part_cont * self.nb_cont)
 
         self.nb_part_status.setText(self.nb_part_auto_message)
@@ -281,12 +290,15 @@ class ContainerOptionsWidget(QWidget):
 
     def draw_placement_cb(self):
         """
-        Draws placement selection cb and
+        Draw placement cb, to select container placement
+        Sets the comboBox' index to self.placement_index
         :return:
         """
         # TODO define arrays to be displayed in combo box
+        # TODO return good instance, not hard coded sample instance
+
         sample_container = Bin(name='sample_bin', length=0, width=0, height=0)  # sample container is used only to get the number of possibilities
-        instance = ContainerCatalog.create_containers_from_type(sample_container, 1)
+        instance = ContainerCatalog.create_containers_from_type(self.container_instance, 1)
         print('drawing placement cb')
         print('instance', instance)
         if instance and instance[0]:
@@ -300,6 +312,9 @@ class ContainerOptionsWidget(QWidget):
 
         if int(self.placement_index) - 1 < self.nb_cont:
             self.placement_cb.setCurrentIndex(int(self.placement_index) - 1)
+
+            # HOW DOES THE PLACEMENT CB IS READ AND THE DRAWN?
+            # BY CHECKING THE INDEX AND ASKING FOR THE INDEX IN CONTAINER_PLACEMENT?
 
 
 
@@ -326,12 +341,20 @@ class ContainerOptionsWidget(QWidget):
         :return:
         """
         self.storage_object = None
-        self.container_type = None
+        self.container_instance = None
         self.part_code = None
         self.nb_part = 0
         self.nb_cont = 0
         self.nb_part_cont = 0
         self.update_ui()
+        self.set_input_disabled(True)
+
+    def set_input_disabled(self, state: bool):
+        for element in self.input_element:
+            try:
+                element.setDisabled(state)
+            finally:
+                pass
 
     def display_content(self, content: StorageObject):
         """
@@ -340,10 +363,12 @@ class ContainerOptionsWidget(QWidget):
         :param content:
         :return:
         """
+        print(vars(content))
+        self.set_input_disabled(False)
         self.storage_object = content   # DEPRECIATED
-        self.container_type = content.container_type()
-        self.part_code = content.part_code
-        self.nb_cont = content.container_number()
+        self.container_instance = content.container_type()      # return containerInstance of SO
+        self.part_code = content.part_code                  # return part_code prop of SO
+        self.nb_cont = content.container_number()           # return number of container SO
         self.nb_part = content.storage_capacity()
 
         if self.nb_cont != 0:
@@ -353,6 +378,8 @@ class ContainerOptionsWidget(QWidget):
         if content.placement:
             placement_name = ContainerPlacement.get_placement_name(content.placement)
             self.placement_index = int(placement_name.split('_')[len(placement_name.split('_')) - 1])
+        else:
+            print('NO CONTENT PLACEMENT containerOptions')
 
 
 

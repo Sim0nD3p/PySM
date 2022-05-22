@@ -1,3 +1,4 @@
+from OpenGL.raw.GL.VERSION.GL_1_0 import glClearColor, glClear, GL_COLOR_BUFFER_BIT
 from PyQt6.QtCore import Qt, QRect, pyqtSignal
 import math
 import PyQt6
@@ -5,7 +6,6 @@ from backend.storeFloor import StoreFloor
 from PyQt6 import QtOpenGLWidgets
 from PyQt6.QtGui import QPainter
 from PyQt6.QtGui import QColor, QPainter, QPen
-from OpenGL.GL import *
 from layout.central.storeOverview.storeViewerWidget.actions import *
 from elements.store.storeObject import StoreObject
 from backend.storeFloor import StoreFloor
@@ -176,15 +176,15 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
             self.mouse_pressed_position = None
 
         elif self.mouse_action_type is ACTION_SELECT:
-            self.selected_element = None
-            self.current_drawing = None
+            # self.selected_element = None
+            # self.current_drawing = None
             for e in StoreFloor().objects:
                 if issubclass(type(e), StoreObject):
                     if e.painter_path().contains(QPointF(x, y)):
                         self.selected_element = e
                         self.selection_signal.emit(self.selected_element)
-            if self.selected_element is None:
-                self.unselect_signal.emit()
+            # if self.selected_element is None:
+                # self.unselect_signal.emit()
 
             # set up logic for how to handle the switch to active drawing to null
         # elif self.mouse_action_type is ACTION_SELECT:

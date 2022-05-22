@@ -116,7 +116,6 @@ class ShelfViewer(QtOpenGLWidgets.QOpenGLWidget):
                 font = QFont('Arial', math.floor((vert[2][0]-vert[0][0])/len(container.name)))
                 font.setLetterSpacing(QFont.SpacingType.AbsoluteSpacing, 0)
                 painter.setFont(font)
-                print('should display that name', container.name)
 
                 painter.setBrush(QColor(87, 66, 0))
                 opt = QTextOption()

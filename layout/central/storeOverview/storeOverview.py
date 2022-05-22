@@ -94,7 +94,7 @@ class StoreOverview(QWidget):
             # TODO hide or display blank containerInspector on submit
             # TODO add support for 3, 5, 5, 6 containers
             # TODO add containerStack support
-            self.container_panel.container_inspector.update_information(storage_object)
+            self.container_panel.container_inspector.display_content(storage_object)
             self.container_panel.show_panel(300)
 
     def handle_container_selection(self, storage_object: StorageObject):
@@ -117,6 +117,9 @@ class StoreOverview(QWidget):
         self.shelf_panel.shelf_inspector.update_child_information(constructor)
         self.shelf_panel.show_panel(300)
 
+    def handle_shelf_unselect(self):
+        pass
+
     def handle_shelf_selection(self, shelf: Shelf):
         """
         Handling shelf selection calling methods in
@@ -124,8 +127,12 @@ class StoreOverview(QWidget):
         :return:
         """
         self.shelf_panel.shelf_inspector.update_child_information(shelf)
+        self.container_panel.container_inspector.display_blank()
         self.shelf_panel.show_panel(200)
         self.shelf_visual.paint_shelf(shelf)
+
+    # TODO reset shelf Inspector and Container inspector when racking change
+    # TODO reset containerInspector when shelf change
 
 
     def handle_racking_creation(self, constructor: ElementConstructorData):
@@ -134,7 +141,6 @@ class StoreOverview(QWidget):
         :param constructor: elementConstructorData
         :return: void
         """
-        # TODO add cancel support with deep copy integration
         print('handle racking creation')
         self.racking_panel.enable_buttons()
         self.racking_panel.racking_inspector.update_child_informations(constructor)
@@ -151,6 +157,8 @@ class StoreOverview(QWidget):
             # self.racking_panel.enable_buttons()
             # self.racking_panel.racking_inspector.update_child_informations(element)
             self.shelf_panel.shelf_inspector.set_parent_racking(element)    # why?
+            self.shelf_panel.shelf_inspector.update_child_information(None)
+            self.container_panel.container_inspector.display_blank()
 
     def unselect_all(self):
         """
@@ -160,6 +168,7 @@ class StoreOverview(QWidget):
         # TODO shelfInspector unselect and shelfViewer unselect
         # TODO hide containerPanel when container or shelf unselect
         print('unselect all')
+        self.racking_panel.racking_inspector.setCurrentIndex(0)
         self.racking_panel.disable_buttons()        # should change to better method in rackingPanel
         self.racking_panel.racking_inspector.update_child_informations(None)
         self.store_visual.selected_element = None

@@ -71,6 +71,8 @@ class PartSelector(QWidget):
         :return:
         """
         self.input.setText('')
+        self.input.setDisabled(True)
+        self.submit_bt.setDisabled(True)
 
     def display_content(self, content: StorageObject):
         """
@@ -79,7 +81,10 @@ class PartSelector(QWidget):
         :param content:
         :return:
         """
+        self.input.setDisabled(False)
+        self.submit_bt.setDisabled(False)
         self.input.setText(content.part_code)
+        # self.input.setCompleter(PartCatalog.part_list())
 
     def update_information(self, element):
         """

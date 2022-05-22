@@ -24,6 +24,32 @@ class Racking(StoreObject):
         racking have shelves:
         shelves should be represented by matrices in racking
         """
+
+    def __eq__(self, other):
+        comparison = []
+        if isinstance(other, Racking):
+            for prop in vars(self):
+                try:
+                    if self.__getattribute__(prop) == other.__getattribute__(prop):
+                        comparison.append(True)
+                    else:
+                        comparison.append(False)
+                except ValueError:
+                    if type(self.__getattribute__(prop)) == np.ndarray:
+                        if np.array_equal(self.__getattribute__(prop), other.__getattribute__(prop)):
+                            comparison.append(True)
+                        else:
+                            comparison.append(False)
+                    else:
+                        comparison.append(False)
+                        print('ERROR - cannot compare elements in racking.__eq__()')
+
+        return all(comparison)
+
+
+
+
+
     def add_shelf(self, shelf):
         """
         TODO Need to be better

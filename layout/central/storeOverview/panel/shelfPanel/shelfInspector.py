@@ -130,7 +130,7 @@ class ShelfInspector(QTabWidget):
         if element is None:
             # print('element None')
             self.shelf_properties.display_blank()
-            # self.shelf_content.display_blank()
+            self.shelf_content.display_blank()
             self.shelf_properties.element = None
             self.shelf_properties.disable_all()
         elif type(element) is ElementConstructorData:

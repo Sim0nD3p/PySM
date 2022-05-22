@@ -56,7 +56,10 @@ class Part:
         :return: float
         """
         if self.specifications and self.specifications.weight:
-            return self.specifications.weight
+            try:
+                return float(self.specifications.weight)
+            except ValueError:
+                return None
         else:
             return None
 

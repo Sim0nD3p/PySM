@@ -46,7 +46,8 @@ class ContainerInspector(QTabWidget):
 
 
     def handle_container_change(self, container: Container):
-        self.container_selector.container_options.container_type = container
+        print('handling container change CI')
+        self.container_selector.container_options.container_instance = container
 
         if self.storage_group:
             pass
@@ -54,23 +55,28 @@ class ContainerInspector(QTabWidget):
 
     def handle_placement_change(self, index: int):
         """
+        Triggered when changes in placement_cb
 
         :param index: configuration index in the placement array returned by ContainerPlacement
         :return:
         """
+        print('handling palcement change CI')
         container_instance = self.container_selector.container_selector.get_container_instance()
-        placement_options = ContainerPlacement.get_placement_options(container_instance=container_instance,
-                                                                     number=self.storage_group.container_number()
-                                                                     )
-        # print('handling placement change, index is ', index)
-        if index < len(placement_options):
-            self.storage_group.placement = placement_options[index]
+        if container_instance and self.storage_group.container_number():
+            placement_options = ContainerPlacement.get_placement_options(container_instance=container_instance,
+                                                                         number=self.storage_group.container_number()
+                                                                         )
+            # print('handling placement change, index is ', index)
+            if index < len(placement_options):
+                self.storage_group.placement = placement_options[index]
 
         self.storage_group.move_containers()
         self.shelf_draw_signal.emit()
         # print('containers shouldve moved')
 
+
     def handle_container_number_change(self, value):
+        print('handling cont number change CI')
         if issubclass(type(self.storage_group), StorageObject):
             part_code = self.container_selector.part_selector.get_part()
             container_instance = self.container_selector.container_selector.get_container_instance()
@@ -87,6 +93,7 @@ class ContainerInspector(QTabWidget):
             self.shelf_draw_signal.emit()
 
     def handle_origin_change(self, x, y):
+        print('handling origin change CI')
         if issubclass(type(self.storage_group), StorageObject):
             self.storage_group.set_x_position(x)
             self.storage_group.set_y_position(y)
@@ -100,6 +107,7 @@ class ContainerInspector(QTabWidget):
         :param dimensions:
         :return:
         """
+        print('handling dimensions changes CI')
         if issubclass(type(self.storage_group), StorageObject):
             if self.storage_group.container_instance():
                 instance = self.storage_group.container_instance()
@@ -129,6 +137,7 @@ class ContainerInspector(QTabWidget):
 
 
     def handle_submit(self):
+        # TODO problem when no shelf is selected?
         if self.storage_group:
 
             # GET DATA FROM SUB WIDGETS
@@ -183,6 +192,27 @@ class ContainerInspector(QTabWidget):
         self.container_selector.container_options.display_blank()
         self.container_selector.origin_selector.display_blank()
 
+    def display_content(self, element: StorageObject):
+        """
+        Displays content of the storage_object by calling methods of subwidgets and adds the storage_object to the
+        shelf id if not already in it
+        :param element:
+        :return:
+        """
+        self.storage_group = element
+        print('displayContent in containerInspector')
+        print(element)
+        if self.storage_group.parent_shelf_id:
+            shelf = StoreFloor.get_shelf_by_id(self.storage_group.parent_shelf_id)
+            if shelf and self.storage_group not in shelf.storage_objects:
+                shelf.storage_objects.append(self.storage_group)
+
+            self.container_selector.update_ui(element)
+            self.container_selector.part_selector.display_content(element)
+            self.container_selector.container_selector.display_content(element)
+            self.container_selector.origin_selector.display_content(element)
+            self.container_selector.container_options.display_content(element)
+
 
     def update_information(self, element: StorageObject):
         """
@@ -194,13 +224,14 @@ class ContainerInspector(QTabWidget):
             self.storage_group = element
             # TODO change how storage_object is added to shelf.contentObjects
             # TODO handle container size change for custom size containers
+
+            # only to check if SO is in shelf
             if self.storage_group.parent_shelf_id:
                 shelf = StoreFloor.get_shelf_by_id(self.storage_group.parent_shelf_id)
-                # print('hello')
                 if self.storage_group not in shelf.storage_objects:
                     shelf.storage_objects.append(self.storage_group)
 
-            self.container_selector.update_child_widgets(self.storage_group)
+            self.container_selector.update_child_widgets(self.storage_group)    # updating content
 
 
 

@@ -71,3 +71,12 @@ class DimensionSelector(QWidget):
         self.width_sp.setValue(width)
         self.height_sp.setValue(height)
 
+    def enable_input(self):
+        for element in self.input_elements:
+            element.setDisabled(False)
+
+    def display_blank(self):
+        for element in self.input_elements:
+            element.setValue(0)
+            element.setDisabled(True)
+

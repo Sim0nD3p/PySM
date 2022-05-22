@@ -22,6 +22,7 @@ class ContainerSelector(QWidget):
         self.main_vbox = QVBoxLayout()
         # self.main_vbox.setContentsMargins(5, 5, 5, 5)
         self.container_instance = None
+        self.enable_type_change_listener = False
 
         # label container selector
         self.main_vbox.addSpacing(10)
@@ -65,10 +66,31 @@ class ContainerSelector(QWidget):
         :return:
         """
         self.type_cb.clear()    # problem seems to be here, makes app crash, triggers valueChange
-        # print('drawTypeCB')
+        self.enable_type_change_listener = False    # disable listener to not mistrigger change
+
         for container in element.compatible_containers:
             self.type_cb.addItem(container.display_type, container)
+        self.enable_type_change_listener = True
 
+    def find_cb_index(self, cb: QComboBox, data):
+        """
+        Finds the index of cb that correspond the give data.
+        Loops through all index and check if data matches. For subtypes, checks if it is the same container class and
+        same dimensions
+        :param cb: QComboBox
+        :param data: Data to find
+        :return:
+        """
+        index = -1
+        for i in range(0, cb.count()):
+            current_data = cb.itemData(i)
+            if current_data == data:
+                index = i
+            elif issubclass(type(current_data), type(data)) and issubclass(type(current_data), Container):
+                if data.length() == current_data.length() and data.width() == current_data.width() \
+                        and data.height() == current_data.height():
+                    index = i
+        return index
 
     def handle_type_change(self, type_cb_index):
         """
@@ -77,10 +99,12 @@ class ContainerSelector(QWidget):
         :return:
         """
         # print('handle type change')
-        if type_cb_index != -1:
+        print('handle type change', self.enable_type_change_listener)
+        if type_cb_index != -1 and self.enable_type_change_listener:
             container_type = self.type_cb.itemData(type_cb_index)
             subtypes = ContainerCatalog().get_containers(container_type=container_type)
-            print('new container type')
+            print('HANDLING TYPE CHANGE containerSelector')
+            print(container_type)
 
             self.subtype_cb.clear()
             if len(subtypes) == 0:
@@ -90,6 +114,7 @@ class ContainerSelector(QWidget):
                     container.set_length(self.container_instance.length())
                     container.set_width(self.container_instance.width())
                     container.set_height(self.container_instance.height())
+                print('setting dimensions', container.length(), container.width())
                 self.dimensions_selector.set_dimensions(
                     length=container.length(),
                     width=container.width(),
@@ -159,15 +184,15 @@ class ContainerSelector(QWidget):
         if self.type_cb.currentIndex() != -1:       # if there is a container type selected (should be everytime)
             type_data = self.type_cb.itemData(self.type_cb.currentIndex())  # the type of container (class)
             if len(ContainerCatalog.get_containers(type_data)) == 0:    # if we have container of that type "in stock"
-                print('creating instance no subtype containerSelector')
-                print(type_data)
+                # print('creating instance no subtype containerSelector')
+                # print(type_data)
                 instance = ContainerCatalog.create_containers_from_type(type_data, 1)[0]  # create instance of container
                 instance.set_length(self.dimensions_selector.length())      # setting dimensions
                 instance.set_width(self.dimensions_selector.width())
                 instance.set_height(self.dimensions_selector.height())
-                print('dimensions of container instance', instance.geometry)
+                # print('dimensions of container instance', instance.geometry)
             elif self.subtype_cb.currentIndex() != -1:
-                print('creating instance from subtype containerSelector')
+                # print('creating instance from subtype containerSelector')
                 instance = self.subtype_cb.itemData(self.subtype_cb.currentIndex())     # subtypes stored as instances
 
         print('returning instance @get_container_instance', instance)       # TODO error, returning Bin when spaceContainer
@@ -183,31 +208,7 @@ class ContainerSelector(QWidget):
         self.type_cb.clear()
         self.subtype_cb.clear()
         self.container_instance = None
-        self.dimensions_selector.set_dimensions(0, 0, 0)
-
-    def find_cb_index(self, cb: QComboBox, data):
-        """
-        Finds the index of cb that correspond the give data.
-        Loops through all index and check if data matches. For subtypes, checks if it is the same container class and
-        same dimensions
-        :param cb: QComboBox
-        :param data: Data to find
-        :return:
-        """
-        index = -1
-        for i in range(0, cb.count()):
-            current_data = cb.itemData(i)
-            if current_data == data:
-                index = i
-            elif issubclass(type(current_data), type(data)) and issubclass(type(current_data), Container):
-                if data.length() == current_data.length() and data.width() == current_data.width() \
-                        and data.height() == current_data.height():
-                    index = i
-        return index
-
-
-
-
+        self.dimensions_selector.display_blank()
 
     def display_content(self, content: StorageObject):
         """
@@ -215,14 +216,13 @@ class ContainerSelector(QWidget):
         :param content: StorageObject
         :return: void
         """
-        # print(content.parent_shelf_id)
-        shelf_type = StoreFloor.get_shelf_by_id(content.parent_shelf_id)    # no error
-        # print(shelf_type)
+        shelf_type = StoreFloor.get_shelf_by_id(content.parent_shelf_id)    # getting shelf from shelf_id
         if shelf_type:
             self.draw_type_cb(shelf_type)
 
         if content.container_type():
             self.container_instance = content.container_instance()
+            print('changing type index containerSelector')
             type_index = self.find_cb_index(self.type_cb, content.container_type())
             self.type_cb.setCurrentIndex(type_index)
 

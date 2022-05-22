@@ -11,6 +11,9 @@
 
 ## where I am:
 # TODO bugs in containerInspector
+- bug not returning containerInstance in containerSelector, subtype not beeing updated correctly
+    bug was triggering handle_change for each new index added (fixed with enable change variable)
+    now need to fix logic around subtype_cb
   - shelfContent not updating on delete
   - display different color for each storage object
   - finalise movement (drag to move)

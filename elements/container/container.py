@@ -46,6 +46,10 @@ class Container(Geometry):
         self.weight_capacity = weight_capacity  # weight capacity of the container
         self.net_weight = net_weight    # weight when empty
 
+    def __repr__(self):
+        s = 'Container(type:' + str(self.type) + ',\n geometry:' + str(np.array2string(self.geometry)) + ')'
+        return s
+
     def get_content(self):
         """
         Gets the content np.array([quantity, whats in the container])

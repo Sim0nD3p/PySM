@@ -54,10 +54,10 @@ class RackingPanel(Panel):
 
             for obj in StoreFloor.objects:
                 if hasattr(obj, 'id') and obj.id == self.racking_inspector.element.id:
-                    print('lets goo', self.racking_inspector.element.id)
-
-
-        # TODO CREATE HANDLE CANCEL METHOD
+                    # find the element in store and replace it with backup element
+                    StoreFloor.delete_store_object(object_id=self.racking_inspector.element.id)
+                    StoreFloor.add_object(self.element_copy)
+                    self.racking_inspector.unselect_signal.emit()   # kinda wak but signal works
 
     def handle_delete(self):
         print('handling delete from rackingPanel')

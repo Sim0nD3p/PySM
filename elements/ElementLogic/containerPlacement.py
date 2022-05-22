@@ -110,7 +110,7 @@ class ContainerPlacement:
         else:
 
             print('error in get_placement (containerPlacement)')
-            return None
+            return cls.cont1_options(container_instance)
 
     @classmethod
     def get_placement_index(cls, placement):
