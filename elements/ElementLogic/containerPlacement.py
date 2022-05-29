@@ -139,35 +139,38 @@ class ContainerPlacement:
         :param placement:
         :return:
         """
-        g2m_sample = placement[0]
+        if placement and placement[0]:
+            g2m_sample = placement[0]
+            length = max(g2m_sample.length(), g2m_sample.width())
+            width = min(g2m_sample.length(), g2m_sample.width())
+            cont = Container('', '', length=length, width=width, height=0, net_weight=0, weight_capacity=0)
 
-        length = max(g2m_sample.length(), g2m_sample.width())
-        width = min(g2m_sample.length(), g2m_sample.width())
-        cont = Container('', '', length=length, width=width, height=0, net_weight=0, weight_capacity=0)
+            options = []
+            if len(placement) == 1:
+                options = cls.cont1_options(cont)
 
-        options = []
-        if len(placement) == 1:
-            options = cls.cont1_options(cont)
+            elif len(placement) == 2:
+                options = cls.cont2_options(cont)
 
-        elif len(placement) == 2:
-            options = cls.cont2_options(cont)
+            elif len(placement) == 3:
+                # options = cls.cont3_options(cont)
+                # TODO ADD CONT3
+                pass
 
-        elif len(placement) == 3:
-            # options = cls.cont3_options(cont)
-            # TODO ADD CONT3
-            pass
+            place_calc = []
+            for place in placement:
+                place_calc.append(np.array2string(place.geometry.flatten()))
 
-        place_calc = []
-        for place in placement:
-            place_calc.append(np.array2string(place.geometry.flatten()))
+            name = None
+            for i in range(0, len(options)):
+                current_option = []
+                for opt_cont in options[i]:
+                    current_option.append(np.array2string(opt_cont.geometry.flatten()))
+                if current_option == place_calc:
+                    name = 'cont' + str(len(placement)) + '_' + str(i + 1)
 
-        name = None
-        for i in range(0, len(options)):
-            current_option = []
-            for opt_cont in options[i]:
-                current_option.append(np.array2string(opt_cont.geometry.flatten()))
-            if current_option == place_calc:
-                name = 'cont' + str(len(placement)) + '_' + str(i + 1)
-
-        return name
+            return name
+        else:
+            print('trying to get_placement_name with placement=None @ContainerPlacement')
+            return None
 

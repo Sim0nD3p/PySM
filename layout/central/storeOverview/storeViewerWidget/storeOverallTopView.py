@@ -3,9 +3,10 @@ from PyQt6.QtCore import Qt, QRect, pyqtSignal
 import math
 import PyQt6
 from backend.storeFloor import StoreFloor
+from PyQt6.QtWidgets import *
 from PyQt6 import QtOpenGLWidgets
-from PyQt6.QtGui import QPainter
-from PyQt6.QtGui import QColor, QPainter, QPen
+from PyQt6.QtGui import *
+from PyQt6.QtCore import *
 from layout.central.storeOverview.storeViewerWidget.actions import *
 from elements.store.storeObject import StoreObject
 from backend.storeFloor import StoreFloor
@@ -24,8 +25,6 @@ class Rect(QPainterPath):
         self.addRect(20, 20, 60, 60)
 
 
-
-
 class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
     mouse_release_signal = pyqtSignal(PyQt6.QtGui.QMouseEvent, name='name')
     new_rect_signal = pyqtSignal(ElementConstructorData, name='new_shape')
@@ -41,6 +40,17 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
         self.coord_scale_x = 8000
         self.x_offset = 0
         self.y_offset = 0
+
+        # e = StoreViewerControls(store_viewer=self)
+
+        tb = QToolBar(self)
+        tb.setFloatable(True)
+        tb.setMovable(True)
+        tb.setAutoFillBackground(True)
+        tb.setBackgroundRole(QPalette.ColorRole.AlternateBase)
+        tb.addWidget(QLabel('test'))
+        tb.addAction('action1')
+        # TODO add zoom by scrolling
 
         self.setGeometry(0, 0, 100, 100)
         self.current_drawing = None
@@ -131,6 +141,13 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
         return element
 
 
+    def wheelEvent(self, e: QWheelEvent):
+        """
+        TODO zomm in and out on wheel scroll
+        :param e:
+        :return:
+        """
+        pass
 
 
     def mousePressEvent(self, a0: PyQt6.QtGui.QMouseEvent):

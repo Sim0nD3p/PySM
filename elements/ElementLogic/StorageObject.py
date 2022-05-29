@@ -34,7 +34,12 @@ class StorageObject(Geometry):
         self.placement = None
 
     def __repr__(self):
-        s = 'StorageObject(' + str(self.container_number()) + str(self.container_type().type) + ')'
+        placement_name = 'None'
+        if ContainerPlacement.get_placement_name(self.placement):
+            placement_name = ContainerPlacement.get_placement_name(self.placement)
+
+        s = 'StorageObject(' + str(self.container_number()) + str(self.container_type().type) + ',' + \
+            str(placement_name) + ')'
         return s
 
     def set_part_code(self, part_code: str):
@@ -106,7 +111,9 @@ class StorageObject(Geometry):
         """
         containers = []
         print('update containers in SO')
-        print('instance', container_instance)       # TODO container_instance
+        print('SO - placement', ContainerPlacement.get_placement_name(self.placement))
+
+
         if container_options.nb_cont != 0:
             nb_part_cont = math.ceil(container_options.nb_part / container_options.nb_cont)
 
@@ -119,15 +126,13 @@ class StorageObject(Geometry):
                     self.placement = placement[0]
 
             if self.placement:
-                print('resetting placement', container_instance.geometry)
-
-
                 for i in range(0, container_options.nb_cont):
                     cont_i = ContainerCatalog.create_containers(container_instance, 1)[0]   # creating new containers
                     cont_i.name = str(cont_i.type) + '_' + part + '_' + str(i)
                     cont_i.set_content(nb_part_cont, part)
                     containers.append(cont_i)
 
+                print('SO - placement', ContainerPlacement.get_placement_name(self.placement))
                 self.containers = containers
                 self.move_containers()
 

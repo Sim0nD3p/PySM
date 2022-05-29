@@ -1,3 +1,4 @@
+from elements.elementsTypes import *
 
 """
 Notes
@@ -23,8 +24,8 @@ class Settings:
     }
 
     # --- STORE VIEWER SETTINGS -----
-    move_click_offset = 10
-    zoom_click_offset = 10
+    move_click_offset = 500
+    zoom_click_offset = 500
 
 
     # ----- STORE SETTINGS -----
@@ -35,5 +36,7 @@ class Settings:
     default_shelf_net_height = 10   # cm
 
     # ----- CONTAINER SETTINGS -----
+    containers = [BIN, SPACE_CONTAINER]
+    custom_containers = [SPACE_CONTAINER]
     bin_weight_capacity = 45    # kg
 

@@ -120,9 +120,11 @@ class ContainerSelector(QWidget):
                     width=container.width(),
                     height=container.height()
                 )
+                self.dimensions_selector.set_disabled(False)
                 self.container_change.emit(container)
                 self.subtype_cb.setDisabled(True)
             else:
+                print('should enable subtype')
                 self.subtype_cb.setDisabled(False)
                 for subtype in subtypes:
                     self.subtype_cb.addItem(subtype.name, subtype)
@@ -180,7 +182,7 @@ class ContainerSelector(QWidget):
         :return:
         """
         # TODO CHECK METHOD SO THAT IT RETURNS THE GOOD INSTANCE (SpaceContainer)
-        instance = None
+        instance = ContainerCatalog.default_container()
         if self.type_cb.currentIndex() != -1:       # if there is a container type selected (should be everytime)
             type_data = self.type_cb.itemData(self.type_cb.currentIndex())  # the type of container (class)
             if len(ContainerCatalog.get_containers(type_data)) == 0:    # if we have container of that type "in stock"
@@ -195,7 +197,8 @@ class ContainerSelector(QWidget):
                 # print('creating instance from subtype containerSelector')
                 instance = self.subtype_cb.itemData(self.subtype_cb.currentIndex())     # subtypes stored as instances
 
-        print('returning instance @get_container_instance', instance)       # TODO error, returning Bin when spaceContainer
+        print('returning instance @get_container_instance', instance)
+        # TODO error, returning Bin when spaceContainer (seems FIXED)
 
         return instance
 
@@ -222,7 +225,19 @@ class ContainerSelector(QWidget):
 
         if content.container_type():
             self.container_instance = content.container_instance()
-            print('changing type index containerSelector')
+            if self.container_instance.is_custom_container():
+                pass
+                # self.dimensions_selector.set_disabled(False)
+            else:
+                pass
+
+            # force draw subtype even if type doesnt change
+            if len(ContainerCatalog.get_containers(self.container_instance)) > 0:
+                for subtype in ContainerCatalog.get_containers(self.container_instance):
+                    self.subtype_cb.addItem(subtype.name, subtype)
+
+
+            # print('changing type index containerSelector')
             type_index = self.find_cb_index(self.type_cb, content.container_type())
             self.type_cb.setCurrentIndex(type_index)
 
@@ -232,25 +247,6 @@ class ContainerSelector(QWidget):
                 subtype_index = self.find_cb_index(self.subtype_cb, content.container_instance())
                 if subtype_index != -1:
                     self.subtype_cb.setCurrentIndex(subtype_index)
-
-
-
-    def update_information_old(self, element: StorageObject):
-        """
-        OLD
-        Updates informations to display good information on the selection part of the widget to select container
-        according to shelf
-        could be simplified
-        :param element:
-        :return:
-        """
-        if hasattr(element, 'parent_shelf_id'):
-            shelf_target = StoreFloor.get_shelf_by_id(element.parent_shelf_id)
-            self.draw_type_cb(shelf_target)
-            self.draw_subtype_cb()
-            # print('test3')
-        else:
-            self.display_blank()
 
 
 

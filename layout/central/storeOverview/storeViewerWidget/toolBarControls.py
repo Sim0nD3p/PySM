@@ -1,8 +1,9 @@
 from PyQt6.QtWidgets import QWidget, QPushButton, QLabel, QToolButton, QToolBar
 from PyQt6.QtCore import QObject
 from layout.central.storeOverview.storeViewerWidget.actions import *
-from layout.central.storeOverview.storeViewerWidget.storeOverallTopView import *
+from layout.central.storeOverview.storeViewerWidget.storeOverallTopView import StoreTopVisualizer
 from layout.central.storeOverview.shelfViewerWidget.shelfViewer import *
+from layout.central.storeOverview.storeViewerWidget.storeOverallTopView import *
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QMouseEvent, QActionGroup
 

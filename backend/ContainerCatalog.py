@@ -14,15 +14,26 @@ class ContainerCatalog:
     def get_containers(cls, container_type: type):
         """
         Return all containers with the given container type
-        :param container_type:
+        :param container_type: ex: Bin, SpaceContainer
         :return:
         """
         containers = []
         for container in cls.containers:
-            if type(container) == container_type:
+            if type(container) == container_type or type(container) == type(container_type):
                 containers.append(container)
 
         return containers
+
+    @classmethod
+    def default_container(cls):
+        """
+        Return default container instance for when there is no container type selected
+        *eliminate bug
+        :return:
+        """
+        return cls.get_containers(Bin)[0]
+
+
 
     @classmethod
     def custom_container(cls):

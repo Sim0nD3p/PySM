@@ -42,13 +42,22 @@ class Container(Geometry):
         self.name = name
         self.stored_part = None     # DEPRECIATED, use content instead
         self.content = np.array([0, None])  # number of parts, part str
-        self.type = container_type
+        self.type = container_type          # variable override
         self.weight_capacity = weight_capacity  # weight capacity of the container
         self.net_weight = net_weight    # weight when empty
 
     def __repr__(self):
         s = 'Container(type:' + str(self.type) + ',\n geometry:' + str(np.array2string(self.geometry)) + ')'
         return s
+
+    def is_custom_container(self):
+        """
+        Return bool, if current container is in customizable containers
+        :return:
+        """
+        return self.type in Settings.custom_containers
+
+
 
     def get_content(self):
         """

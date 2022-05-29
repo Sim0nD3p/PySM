@@ -17,6 +17,7 @@ class ContainerInspector(QTabWidget):
     def __init__(self):
         super().__init__()
         self.storage_group = None
+        self.enable_dynamic_changes = True
 
         self.container_selector = SelectContainer()
         self.container_selector.setContentsMargins(0, 0, 0, 0)
@@ -30,9 +31,6 @@ class ContainerInspector(QTabWidget):
         self.container_selector.container_options.placement_changed.connect(self.handle_placement_change)
         self.container_selector.container_selector.dimensions_change.connect(self.handle_dimensions_change)
 
-
-
-
     def handle_part_selection(self, part_code: str):
         """
         Runs on user input change in partSelector
@@ -40,16 +38,15 @@ class ContainerInspector(QTabWidget):
         :return: void
         """
         self.container_selector.container_options.part_code = part_code
-        if issubclass(type(self.storage_group), StorageObject):
-            print('updating containers names')
+        if issubclass(type(self.storage_group), StorageObject) and self.enable_dynamic_changes:
+            print('updating containers names - CI.handle_part_selection')
             self.storage_group.set_part_code(part_code)
-
 
     def handle_container_change(self, container: Container):
         print('handling container change CI')
         self.container_selector.container_options.container_instance = container
 
-        if self.storage_group:
+        if self.storage_group and self.enable_dynamic_changes:
             pass
             # self.storage_group.change_container_type(container)
 
@@ -62,22 +59,19 @@ class ContainerInspector(QTabWidget):
         """
         print('handling palcement change CI')
         container_instance = self.container_selector.container_selector.get_container_instance()
-        if container_instance and self.storage_group.container_number():
+        if container_instance and self.storage_group.container_number() and self.enable_dynamic_changes:
             placement_options = ContainerPlacement.get_placement_options(container_instance=container_instance,
                                                                          number=self.storage_group.container_number()
                                                                          )
-            # print('handling placement change, index is ', index)
             if index < len(placement_options):
                 self.storage_group.placement = placement_options[index]
 
         self.storage_group.move_containers()
         self.shelf_draw_signal.emit()
-        # print('containers shouldve moved')
-
 
     def handle_container_number_change(self, value):
         print('handling cont number change CI')
-        if issubclass(type(self.storage_group), StorageObject):
+        if issubclass(type(self.storage_group), StorageObject) and self.enable_dynamic_changes:
             part_code = self.container_selector.part_selector.get_part()
             container_instance = self.container_selector.container_selector.get_container_instance()
             if container_instance and part_code:
@@ -88,13 +82,11 @@ class ContainerInspector(QTabWidget):
                                                      container_instance=container_instance,
                                                      container_options=container_options
                                                      )
-
-            # print('shouldve updated containers')
             self.shelf_draw_signal.emit()
 
     def handle_origin_change(self, x, y):
         print('handling origin change CI')
-        if issubclass(type(self.storage_group), StorageObject):
+        if issubclass(type(self.storage_group), StorageObject) and self.enable_dynamic_changes:
             self.storage_group.set_x_position(x)
             self.storage_group.set_y_position(y)
             self.storage_group.move_containers()
@@ -108,7 +100,7 @@ class ContainerInspector(QTabWidget):
         :return:
         """
         print('handling dimensions changes CI')
-        if issubclass(type(self.storage_group), StorageObject):
+        if issubclass(type(self.storage_group), StorageObject) and self.enable_dynamic_changes:
             if self.storage_group.container_instance():
                 instance = self.storage_group.container_instance()
                 if instance:
@@ -124,19 +116,16 @@ class ContainerInspector(QTabWidget):
 
                         if new_placements and type(placement_index) == int:
                             new_placement = new_placements[placement_index-1]
+                            print('index used is ', ContainerPlacement.get_placement_index(new_placement), 'CI')
                             self.storage_group.placement = new_placement
 
                     self.storage_group.update_containers(part=part, container_instance=instance,
                                                          container_options=storage_options)
-
                     self.storage_group.move_containers()
                     self.shelf_draw_signal.emit()
 
-
-
-
-
     def handle_submit(self):
+        print('handle_submit in CI')
         # TODO problem when no shelf is selected?
         if self.storage_group:
 
@@ -172,7 +161,7 @@ class ContainerInspector(QTabWidget):
         Handles deletion of the current storage_object form the shelf content
         :return:
         """
-        print('handling delete')
+        print('handle_delete in CI')
         if issubclass(type(self.storage_group), StorageObject) and self.storage_group.parent_shelf_id:
             shelf = StoreFloor.get_shelf_by_id(self.storage_group.parent_shelf_id)
             if shelf:
@@ -180,10 +169,6 @@ class ContainerInspector(QTabWidget):
                 self.display_blank()
                 self.storage_group = None
                 self.shelf_draw_signal.emit()
-
-
-
-
 
     def display_blank(self):
         # print('containerInspector calls to display blank')
@@ -199,9 +184,11 @@ class ContainerInspector(QTabWidget):
         :param element:
         :return:
         """
+        # TODO bug when changing container seleciton without submitting (seems fiexed)
+        # placement bug -> fixed (added enable_dynamic_changes which restrict mod when data is not all set)
+        self.enable_dynamic_changes = False
         self.storage_group = element
-        print('displayContent in containerInspector')
-        print(element)
+        print('displayContent in CI', self.storage_group)
         if self.storage_group.parent_shelf_id:
             shelf = StoreFloor.get_shelf_by_id(self.storage_group.parent_shelf_id)
             if shelf and self.storage_group not in shelf.storage_objects:
@@ -212,9 +199,10 @@ class ContainerInspector(QTabWidget):
             self.container_selector.container_selector.display_content(element)
             self.container_selector.origin_selector.display_content(element)
             self.container_selector.container_options.display_content(element)
+        self.enable_dynamic_changes = True
 
 
-    def update_information(self, element: StorageObject):
+    def update_information_old(self, element: StorageObject):
         """
         Takes storage object and handle the container inspector
         :param element:
