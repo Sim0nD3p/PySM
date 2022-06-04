@@ -10,6 +10,7 @@ from elements.store.storeObject import StoreObject
 from elements.racking.racking import Racking
 from backend.storeFloor import StoreFloor
 from elements.ElementLogic.dataClasses import *
+from layout.central.storeOverview.rackingViewer.rackingViewer import *
 
 class RackingInspector(QTabWidget):
     """
@@ -30,10 +31,13 @@ class RackingInspector(QTabWidget):
         self.addTab(self.racking_properties, 'Propriétés')
 
         self.racking_content = RackingContent()
-        self.racking_content.new_shelf_button.clicked.connect(self.new_shelf_creation)
-
-
         self.addTab(self.racking_content, 'Contenu')
+
+        self.racking_viewer = RackingViewer()
+        self.addTab(self.racking_viewer, 'Racking')
+
+
+        self.racking_content.new_shelf_button.clicked.connect(self.new_shelf_creation)
         self.element = Racking(name='', length=0, width=0, height=0, angle=0, id=0, x_position=0, y_position=0)
         self.submit_signal.connect(self.handle_submit)
         self.new_element_signal.connect(self.create_racking)
@@ -172,5 +176,6 @@ class RackingInspector(QTabWidget):
         elif issubclass(type(element), StoreObject):
             print('element is storeObject')
             self.racking_properties.update_informations(element)
+            self.racking_viewer.set_racking(element)
             self.racking_content.update_informations(element)
             self.element = element

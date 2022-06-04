@@ -86,6 +86,10 @@ class Panel(QWidget):
         self.container_inspector = inspector
         self.main_vbox.insertWidget(1, self.container_inspector)
 
+    def set_panel_flexible(self, min, max):
+        self.setMinimumWidth(min)
+        self.setMaximumWidth(max)
+
 
     def show_panel(self, width=250):
         """

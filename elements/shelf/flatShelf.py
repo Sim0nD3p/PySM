@@ -34,9 +34,14 @@ class FlatShelf(Shelf):
                 width=geometry[0, 1],
                 height=geometry[2, 1],
             )
-            sh.set_x_position(geometry[1, 0])
-            sh.set_y_position(geometry[1, 1])
-            sh.set_height(geometry[2, 1])
+            # TODO problem setting height
+            sh.set_base_height(int(properties['base_height']))
+            # sh.set_x_position(geometry[1, 0])
+            # sh.set_y_position(geometry[1, 1])
+            # h.set_height(geometry[2, 1])
+            sh.auto_height = bool(int(properties['auto_height']))
             sh.set_angle(geometry[2, 0])
+
+
             return sh
 

@@ -34,6 +34,7 @@ class Settings:
 
     # ----- SHELVES SETTINGS -----
     default_shelf_net_height = 10   # cm
+    max_z_position = 600    # cm
 
     # ----- CONTAINER SETTINGS -----
     containers = [BIN, SPACE_CONTAINER]

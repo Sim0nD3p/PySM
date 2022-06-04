@@ -10,10 +10,16 @@
     - reload partModel in treePropertiesEditor not only on program starup
 
 ## where I am:
+HEIGHT
+- set autoHeight writer/loader
+- check_conflict in racking
+- trigger check conflict when submitting container or new shelf
+- make dialog when conflict in racking height
+- add base racking height in auto height (shelf.height())
 # TODO bugs in containerInspector
-- bug not returning containerInstance in containerSelector, subtype not beeing updated correctly
-    bug was triggering handle_change for each new index added (fixed with enable change variable)
-    now need to fix logic around subtype_cb
+  - handle cancel containerInspector
+  - handle error when cont number not valid
+  - unselect functions 
   - shelfContent not updating on delete
   - display different color for each storage object
   - finalise movement (drag to move)

@@ -41,15 +41,6 @@ class StoreTopVisualizer(QtOpenGLWidgets.QOpenGLWidget):
         self.x_offset = 0
         self.y_offset = 0
 
-        # e = StoreViewerControls(store_viewer=self)
-
-        tb = QToolBar(self)
-        tb.setFloatable(True)
-        tb.setMovable(True)
-        tb.setAutoFillBackground(True)
-        tb.setBackgroundRole(QPalette.ColorRole.AlternateBase)
-        tb.addWidget(QLabel('test'))
-        tb.addAction('action1')
         # TODO add zoom by scrolling
 
         self.setGeometry(0, 0, 100, 100)

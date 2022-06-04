@@ -51,11 +51,12 @@ class StoreOverview(QWidget):
         self.racking_panel.racking_inspector.racking_content.shelf_selection_signal.connect(self.handle_shelf_selection)
         self.racking_panel.racking_inspector.unselect_signal.connect(self.unselect_all)
         self.racking_panel.racking_inspector.racking_content.new_shelf_button.clicked.connect(self.handle_shelf_creation)
-
+        self.racking_panel.racking_inspector.racking_viewer.shelf_selection_signal.connect(self.handle_shelf_selection)
         # interfaces shelf panel
         self.shelf_panel.shelf_inspector.shelf_list_update_signal.connect(self.racking_panel.racking_inspector
                                                                           .racking_content.draw_list)
         self.shelf_panel.shelf_inspector.container_select_signal.connect(self.handle_container_creation)
+
 
         # container interface (shelf)
         self.container_panel.container_inspector.container_list_update_signal.connect(self.shelf_panel.shelf_inspector

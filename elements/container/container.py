@@ -40,6 +40,7 @@ class Container(Geometry):
                          angle=angle, height=height
                          )
         self.name = name
+        self.display_color = QColor(255, 0, 0)
         self.stored_part = None     # DEPRECIATED, use content instead
         self.content = np.array([0, None])  # number of parts, part str
         self.type = container_type          # variable override
@@ -74,6 +75,9 @@ class Container(Geometry):
         :return: void
         """
         self.content = np.array([int(number), content])
+
+    def set_display_color(self, color: QColor):
+        self.display_color = color
 
 
     def set_position(self, x_position, y_position):

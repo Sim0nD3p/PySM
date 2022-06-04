@@ -37,7 +37,7 @@ class Geometry:
         ])
         self.displayLabel = True
         # geometry should have name (passed as argument)
-        self.name = 'Test'
+        self.name = name
 
 
 
@@ -55,7 +55,10 @@ class Geometry:
         :param x_position: x_position
         :return: void
         """
-        self.geometry[1, 0] = x_position
+        try:
+            self.geometry[1, 0] = float(x_position)
+        except ValueError:
+            self.geometry[1, 0] = 0
 
     def y_position(self):
         """
@@ -70,7 +73,11 @@ class Geometry:
         :param y_position: y_position
         :return: void
         """
-        self.geometry[1, 1] = y_position
+        try:
+            self.geometry[1, 1] = float(y_position)
+        except ValueError:
+            self.geometry[1, 1] = 0
+
 
 
     def length(self):
@@ -87,7 +94,10 @@ class Geometry:
         :return: void
         """
         if length > 0:
-            self.geometry[0, 0] = length
+            try:
+                self.geometry[0, 0] = float(length)
+            except ValueError:
+                self.geometry[0, 0] = 0
         else:
             print('error length should be > 0')
 
@@ -105,7 +115,10 @@ class Geometry:
         :return: void
         """
         if width > 0:
-            self.geometry[0, 1] = width
+            try:
+                self.geometry[0, 1] = float(width)
+            except ValueError:
+                self.geometry[0, 1] = 0
         else:
             print('error width should be > 0')
 
@@ -139,7 +152,10 @@ class Geometry:
         :return:
         """
         if height <= Settings.store_object_max_height:
-            self.geometry[2, 1] = height
+            try:
+                self.geometry[2, 1] = float(height)
+            except ValueError:
+                self.geometry[2, 1] = 0
         else:
             print('error, height given is over the limit')
 

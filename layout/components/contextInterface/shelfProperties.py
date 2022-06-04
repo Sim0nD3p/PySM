@@ -27,6 +27,17 @@ class ShelfProperties(QWidget):
         name_hb.addWidget(self.name_le)
         self.main_vbox.addLayout(name_hb)
 
+        auto_height_label = QLabel('Hauteur auto')
+        self.auto_height_check = QCheckBox()
+        ah_hb = QHBoxLayout()
+        ah_hb.addWidget(auto_height_label)
+        ah_hb.addWidget(self.auto_height_check)
+        self.main_vbox.addLayout(ah_hb)
+
+        # TODO add ID
+
+
+
         # type
         type_label = QLabel('Type:')
         self.type_cb = QComboBox()
@@ -73,6 +84,10 @@ class ShelfProperties(QWidget):
         self.input_elements.append(self.y_pos_sb)
         self.y_pos_sb.setMaximum(9999)
         self.y_pos_sb.setMinimum(-9999)
+        zpos_label = QLabel('Hauteur verticale')
+        self.z_pos_sb = QSpinBox()
+        self.z_pos_sb.setMinimum(0)
+        self.z_pos_sb.setMaximum(Settings.max_z_position)
 
         props_grid.addWidget(length_label, 0, 0, 1, 1)
         props_grid.addWidget(self.length_sb, 0, 1, 1, 1)
@@ -84,6 +99,8 @@ class ShelfProperties(QWidget):
         props_grid.addWidget(self.x_pos_sb, 3, 1, 1, 1)
         props_grid.addWidget(y_pos_label, 4, 0, 1, 1)
         props_grid.addWidget(self.y_pos_sb, 4, 1, 1, 1)
+        props_grid.addWidget(zpos_label, 5, 0, 1, 1)
+        props_grid.addWidget(self.z_pos_sb, 5, 1, 1, 1)
 
         self.main_vbox.addLayout(props_grid)
 
@@ -112,6 +129,7 @@ class ShelfProperties(QWidget):
         :param element:
         :return:
         """
+        print('sda')
         self.name_le.setText(str(element.name))
         self.length_sb.setValue(element.length())
         self.width_sb.setValue(element.width())
@@ -119,6 +137,9 @@ class ShelfProperties(QWidget):
         self.y_pos_sb.setValue(element.y_position())
         self.x_pos_sb.setValue(element.x_position())
         self.type_cb.setCurrentIndex(self.type_cb.findData(element.type))
+        self.z_pos_sb.setValue(int(element.base_height))
+        self.auto_height_check.setChecked(element.auto_height)
+        self.height_sb.setDisabled(element.auto_height)
 
     def display_from_element_constructor(self, element: ElementConstructorData):
         """
@@ -134,6 +155,8 @@ class ShelfProperties(QWidget):
         self.height_sb.setValue(int(element.height))
         self.width_sb.setValue(int(element.width))
         self.x_pos_sb.setValue(int(element.x_position))
+        self.z_pos_sb.setValue(0)   # constructor data doesnt have baseHeight prop
+        self.auto_height_check.setChecked(True)
 
     def modify_shelf_properties(self):
         if issubclass(type(self.element), Shelf):
@@ -143,6 +166,12 @@ class ShelfProperties(QWidget):
             self.element.set_y_position(self.y_pos_sb.value())
             self.element.set_width(self.width_sb.value())
             self.element.set_length(self.length_sb.value())
+            self.element.set_base_height(self.z_pos_sb.value())
+
+            if self.auto_height_check.checkState() == Qt.CheckState.Checked:
+                self.element.auto_height = True
+            else:
+                self.element.auto_height = False
             print(vars(self.element))
 
     def display_blank(self):

@@ -30,12 +30,19 @@ class ShelfInspector(QTabWidget):
 
         self.shelf_content.add_button.clicked.connect(self.start_container_path)
         self.shelf_content.list.itemClicked.connect(self.handle_shelf_content_click)
+        self.shelf_properties.auto_height_check.stateChanged.connect(self.handle_auto_height_change)
 
     # TODO: hide shelfViewer when shelf unselect
+
+    def handle_auto_height_change(self, cs):
+        if self.element:
+            self.element.auto_height = bool(cs)
+            self.update_child_information(self.element)
 
 
     def handle_delete(self):
         print('handling delete from shelfInspector')
+
 
     def handle_submit(self):
         if not self.element:
@@ -74,6 +81,7 @@ class ShelfInspector(QTabWidget):
             # print(shelf)
             # print(self.parent_racking)
             shelf.set_parent_racking(self.parent_racking)
+            shelf.set_base_height(self.shelf_properties.z_pos_sb.value())
             self.parent_racking.add_shelf(shelf)
             self.shelf_list_update_signal.emit()
 
@@ -116,7 +124,12 @@ class ShelfInspector(QTabWidget):
                 item.setData(1, element)
                 self.shelf_content.list.addItem(item)
 
-
+    def display_content(self, content: Shelf):
+        self.element = content
+        self.shelf_properties.element = content
+        self.shelf_properties.update_information(content)
+        self.shelf_content.update_information(content)  # kinda useless? (list updated from shelfInspector)
+        self.update_content_list()
 
 
     def update_child_information(self, element):
@@ -145,5 +158,6 @@ class ShelfInspector(QTabWidget):
             self.shelf_properties.update_information(element)
             self.shelf_content.update_information(element)  # kinda useless? (list updated from shelfInspector)
             self.update_content_list()
+
 
 

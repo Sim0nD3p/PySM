@@ -4,6 +4,7 @@ from PyQt6.QtGui import *
 from layout.central.storeOverview.panel.containerPanel.childrens.partSelector import *
 from layout.central.storeOverview.panel.containerPanel.childrens.containerSelector import *
 from layout.central.storeOverview.panel.containerPanel.childrens.containerOptionsWidget import *
+from layout.central.storeOverview.panel.containerPanel.childrens.colorSelector import *
 from elements.shelf.shelf import *
 from elements.ElementLogic.StorageObject import *
 
@@ -43,6 +44,11 @@ class SelectContainer(QWidget):
         # part selector
         self.part_selector = PartSelector()
         self.main_vbox.addWidget(self.part_selector)
+
+        # color selector
+        # self.color_selector = ColorSelector()
+        # self.main_vbox.addWidget(self.color_selector)
+
 
         # container selector
         self.container_selector = ContainerSelector()

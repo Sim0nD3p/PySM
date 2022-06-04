@@ -127,6 +127,7 @@ class ContainerInspector(QTabWidget):
     def handle_submit(self):
         print('handle_submit in CI')
         # TODO problem when no shelf is selected?
+        # TODO calculate shelf height on submit
         if self.storage_group:
 
             # GET DATA FROM SUB WIDGETS

@@ -52,6 +52,8 @@ class StoreFloorWriter:
                                                   'name': shelf.name,
                                                   'id': str(shelf.id),
                                                   'type': shelf.type,
+                                                  'base_height': str(shelf.base_height),
+                                                  'auto_height': str(int(shelf.auto_height)),
                                                   'geometry': geo
                                               })
                     for so in shelf.storage_objects:

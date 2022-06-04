@@ -25,6 +25,7 @@ class StorageObject(Geometry):
         )
         # we'll need to setup geometry later when posiotionning in shelf
         self.part_code = None
+        self.color = QColor(255, 0, 0)
         self.parent_shelf_id = parent_shelf_id
         self.containers = [Bin('sample_bin', length=0, width=0, height=0)]    # at least 1 container
         self.id = 000000
@@ -41,6 +42,19 @@ class StorageObject(Geometry):
         s = 'StorageObject(' + str(self.container_number()) + str(self.container_type().type) + ',' + \
             str(placement_name) + ')'
         return s
+
+    def height(self):
+        """
+        Finds the maximum height of the containers in SO
+        :return:
+        """
+        max_height = 0
+        for container in self.containers:
+            if container.height() > max_height:
+                max_height = container.height()
+
+        return max_height
+
 
     def set_part_code(self, part_code: str):
         """
@@ -130,6 +144,7 @@ class StorageObject(Geometry):
                     cont_i = ContainerCatalog.create_containers(container_instance, 1)[0]   # creating new containers
                     cont_i.name = str(cont_i.type) + '_' + part + '_' + str(i)
                     cont_i.set_content(nb_part_cont, part)
+                    # cont_i.set_display_color(self.color)
                     containers.append(cont_i)
 
                 print('SO - placement', ContainerPlacement.get_placement_name(self.placement))

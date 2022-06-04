@@ -1,4 +1,8 @@
 import numpy as np
+from PyQt6.QtGui import *
+from PyQt6.QtCore import *
+
+
 from elements.elementsTypes import *
 from elements.store.storeObject import StoreObject
 from math import cos, sin, radians as rad
@@ -48,14 +52,62 @@ class Racking(StoreObject):
 
 
 
+    def height_map(self):
+        """
+        Returns a dict of the height map in range(base_height, max_height)
+        {shelf_name: range(baseHeight, base_height + shelf_height)
+        :return:
+        """
+        hmap = {}
+        for shelf in self.shelves:
+            r = range(int(shelf.base_height), int(shelf.base_height) + int(shelf.height()))
+            hmap[shelf.name] = r
+        return hmap
+
+
+    def check_height_conflict(self, height_range: range):
+        shelf_dict = {}
+        for shelf in self.shelves:
+            shelf_dict[shelf.name] = range(int(shelf.base_height), int(shelf.base_height) + int(shelf.height()))
+
+
+    def set_base_height(self, base_height):
+        pass
+
+    def face_painter_path(self):
+        path = QPainterPath()
+
+        path.moveTo(QPointF(0, 0))
+        path.lineTo(QPointF(0, self.height()))
+
+        path.moveTo(QPointF(self.length(), 0))
+        path.lineTo(QPointF(self.length(), self.height()))
+
+        return path
+
+
 
 
     def add_shelf(self, shelf):
         """
         TODO Need to be better
+        * check baseHeight
         :param shelf:
         :return:
         """
+        print('add shelf')
+        height_map = []
+        ts = set(range(int(shelf.base_height), int(shelf.base_height) + int(shelf.height())))
+        print(self.height_map())
+        hmap = self.height_map()
+        print(hmap)
+        for key in hmap.keys():
+            s = set(hmap[key])
+            if set.intersection(ts, s):
+                print('yesyt')
+
+
+
         self.shelves.append(shelf)
 
     def set_length(self, length):

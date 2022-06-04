@@ -18,9 +18,10 @@ class RackingPanel(Panel):
     def __init__(self, store_viewer: StoreTopVisualizer, shelf_viewer: ShelfViewer):
         super().__init__()
         self.store_viewer = store_viewer
-        self.setMaximumWidth(400)
+        # self.setMaximumWidth(400)
+        self.set_panel_flexible(200, 500)
         self.element_copy = None    # used for restoring element on cancel
-        self.show_panel(175)
+        # self.show_panel(175)
         self.racking_tool_bar = StoreViewerControls(store_viewer=store_viewer)
         self.racking_inspector = RackingInspector(store_viewer=self.store_viewer)
         self.set_tool_bar(self.racking_tool_bar)
@@ -36,7 +37,7 @@ class RackingPanel(Panel):
         if issubclass(type(element), Racking):
             self.element_copy = deepcopy(element)
             print('lets go')
-            self.show_panel(175)
+            self.set_panel_flexible(150, 400)
             self.enable_buttons()
             self.racking_inspector.update_child_informations(element)
 

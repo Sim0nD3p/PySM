@@ -1,6 +1,7 @@
 from layout.settings.settings import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
+from PyQt6.QtWidgets import *
 from elements.container.container import *
 import numpy as np
 from elements.ElementLogic.dataClasses import *
@@ -37,10 +38,30 @@ class Shelf(Geometry):
         self.type = type
         self.id = id
         self.parent_racking = None
+        self.base_height = 0
+        self.auto_height = False
 
         self.storage_objects = []   # storage object regrouping all containers
 
                                     # should be replaced by self.containers()
+    def __repr__(self):
+        s = 'Shelf(' + str(self.type) + ',' + 'bh:' + str(self.base_height) + ',' + 'height:' + str(self.height()) + ')'
+        return s
+
+    def set_base_height(self, z_value):
+        self.base_height = z_value
+
+    def height(self):
+        # TODO height override? how to
+        parent_height = super().height()
+        if self.auto_height:
+            max_height = 0
+            for so in self.storage_objects:
+                if so.height() > max_height:
+                    max_height = so.height()
+            return max_height
+        else:
+            return super().height()
 
 
     def set_parent_racking(self, racking):
@@ -91,6 +112,10 @@ class Shelf(Geometry):
         :param storage_object:
         :return:
         """
+        # TODO set_height according to container' max height
+        if storage_object.height() > self.height():
+            self.set_height(storage_object.height())
+            # check if increasing height is possible of if there is a shelf
         self.storage_objects.append(storage_object)
 
 
